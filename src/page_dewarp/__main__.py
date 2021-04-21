@@ -5,6 +5,8 @@ import cv2
 from PIL import Image
 import numpy as np
 import scipy.optimize
+from .cli import ArgParser
+from .debug_utils import cCOLOURS, debug_show
 
 # for some reason pylint complains about cv2 members being undefined :(
 # pylint: disable=E1101
@@ -36,90 +38,16 @@ SPAN_MIN_WIDTH = 30  # minimum reduced px width for span
 SPAN_PX_PER_STEP = 20  # reduced px spacing for sampling along spans
 FOCAL_LENGTH = 1.2  # normalized focal length of camera
 
-DEBUG_LEVEL = 3  # 0=none, 1=some, 2=lots, 3=all
-DEBUG_OUTPUT = "file"  # file, screen, both
-
 WINDOW_NAME = "Dewarp"  # Window name for visualization
-
-# nice color palette for visualizing contours, etc.
-CCOLORS = [
-    (255, 0, 0),
-    (255, 63, 0),
-    (255, 127, 0),
-    (255, 191, 0),
-    (255, 255, 0),
-    (191, 255, 0),
-    (127, 255, 0),
-    (63, 255, 0),
-    (0, 255, 0),
-    (0, 255, 63),
-    (0, 255, 127),
-    (0, 255, 191),
-    (0, 255, 255),
-    (0, 191, 255),
-    (0, 127, 255),
-    (0, 63, 255),
-    (0, 0, 255),
-    (63, 0, 255),
-    (127, 0, 255),
-    (191, 0, 255),
-    (255, 0, 255),
-    (255, 0, 191),
-    (255, 0, 127),
-    (255, 0, 63),
-]
 
 # default intrinsic parameter matrix
 K = np.array([[FOCAL_LENGTH, 0, 0], [0, FOCAL_LENGTH, 0], [0, 0, 1]], dtype=np.float32)
 
 
-def debug_show(name, step, text, display):
-
-    if DEBUG_OUTPUT != "screen":
-        filetext = text.replace(" ", "_")
-        outfile = name + "_debug_" + str(step) + "_" + filetext + ".png"
-        cv2.imwrite(outfile, display)
-
-    if DEBUG_OUTPUT != "file":
-
-        image = display.copy()
-        height = image.shape[0]
-
-        cv2.putText(
-            image,
-            text,
-            (16, height - 16),
-            cv2.FONT_HERSHEY_SIMPLEX,
-            1.0,
-            (0, 0, 0),
-            3,
-            cv2.LINE_AA,
-        )
-
-        cv2.putText(
-            image,
-            text,
-            (16, height - 16),
-            cv2.FONT_HERSHEY_SIMPLEX,
-            1.0,
-            (255, 255, 255),
-            1,
-            cv2.LINE_AA,
-        )
-
-        cv2.imshow(WINDOW_NAME, image)
-
-        while cv2.waitKey(5) < 0:
-            pass
-
-
 def round_nearest_multiple(i, factor):
     i = int(i)
     rem = i % factor
-    if not rem:
-        return i
-    else:
-        return i + factor - rem
+    return i + factor - rem if rem else i
 
 
 def pix2norm(shape, pts):
@@ -231,24 +159,6 @@ def project_keypoints(pvec, keypoint_index):
     return project_xy(xy_coords, pvec)
 
 
-def resize_to_screen(src, maxw=1280, maxh=700, copy=False):
-
-    height, width = src.shape[:2]
-
-    scl_x = float(width) / maxw
-    scl_y = float(height) / maxh
-
-    scl = int(np.ceil(max(scl_x, scl_y)))
-
-    if scl > 1.0:
-        inv_scl = 1.0 / scl
-        img = cv2.resize(src, (0, 0), None, inv_scl, inv_scl, cv2.INTER_AREA)
-    elif copy:
-        img = src.copy()
-    else:
-        img = src
-
-    return img
 
 
 def box(width, height):
@@ -641,7 +551,7 @@ def visualize_contours(name, small, cinfo_list):
 
     for j, cinfo in enumerate(cinfo_list):
 
-        cv2.drawContours(regions, [cinfo.contour], 0, CCOLORS[j % len(CCOLORS)], -1)
+        cv2.drawContours(regions, [cinfo.contour], 0, cCOLOURS[j % len(cCOLOURS)], -1)
 
     mask = regions.max(axis=2) != 0
 
@@ -649,7 +559,7 @@ def visualize_contours(name, small, cinfo_list):
     display[mask] = (display[mask] / 2) + (regions[mask] / 2)
 
     for j, cinfo in enumerate(cinfo_list):
-        color = CCOLORS[j % len(CCOLORS)]
+        color = cCOLOURS[j % len(cCOLOURS)]
         color = tuple(c // 4 for c in color)
 
         cv2.circle(display, fltp(cinfo.center), 3, (255, 255, 255), 1, cv2.LINE_AA)
@@ -672,7 +582,7 @@ def visualize_spans(name, small, pagemask, spans):
 
     for i, span in enumerate(spans):
         contours = [cinfo.contour for cinfo in span]
-        cv2.drawContours(regions, contours, -1, CCOLORS[i * 3 % len(CCOLORS)], -1)
+        cv2.drawContours(regions, contours, -1, cCOLOURS[i * 3 % len(cCOLOURS)], -1)
 
     mask = regions.max(axis=2) != 0
 
@@ -703,7 +613,7 @@ def visualize_span_points(name, small, span_points, corners):
 
         for point in points:
             cv2.circle(
-                display, fltp(point), 3, CCOLORS[i % len(CCOLORS)], -1, cv2.LINE_AA
+                display, fltp(point), 3, cCOLOURS[i % len(cCOLOURS)], -1, cv2.LINE_AA
             )
 
         cv2.line(display, fltp(point0), fltp(point1), (255, 255, 255), 1, cv2.LINE_AA)
@@ -854,74 +764,125 @@ def remap_image(name, img, small, page_dims, params):
 
     return threshfile
 
+def save_pdf(outfiles):
+    print("To convert to PDF (requires ImageMagick):")
+    print("  convert -compress Group4 " + " ".join(outfiles) + " output.pdf")
+    raise NotImplementedError("TODO: handle PDF conversion")
+
+class WarpedImage:
+    written = False # Explicitly declare the file write in this attribute
+
+    def __init__(self, imgfile):
+        self.cv2_img = cv2.imread(imgfile)
+        self.file_path = Path(imgfile)
+        self.small = self.resize_to_screen()
+        size, resized = self.size, self.resized
+        print(f"Loaded {self.basename} at {size=} --> {resized=}")
+        if DEBUG_LEVEL >= 3:
+            debug_show(self.stem, 0.0, "original", self.small)
+
+        self.calculate_page_extents() # set pagemask & page_outline attributes
+        self.contour_list = self.contour_info(text=True)
+        spans = self.iteratively_assemble_spans()
+        # Skip if no spans
+        if len(spans) < 1:
+            print(f"skipping {self.stem} because only {len(spans)} spans")
+        else:
+            span_points = sample_spans(self.small.shape, spans)
+            n_pts = sum(map(len, span_points))
+            print(f"  got {len(spans)} spans with {n_pts} points.")
+
+            corners, ycoords, xcoords = keypoints_from_samples(
+                self.stem, self.small, self.pagemask, self.page_outline, span_points
+            )
+            rough_dims, span_counts, params = get_default_params(corners, ycoords, xcoords)
+            dstpoints = np.vstack((corners[0].reshape((1, 1, 2)),) + tuple(span_points))
+            params = optimize_params(self.stem, self.small, dstpoints, span_counts, params)
+            page_dims = get_page_dims(corners, rough_dims, params)
+            self.outfile = remap_image(self.stem, self.cv2_img, self.small, page_dims, params)
+            self.written = True
+
+    def iteratively_assemble_spans(self):
+        """
+        First try to assemble spans from contours, if too few spans then make spans by
+        line detection (borders of a table box) rather than text detection.
+        """
+        spans = assemble_spans(self.stem, self.small, self.pagemask, self.contour_list)
+        # Retry if insufficient spans
+        if len(spans) < 3:
+            print(f"  detecting lines because only {len(spans)} text spans")
+            self.contour_list = self.contour_info(line=True)
+            spans = self.attempt_reassemble_spans(spans)
+        return spans
+
+    def attempt_reassemble_spans(self, prev_spans):
+        new_spans = assemble_spans(self.stem, self.small, self.pagemask, self.contour_list)
+        return new_spans if len(new_spans) > len(prev_spans) else prev_spans
+
+
+    @property
+    def basename(self):
+        return self.file_path.name
+
+    @property
+    def stem(self):
+        return self.file_path.stem
+
+    def resize_to_screen(self, maxw=1280, maxh=700, copy=False):
+        height, width = self.cv2_img.shape[:2]
+        scl_x = float(width) / maxw
+        scl_y = float(height) / maxh
+        scl = int(np.ceil(max(scl_x, scl_y)))
+        if scl > 1.0:
+            inv_scl = 1.0 / scl
+            img = cv2.resize(self.cv2_img, (0, 0), None, inv_scl, inv_scl, cv2.INTER_AREA)
+        elif copy:
+            img = self.cv2_img.copy()
+        else:
+            img = self.cv2_img
+        return img
+
+    def calculate_page_extents(self):
+        self.pagemask, self.page_outline = get_page_extents(self.small)
+
+    @property
+    def size(self):
+        return imgsize(self.cv2_img)
+    
+    @property
+    def resized(self):
+        return imgsize(self.small)
+
+    def contour_info(self, text=False, line=False):
+        if not (text ^ line):
+            raise ValueError("Please specify either text or line contour")
+        c_type = "text" if text else "line"
+        return get_contours(self.stem, self.small, self.pagemask, c_type)
+
 
 def main():
+    parser = ArgParser()
+    args = parser.parse_args()
 
-    if len(sys.argv) < 2:
-        print("usage:", sys.argv[0], "IMAGE1 [IMAGE2 ...]")
-        sys.exit(0)
+    input_images = args.input_images
+    global DEBUG_LEVEL, DEBUG_OUTPUT
+    DEBUG_LEVEL = args.DEBUG_LEVEL
+    DEBUG_OUTPUT = args.DEBUG_OUTPUT
+    convert_to_pdf = args.to_pdf
 
     if DEBUG_LEVEL > 0 and DEBUG_OUTPUT != "file":
         cv2.namedWindow(WINDOW_NAME)
 
     outfiles = []
 
-    for imgfile in sys.argv[1:]:
+    for imgfile in input_images:
+        processed_img = WarpedImage(imgfile)
+        if processed_img.written:
+            outfiles.append(processed_img.outfile)
+            print(f"  wrote {processed_img.outfile}", end="\n\n")
 
-        img = cv2.imread(imgfile)
-        small = resize_to_screen(img)
-        imgfile_path = Path(imgfile)
-        basename = imgfile_path.name
-        stem = imgfile_path.stem
-
-        print("loaded", basename, "with size", imgsize(img), end=" ")
-        print("and resized to", imgsize(small))
-
-        if DEBUG_LEVEL >= 3:
-            debug_show(stem, 0.0, "original", small)
-
-        pagemask, page_outline = get_page_extents(small)
-
-        cinfo_list = get_contours(stem, small, pagemask, "text")
-        spans = assemble_spans(stem, small, pagemask, cinfo_list)
-
-        if len(spans) < 3:
-            print("  detecting lines because only", len(spans), "text spans")
-            cinfo_list = get_contours(stem, small, pagemask, "line")
-            spans2 = assemble_spans(stem, small, pagemask, cinfo_list)
-            if len(spans2) > len(spans):
-                spans = spans2
-
-        if len(spans) < 1:
-            print("skipping", stem, "because only", len(spans), "spans")
-            continue
-
-        span_points = sample_spans(small.shape, spans)
-
-        print("  got", len(spans), "spans", end=" ")
-        print("with", sum([len(pts) for pts in span_points]), "points.")
-
-        corners, ycoords, xcoords = keypoints_from_samples(
-            stem, small, pagemask, page_outline, span_points
-        )
-
-        rough_dims, span_counts, params = get_default_params(corners, ycoords, xcoords)
-
-        dstpoints = np.vstack((corners[0].reshape((1, 1, 2)),) + tuple(span_points))
-
-        params = optimize_params(stem, small, dstpoints, span_counts, params)
-
-        page_dims = get_page_dims(corners, rough_dims, params)
-
-        outfile = remap_image(stem, img, small, page_dims, params)
-
-        outfiles.append(outfile)
-
-        print("  wrote", outfile)
-        print()
-
-    print("to convert to PDF (requires ImageMagick):")
-    print("  convert -compress Group4 " + " ".join(outfiles) + " output.pdf")
+    if convert_to_pdf:
+        save_pdf(outfiles)
 
 
 if __name__ == "__main__":

@@ -5,3 +5,4 @@ dist
 *.egg-info
 version.py
 .eggs
+results/

@@ -2,12 +2,8 @@
 
 Document image dewarping library using a cubic sheet model
 
-Python 3 library renovated from the
-[original (2016) Python 2 script](https://github.com/mzucker/page_dewarp/) by Matt Zucker
-for page dewarping and thresholding, now with more advanced command line interface and modular package organisation,
-and [distributed on PyPI](https://pypi.org/project/page-dewarp/).
-
-- See full writeup on [Matt's blog](https://mzucker.github.io/2016/08/15/page-dewarping.html)
+Python 3 library for page dewarping and thresholding,
+[available on PyPI](https://pypi.org/project/page-dewarp/).
 
 ## Explanation and extension to Gpufit
 
@@ -20,8 +16,9 @@ CUDA (C++ with Python API).
 
 _[Work in progress]_
 
+- See full writeup on [Matt Zucker's blog](https://mzucker.github.io/2016/08/15/page-dewarping.html)
 - See [lecture](https://www.cs.cornell.edu/courses/cs4620/2013fa/lectures/16spline-curves.pdf)
-  on splines for more details and how a spline can be represented in matrix form.
+  on splines by Steve Marschner for more details and how a spline can be represented in matrix form.
 
 ## Features
 
@@ -41,13 +38,15 @@ Improvements on the original include:
 
 ## Requirements
 
-Currently matching those in [@bertsky's Python 3 fork](https://github.com/bertsky/page_dewarp/tree/support-python3)
-of [@mzucker's `page_dewarp` repo](https://github.com/mzucker/page_dewarp/):
+Python 3 and NumPy, SciPy, SymPy, Matplotlib and OpenCV are required to run `page-dewarp`.
 
-- Python 3
-- scipy
-- OpenCV 3.0 or greater
-- Image module from PIL or Pillow
+- See [`CONDA_SETUP.md`](https://github.com/lmmx/page-dewarp/blob/master/CONDA_SETUP.md) for
+  an example conda environment 
+- If you must install everything from pip, `pip install` will retrieve
+  [`requirements.txt`](https://github.com/lmmx/page-dewarp/blob/master/requirements.txt)
+
+This library was renovated from the [original (2016) Python 2 script](https://github.com/mzucker/page_dewarp/)
+by Matt Zucker, which you can use if you are somehow still using Python 2.
 
 ## Usage
 
