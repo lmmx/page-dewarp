@@ -14,9 +14,11 @@ and [distributed on PyPI](https://pypi.org/project/page-dewarp/).
 A book on a flat surface can be said to be 'fixed to zero' at the endpoints of a curve, which
 you can model as a cubic (see [`derive_cubic.py`](derive_cubic.py))
 
-The "cubic spline" is one of the models supported by
+The "cubic Hermite spline" is one of the models supported by
 [Gpufit](https://github.com/gpufit/Gpufit/), a library for Levenberg Marquardt curve fitting in
 CUDA (C++ with Python API).
+
+_[Work in progress]_
 
 - See [lecture](https://www.cs.cornell.edu/courses/cs4620/2013fa/lectures/16spline-curves.pdf)
   on splines for more details and how a spline can be represented in matrix form.
@@ -26,10 +28,15 @@ CUDA (C++ with Python API).
 Improvements on the original include:
 
 - [x] Banished Python 2
-- [ ] Add both batched mode and input directory input mode (plus other command line flags)
+- [ ] Command line interface
+  - Both batched mode and input directory input mode
+  - Alterable debug level
+  - ...
 - [x] Repackage for pip installation
 - [ ] Refactor with modules and classes
 - [ ] Speed up the optimisation
+  - Multiprocessing on CPU
+  - Optional interface to use Gpufit on GPU
 
 
 ## Requirements
