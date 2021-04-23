@@ -5,6 +5,45 @@ Document image dewarping library using a cubic sheet model
 Python 3 library for page dewarping and thresholding,
 [available on PyPI](https://pypi.org/project/page-dewarp/).
 
+## Requirements
+
+Python 3 and NumPy, SciPy, SymPy, Matplotlib and OpenCV are required to run `page-dewarp`.
+
+- See [`CONDA_SETUP.md`](https://github.com/lmmx/page-dewarp/blob/master/CONDA_SETUP.md) for
+  an example conda environment 
+- If you must install everything from pip, `pip install page-dewarp` will retrieve
+  [`requirements.txt`](https://github.com/lmmx/page-dewarp/blob/master/requirements.txt)
+
+This library was renovated from the [original (2016) Python 2 script](https://github.com/mzucker/page_dewarp/)
+by Matt Zucker, which you can use if you are somehow still using Python 2.
+
+## Usage
+
+```
+usage: page-dewarp [-h] [--debug-level {0,1,2,3}] [--debug-to {file,screen,both}] [-p]
+IMAGE_FILE_OR_FILES [IMAGE_FILE_OR_FILES ...]
+
+positional arguments:
+  IMAGE_FILE_OR_FILES   One or more images to process
+
+optional arguments:
+  -h, --help            show this help message and exit
+  --debug-level {0,1,2,3}
+  --debug-to {file,screen,both}
+  -p, --pdf             Convert result to PDF
+```
+
+- PDF conversion not yet implemented
+
+To try out an example image, run
+
+```sh
+git clone https://github.com/lmmx/page-dewarp
+cd page-dewarp
+mkdir results && cd results
+page-dewarp ../example_input/boston_cooking_a.jpg
+```
+
 ## Explanation and extension to Gpufit
 
 A book on a flat surface can be said to be 'fixed to zero' at the endpoints of a curve, which
@@ -35,21 +74,3 @@ Improvements on the original include:
   - Multiprocessing on CPU
   - Optional interface to use Gpufit on GPU
 
-
-## Requirements
-
-Python 3 and NumPy, SciPy, SymPy, Matplotlib and OpenCV are required to run `page-dewarp`.
-
-- See [`CONDA_SETUP.md`](https://github.com/lmmx/page-dewarp/blob/master/CONDA_SETUP.md) for
-  an example conda environment 
-- If you must install everything from pip, `pip install` will retrieve
-  [`requirements.txt`](https://github.com/lmmx/page-dewarp/blob/master/requirements.txt)
-
-This library was renovated from the [original (2016) Python 2 script](https://github.com/mzucker/page_dewarp/)
-by Matt Zucker, which you can use if you are somehow still using Python 2.
-
-## Usage
-
-```
-TBC
-```
