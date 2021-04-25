@@ -1,6 +1,6 @@
 import numpy as np
 from cv2 import solvePnP
-from .options import cfg
+from .options import cfg, K
 
 __all__ = ["get_default_params"]
 
@@ -18,7 +18,7 @@ def get_default_params(corners, ycoords, xcoords):
         ]
     )
     # estimate rotation and translation from four 2D-to-3D point correspondences
-    _, rvec, tvec = solvePnP(corners_object3d, corners, cfg.param_opts.K, np.zeros(5))
+    _, rvec, tvec = solvePnP(corners_object3d, corners, K(), np.zeros(5))
     span_counts = [*map(len, xcoords)]
     params = np.hstack(
         (

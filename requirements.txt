@@ -3,4 +3,4 @@ matplotlib
 scipy
 sympy
 opencv-python
-toml
+tomlkit

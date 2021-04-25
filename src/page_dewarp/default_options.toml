@@ -41,4 +41,4 @@ OUTPUT_DPI = 300  # Just affects stated DPI of PNG, not appearance
 REMAP_DECIMATE = 16  # Downscaling factor for remapping image
 
 [pdf_opts]
-CONVERT_TO_PDF = false  # Whether to merge dewarped images into a PDF file
+CONVERT_TO_PDF = false  # Merge dewarped images into a PDF

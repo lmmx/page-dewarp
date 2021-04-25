@@ -6,7 +6,7 @@ def add_default_argument(
     name_or_flags,
     arg_name=None,
     action=None,
-    arg_help=None,
+    help=None,
     const=None,
     choices=None,
     nargs=None,
@@ -18,7 +18,7 @@ def add_default_argument(
         "nargs": nargs,
         "const": const,
         "choices": choices,
-        "help": arg_help,
+        "help": help,
         "metavar": metavar,
         "required": required,
     }
@@ -33,6 +33,9 @@ def add_default_argument(
         kwargs["type"] = default_type
     if isinstance(name_or_flags, str):
         name_or_flags = [name_or_flags]  # will be star-expanded so must be sequence
+    if kwargs["help"] is None:
+        # comment in TOML as a string if present, or `None` if absent
+        kwargs["help"] = parser.config_comments().get(arg_name)
     parser.add_argument(
         *name_or_flags,  # one or two values
         dest=arg_name,
