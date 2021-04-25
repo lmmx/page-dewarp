@@ -46,6 +46,8 @@ class ArgParser(argparse.ArgumentParser):
         self.add_default_argument(["-d", "--debug-level"], choices=[0, 1, 2, 3])
         self.add_default_argument(["-o", "--debug-output"], choices=["file", "screen", "both"])
         self.add_default_argument(["-p", "--pdf"], "CONVERT_TO_PDF", help="Merge dewarped images into a PDF")
+        self.add_default_argument(["-vw", "--max-screen-width"], "SCREEN_MAX_W")
+        self.add_default_argument(["-vh", "--max-screen-height"], "SCREEN_MAX_H")
         self.add_default_argument(["-x", "--x-margin"], "PAGE_MARGIN_X")
         self.add_default_argument(["-y", "--y-margin"], "PAGE_MARGIN_Y")
         self.add_default_argument(["-tw", "--min-text-width"], "TEXT_MIN_WIDTH")

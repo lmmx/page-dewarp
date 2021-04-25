@@ -21,14 +21,13 @@ by Matt Zucker, which you can use if you are somehow still using Python 2.
 
 ```
 usage: page-dewarp [-h] [-d {0,1,2,3}] [-o {file,screen,both}] [-p]
-                   [-x PAGE_MARGIN_X] [-y PAGE_MARGIN_Y]
-                   [-tw TEXT_MIN_WIDTH] [-th TEXT_MIN_HEIGHT]
+                   [-vw SCREEN_MAX_W] [-vh SCREEN_MAX_H] [-x PAGE_MARGIN_X]
+                   [-y PAGE_MARGIN_Y] [-tw TEXT_MIN_WIDTH] [-th TEXT_MIN_HEIGHT]
                    [-ta TEXT_MIN_ASPECT] [-tk TEXT_MAX_THICKNESS]
                    [-wz ADAPTIVE_WINSZ] [-ri RVEC_IDX] [-ti TVEC_IDX]
-                   [-ci CUBIC_IDX] [-sw SPAN_MIN_WIDTH]
-                   [-sp SPAN_PX_PER_STEP] [-eo EDGE_MAX_OVERLAP]
-                   [-el EDGE_MAX_LENGTH] [-ec EDGE_ANGLE_COST]
-                   [-ea EDGE_MAX_ANGLE] [-f FOCAL_LENGTH]
+                   [-ci CUBIC_IDX] [-sw SPAN_MIN_WIDTH] [-sp SPAN_PX_PER_STEP]
+                   [-eo EDGE_MAX_OVERLAP] [-el EDGE_MAX_LENGTH]
+                   [-ec EDGE_ANGLE_COST] [-ea EDGE_MAX_ANGLE] [-f FOCAL_LENGTH]
                    [-z OUTPUT_ZOOM] [-dpi OUTPUT_DPI] [-s REMAP_DECIMATE]
                    IMAGE_FILE_OR_FILES [IMAGE_FILE_OR_FILES ...]
 
@@ -39,7 +38,11 @@ optional arguments:
   -h, --help            show this help message and exit
   -d {0,1,2,3}, --debug-level {0,1,2,3}
   -o {file,screen,both}, --debug-output {file,screen,both}
-  -p, --pdf             Merge dewarped images into a PDF file
+  -p, --pdf             Merge dewarped images into a PDF
+  -vw SCREEN_MAX_W, --max-screen-width SCREEN_MAX_W
+                        Viewing screen max width (for resizing to screen)
+  -vh SCREEN_MAX_H, --max-screen-height SCREEN_MAX_H
+                        Viewing screen max height (for resizing to screen)
   -x PAGE_MARGIN_X, --x-margin PAGE_MARGIN_X
                         Reduced px to ignore near L/R edge
   -y PAGE_MARGIN_Y, --y-margin PAGE_MARGIN_Y
@@ -55,14 +58,12 @@ optional arguments:
   -wz ADAPTIVE_WINSZ, --adaptive-winsz ADAPTIVE_WINSZ
                         Window size for adaptive threshold in reduced px
   -ri RVEC_IDX, --rotation-vec-param-idx RVEC_IDX
-                        Index of rvec in params vector (slice: pair of
-                        values)
+                        Index of rvec in params vector (slice: pair of values)
   -ti TVEC_IDX, --translation-vec-param-idx TVEC_IDX
-                        Index of tvec in params vector (slice: pair of
-                        values)
+                        Index of tvec in params vector (slice: pair of values)
   -ci CUBIC_IDX, --cubic-slope-param-idx CUBIC_IDX
-                        Index of cubic slopes in params vector (slice:
-                        pair of values)
+                        Index of cubic slopes in params vector (slice: pair of
+                        values)
   -sw SPAN_MIN_WIDTH, --min-span-width SPAN_MIN_WIDTH
                         Minimum reduced px width for span
   -sp SPAN_PX_PER_STEP, --span-spacing SPAN_PX_PER_STEP
@@ -78,8 +79,7 @@ optional arguments:
   -f FOCAL_LENGTH, --focal-length FOCAL_LENGTH
                         Normalized focal length of camera
   -z OUTPUT_ZOOM, --output-zoom OUTPUT_ZOOM
-                        How much to zoom output relative to *original*
-                        image
+                        How much to zoom output relative to *original* image
   -dpi OUTPUT_DPI, --output-dpi OUTPUT_DPI
                         Just affects stated DPI of PNG, not appearance
   -s REMAP_DECIMATE, --shrink REMAP_DECIMATE

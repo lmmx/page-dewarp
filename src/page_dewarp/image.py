@@ -104,10 +104,10 @@ class WarpedImage:
     def stem(self):
         return self.file_path.stem
 
-    def resize_to_screen(self, maxw=1280, maxh=700, copy=False):
+    def resize_to_screen(self, copy=False):
         height, width = self.cv2_img.shape[:2]
-        scl_x = float(width) / maxw
-        scl_y = float(height) / maxh
+        scl_x = float(width) / cfg.image_opts.SCREEN_MAX_W
+        scl_y = float(height) / cfg.image_opts.SCREEN_MAX_H
         scl = int(np.ceil(max(scl_x, scl_y)))
         if scl > 1.0:
             inv_scl = 1.0 / scl

@@ -5,6 +5,8 @@ DEBUG_LEVEL = 0
 DEBUG_OUTPUT = "file"
 
 [image_opts]
+SCREEN_MAX_W = 1280  # Viewing screen max width (for resizing to screen)
+SCREEN_MAX_H = 700  # Viewing screen max height (for resizing to screen)
 PAGE_MARGIN_X = 50  # Reduced px to ignore near L/R edge
 PAGE_MARGIN_Y = 20  # Reduced px to ignore near T/B edge
 
