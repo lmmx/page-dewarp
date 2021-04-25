@@ -1,0 +1,44 @@
+[debug_lvl_opt]
+DEBUG_LEVEL = 0
+
+[debug_out_opt]
+DEBUG_OUTPUT = "file"
+
+[image_opts]
+PAGE_MARGIN_X = 50  # Reduced px to ignore near L/R edge
+PAGE_MARGIN_Y = 20  # Reduced px to ignore near T/B edge
+
+[contour_opts]
+TEXT_MIN_WIDTH = 15  # Min reduced px width of detected text contour
+TEXT_MIN_HEIGHT = 2  # Min reduced px height of detected text contour
+TEXT_MIN_ASPECT = 1.5  # Filter out text contours below this w/h ratio
+TEXT_MAX_THICKNESS = 10  # Max reduced px thickness of detected text contour
+
+[mask_opts]
+ADAPTIVE_WINSZ = 55  # Window size for adaptive threshold in reduced px
+
+[proj_opts]
+RVEC_IDX = [0, 3]  # Index of rvec in params vector (slice: pair of values)
+TVEC_IDX = [3, 6]  # Index of tvec in params vector (slice: pair of values)
+CUBIC_IDX = [6, 8]  # Index of cubic slopes in params vector (slice: pair of values)
+
+[span_opts]
+SPAN_MIN_WIDTH = 30  # Minimum reduced px width for span
+SPAN_PX_PER_STEP = 20  # Reduced px spacing for sampling along spans
+
+[edge_opts]
+EDGE_MAX_OVERLAP = 1.0  # Max reduced px horiz. overlap of contours in span
+EDGE_MAX_LENGTH = 100.0  # Max reduced px length of edge connecting contours
+EDGE_ANGLE_COST = 10.0  # Cost of angles in edges (tradeoff vs. length)
+EDGE_MAX_ANGLE = 7.5  # Maximum change in angle allowed between contours
+
+[camera_opts]
+FOCAL_LENGTH = 1.2  # Normalized focal length of camera
+
+[output_opts]
+OUTPUT_ZOOM = 1.0  # How much to zoom output relative to *original* image
+OUTPUT_DPI = 300  # Just affects stated DPI of PNG, not appearance
+REMAP_DECIMATE = 16  # Downscaling factor for remapping image
+
+[pdf_opts]
+CONVERT_TO_PDF = false  # Whether to merge dewarped images into a PDF file

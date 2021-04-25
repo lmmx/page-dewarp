@@ -7,7 +7,7 @@ Python 3 library for page dewarping and thresholding,
 
 ## Requirements
 
-Python 3 and NumPy, SciPy, SymPy, Matplotlib and OpenCV are required to run `page-dewarp`.
+Python 3 and NumPy, SciPy, SymPy, Matplotlib, OpenCV, and toml are required to run `page-dewarp`.
 
 - See [`CONDA_SETUP.md`](https://github.com/lmmx/page-dewarp/blob/master/CONDA_SETUP.md) for
   an example conda environment 

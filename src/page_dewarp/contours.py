@@ -12,10 +12,11 @@ from cv2 import (
     RETR_EXTERNAL,
 )
 from .debug_utils import cCOLOURS, debug_show
-from .options import contour_opts
+from .options import cfg
 from .simple_utils import fltp
 
 __all__ = ["ContourInfo", "get_contours"]
+
 
 def blob_mean_and_tangent(contour):
     moments = cv2_moments(contour)
@@ -66,23 +67,23 @@ def make_tight_mask(contour, xmin, ymin, width, height):
     return tight_mask
 
 
-def get_contours(name, small, mask, opts):
+def get_contours(name, small, mask):
     contours, _ = findContours(mask, RETR_EXTERNAL, CHAIN_APPROX_NONE)
     contours_out = []
     for contour in contours:
         rect = boundingRect(contour)
         xmin, ymin, width, height = rect
         if (
-            width < opts["TEXT_MIN_WIDTH"]
-            or height < opts["TEXT_MIN_HEIGHT"]
-            or width < opts["TEXT_MIN_ASPECT"] * height
+            width < cfg.contour_opts.TEXT_MIN_WIDTH
+            or height < cfg.contour_opts.TEXT_MIN_HEIGHT
+            or width < cfg.contour_opts.TEXT_MIN_ASPECT * height
         ):
             continue
         tight_mask = make_tight_mask(contour, xmin, ymin, width, height)
-        if tight_mask.sum(axis=0).max() > opts["TEXT_MAX_THICKNESS"]:
+        if tight_mask.sum(axis=0).max() > cfg.contour_opts.TEXT_MAX_THICKNESS:
             continue
         contours_out.append(ContourInfo(contour, rect, tight_mask))
-    if opts["DEBUG_LEVEL"] >= 2:
+    if cfg.debug_lvl_opt.DEBUG_LEVEL >= 2:
         visualize_contours(name, small, contours_out)
     return contours_out
 

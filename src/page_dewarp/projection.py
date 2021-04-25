@@ -1,15 +1,16 @@
 import numpy as np
 from cv2 import projectPoints
-from .options import proj_opts, param_opts
+from .options import cfg
+
 
 def project_xy(xy_coords, pvec):
     """
     Get cubic polynomial coefficients given by:
-    
+
       f(0) = 0, f'(0) = alpha
       f(1) = 0, f'(1) = beta
     """
-    alpha, beta = tuple(pvec[proj_opts["CUBIC_IDX"]])
+    alpha, beta = tuple(pvec[cfg.proj_opts.CUBIC_IDX])
     poly = np.array([alpha + beta, -2 * alpha - beta, alpha, 0])
 
     xy_coords = xy_coords.reshape((-1, 2))
@@ -17,7 +18,10 @@ def project_xy(xy_coords, pvec):
 
     objpoints = np.hstack((xy_coords, z_coords.reshape((-1, 1))))
     image_points, _ = projectPoints(
-        objpoints, pvec[proj_opts["RVEC_IDX"]], pvec[proj_opts["TVEC_IDX"]],
-        param_opts["K"], np.zeros(5)
+        objpoints,
+        pvec[cfg.proj_opts.RVEC_IDX],
+        pvec[cfg.proj_opts.TVEC_IDX],
+        cfg.param_opts.K,
+        np.zeros(5),
     )
     return image_points

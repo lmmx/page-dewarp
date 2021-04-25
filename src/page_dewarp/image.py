@@ -4,7 +4,7 @@ from pathlib import Path
 from scipy.optimize import minimize
 from .debug_utils import debug_show
 from .mask import Mask
-from .options import image_opts, OptionsMixIn
+from .options import cfg
 from .optimise import optimise_params
 from .projection import project_xy
 from .dewarp import RemappedImage
@@ -20,27 +20,27 @@ def imgsize(img):
 def get_page_dims(corners, rough_dims, params):
     dst_br = corners[2].flatten()
     dims = np.array(rough_dims)
+
     def objective(dims):
         proj_br = project_xy(dims, params)
         return np.sum((dst_br - proj_br.flatten()) ** 2)
+
     res = minimize(objective, dims, method="Powell")
     dims = res.x
     print("  got page dims", dims[0], "x", dims[1])
     return dims
 
 
-class WarpedImage(OptionsMixIn):
+class WarpedImage:
     written = False  # Explicitly declare the file write in this attribute
-    opts = image_opts
-    def __init__(self, imgfile, opts_dict=None):
-        if opts_dict:
-            self.update(opts_dict)
+
+    def __init__(self, imgfile):
         self.cv2_img = cv2.imread(imgfile)
         self.file_path = Path(imgfile)
         self.small = self.resize_to_screen()
         size, resized = self.size, self.resized
         print(f"Loaded {self.basename} at {size=} --> {resized=}")
-        if self.opt("DEBUG_LEVEL") >= 3:
+        if cfg.debug_lvl_opt.DEBUG_LEVEL >= 3:
             debug_show(self.stem, 0.0, "original", self.small)
 
         self.calculate_page_extents()  # set pagemask & page_outline attributes
@@ -62,7 +62,12 @@ class WarpedImage(OptionsMixIn):
             )
             dstpoints = np.vstack((corners[0].reshape((1, 1, 2)),) + tuple(span_points))
             params = optimise_params(
-                self.stem, self.small, dstpoints, span_counts, params, self.opt("DEBUG_LEVEL")
+                self.stem,
+                self.small,
+                dstpoints,
+                span_counts,
+                params,
+                cfg.debug_lvl_opt.DEBUG_LEVEL,
             )
             page_dims = get_page_dims(corners, rough_dims, params)
             self.threshold(page_dims, params)
@@ -117,11 +122,15 @@ class WarpedImage(OptionsMixIn):
 
     def calculate_page_extents(self):
         height, width = self.small.shape[:2]
-        xmin, ymin = map(self.opt, map("PAGE_MARGIN_".__add__, "XY"))
+        # xmin, ymin = map(cfg.image_opts, map("PAGE_MARGIN_".__add__, "XY"))
+        xmin = cfg.image_opts.PAGE_MARGIN_X
+        ymin = cfg.image_opts.PAGE_MARGIN_Y
         xmax, ymax = (width - xmin), (height - ymin)
         self.pagemask = np.zeros((height, width), dtype=np.uint8)
         cv2.rectangle(self.pagemask, (xmin, ymin), (xmax, ymax), (255, 255, 255), -1)
-        self.page_outline = np.array([[xmin, ymin], [xmin, ymax], [xmax, ymax], [xmax, ymin]])
+        self.page_outline = np.array(
+            [[xmin, ymin], [xmin, ymax], [xmax, ymax], [xmax, ymin]]
+        )
 
     @property
     def size(self):
@@ -135,5 +144,5 @@ class WarpedImage(OptionsMixIn):
         if not (text ^ line):
             raise ValueError("Please specify either text or line contour")
         c_type = "text" if text else "line"
-        mask = Mask(self.stem, self.small, self.pagemask, c_type, opts_dict=self.opts)
+        mask = Mask(self.stem, self.small, self.pagemask, c_type)
         return mask.contours()

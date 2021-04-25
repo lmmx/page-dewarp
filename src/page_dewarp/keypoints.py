@@ -3,6 +3,7 @@ from .projection import project_xy
 
 __all__ = ["make_keypoint_index", "project_keypoints"]
 
+
 def make_keypoint_index(span_counts):
     nspans, npts = len(span_counts), sum(span_counts)
     keypoint_index = np.zeros((npts + 1, 2), dtype=int)
@@ -13,6 +14,7 @@ def make_keypoint_index(span_counts):
         start = end
     keypoint_index[1:, 0] = np.arange(npts) + 8 + nspans
     return keypoint_index
+
 
 def project_keypoints(pvec, keypoint_index):
     xy_coords = pvec[keypoint_index]

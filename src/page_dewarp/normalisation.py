@@ -1,5 +1,6 @@
 import numpy as np
 
+
 def pix2norm(shape, pts):
     height, width = shape[:2]
     scl = 2.0 / (max(height, width))
