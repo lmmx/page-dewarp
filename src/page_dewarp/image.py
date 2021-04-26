@@ -1,4 +1,4 @@
-import cv2
+from cv2 import rectangle, imread, resize as cv2_resize, INTER_AREA
 import numpy as np
 from pathlib import Path
 from scipy.optimize import minimize
@@ -35,7 +35,7 @@ class WarpedImage:
     written = False  # Explicitly declare the file write in this attribute
 
     def __init__(self, imgfile):
-        self.cv2_img = cv2.imread(imgfile)
+        self.cv2_img = imread(imgfile)
         self.file_path = Path(imgfile)
         self.small = self.resize_to_screen()
         size, resized = self.size, self.resized
@@ -111,8 +111,8 @@ class WarpedImage:
         scl = int(np.ceil(max(scl_x, scl_y)))
         if scl > 1.0:
             inv_scl = 1.0 / scl
-            img = cv2.resize(
-                self.cv2_img, (0, 0), None, inv_scl, inv_scl, cv2.INTER_AREA
+            img = cv2_resize(
+                self.cv2_img, (0, 0), None, inv_scl, inv_scl, INTER_AREA
             )
         elif copy:
             img = self.cv2_img.copy()
@@ -122,12 +122,11 @@ class WarpedImage:
 
     def calculate_page_extents(self):
         height, width = self.small.shape[:2]
-        # xmin, ymin = map(cfg.image_opts, map("PAGE_MARGIN_".__add__, "XY"))
         xmin = cfg.image_opts.PAGE_MARGIN_X
         ymin = cfg.image_opts.PAGE_MARGIN_Y
         xmax, ymax = (width - xmin), (height - ymin)
         self.pagemask = np.zeros((height, width), dtype=np.uint8)
-        cv2.rectangle(self.pagemask, (xmin, ymin), (xmax, ymax), (255, 255, 255), -1)
+        rectangle(self.pagemask, (xmin, ymin), (xmax, ymax), color=255, thickness=-1)
         self.page_outline = np.array(
             [[xmin, ymin], [xmin, ymax], [xmax, ymax], [xmax, ymin]]
         )
