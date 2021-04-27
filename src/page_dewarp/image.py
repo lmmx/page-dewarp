@@ -86,7 +86,7 @@ class WarpedImage:
         # Retry if insufficient spans
         if len(spans) < 3:
             print(f"  detecting lines because only {len(spans)} text spans")
-            self.contour_list = self.contour_info(line=True)
+            self.contour_list = self.contour_info(text=False) # lines not text
             spans = self.attempt_reassemble_spans(spans)
         return spans
 
@@ -139,9 +139,7 @@ class WarpedImage:
     def resized(self):
         return imgsize(self.small)
 
-    def contour_info(self, text=False, line=False):
-        if not (text ^ line):
-            raise ValueError("Please specify either text or line contour")
+    def contour_info(self, text=True):
         c_type = "text" if text else "line"
         mask = Mask(self.stem, self.small, self.pagemask, c_type)
         return mask.contours()
