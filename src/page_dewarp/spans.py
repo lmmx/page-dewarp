@@ -21,7 +21,7 @@ def generate_candidate_edge(cinfo_a, cinfo_b):
     """
     We want a left of b (so a's successor will be b and b's
     predecessor will be a). Make sure right endpoint of b is to the
-    right of left endpoint of a.
+    right of left endpoint of a (swap them if not the case).
     """
     if cinfo_a.point0[0] > cinfo_b.point1[0]:
         tmp = cinfo_a
@@ -29,6 +29,7 @@ def generate_candidate_edge(cinfo_a, cinfo_b):
         cinfo_b = tmp
     x_overlap_a = cinfo_a.local_overlap(cinfo_b)
     x_overlap_b = cinfo_b.local_overlap(cinfo_a)
+    breakpoint()
     overall_tangent = cinfo_b.center - cinfo_a.center
     overall_angle = np.arctan2(overall_tangent[1], overall_tangent[0])
     delta_angle = np.divide(
@@ -52,9 +53,8 @@ def generate_candidate_edge(cinfo_a, cinfo_b):
     # else return None
 
 
-def assemble_spans(name, small, pagemask, cinfo_list, min_width=None):
-    if min_width is None:
-        min_width = cfg.span_opts.SPAN_MIN_WIDTH
+def assemble_spans(name, small, pagemask, cinfo_list): 
+    breakpoint()
     cinfo_list = sorted(cinfo_list, key=lambda cinfo: cinfo.rect[1])
     candidate_edges = []
     for i, cinfo_i in enumerate(cinfo_list):
@@ -83,14 +83,14 @@ def assemble_spans(name, small, pagemask, cinfo_list, min_width=None):
             cur_span.append(cinfo)  # add to span
             width += cinfo.local_xrng[1] - cinfo.local_xrng[0]
             cinfo = cinfo.succ  # set successor
-        if width > min_width:
+        if width > cfg.span_opts.SPAN_MIN_WIDTH:
             spans.append(cur_span)  # add if long enough
     if cfg.debug_lvl_opt.DEBUG_LEVEL >= 2:
         visualize_spans(name, small, pagemask, spans)
     return spans
 
 
-def sample_spans(shape, spans, span_px_per_step=None):
+def sample_spans(shape, spans):
     span_points = []
     for span in spans:
         contour_points = []
@@ -99,9 +99,7 @@ def sample_spans(shape, spans, span_px_per_step=None):
             totals = (yvals * cinfo.mask).sum(axis=0)
             means = np.divide(totals, cinfo.mask.sum(axis=0))
             xmin, ymin = cinfo.rect[:2]
-            step = (
-                span_px_per_step if span_px_per_step else cfg.span_opts.SPAN_PX_PER_STEP
-            )
+            step = cfg.span_opts.SPAN_PX_PER_STEP
             start = np.floor_divide((np.mod((len(means) - 1), step)), 2)
             # TODO make this extend?
             new_contour_pts = [

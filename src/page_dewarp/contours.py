@@ -19,14 +19,20 @@ __all__ = ["ContourInfo", "get_contours"]
 
 
 def blob_mean_and_tangent(contour):
+    """
+    Construct blob image's covariance matrix from second order central moments
+    (i.e. dividing them by the 0-order 'area moment' to make them translationally
+    invariant), from the eigenvectors of which the blob orientation can be
+    extracted (they are its principle components).
+    """
     moments = cv2_moments(contour)
     area = moments["m00"]
     mean_x = moments["m10"] / area
     mean_y = moments["m01"] / area
-    moments_matrix = np.divide(
+    covariance_matrix = np.divide(
         [[moments["mu20"], moments["mu11"]], [moments["mu11"], moments["mu02"]]], area
     )
-    _, svd_u, _ = SVDecomp(moments_matrix)
+    _, svd_u, _ = SVDecomp(covariance_matrix)
     center = np.array([mean_x, mean_y])
     tangent = svd_u[:, 0].flatten().copy()
     return center, tangent
@@ -43,7 +49,7 @@ class ContourInfo:
         self.mask = mask
         self.center, self.tangent = blob_mean_and_tangent(contour)
         self.angle = np.arctan2(self.tangent[1], self.tangent[0])
-        clx = [self.proj_x(point) for point in contour]
+        clx = [self.proj_x(point) for point in self.contour]
         lxmin, lxmax = min(clx), max(clx)
         self.local_xrng = (lxmin, lxmax)
         self.point0 = self.center + self.tangent * lxmin
@@ -63,7 +69,7 @@ class ContourInfo:
 def make_tight_mask(contour, xmin, ymin, width, height):
     tight_mask = np.zeros((height, width), dtype=np.uint8)
     tight_contour = contour - np.array((xmin, ymin)).reshape((-1, 1, 2))
-    drawContours(tight_mask, [tight_contour], 0, (1, 1, 1), -1)
+    drawContours(tight_mask, [tight_contour], contourIdx=0, color=1, thickness=-1)
     return tight_mask
 
 
