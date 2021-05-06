@@ -118,12 +118,12 @@ Improvements on the original include:
 
 - [x] Banished Python 2
 - [ ] Command line interface
-  - Both batched mode and input directory input mode
-  - Alterable debug level
+  - [ ] Both batched mode and input directory input mode
+  - [x] Alterable config options
   - ...
 - [x] Repackage for pip installation
-- [ ] Refactor with modules and classes
+- [x] Refactor with modules and classes
 - [ ] Speed up the optimisation
   - Multiprocessing on CPU
-  - Optional interface to use Gpufit on GPU
+  - Optional interface to use Gpufit on GPU (or Deep Declarative Networks?)
 
