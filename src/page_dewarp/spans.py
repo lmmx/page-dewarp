@@ -93,17 +93,16 @@ def sample_spans(shape, spans):
     for span in spans:
         contour_points = []
         for cinfo in span:
-            yvals = np.arange(cinfo.mask.shape[0]).reshape((-1, 1)) + 1
+            yvals = np.arange(cinfo.mask.shape[0]).reshape((-1, 1))
             totals = (yvals * cinfo.mask).sum(axis=0)
             means = np.divide(totals, cinfo.mask.sum(axis=0))
             xmin, ymin = cinfo.rect[:2]
             step = cfg.span_opts.SPAN_PX_PER_STEP
             start = np.floor_divide((np.mod((len(means) - 1), step)), 2)
-            # TODO make this extend?
-            new_contour_pts = [
-                (x + xmin, means[x] + ymin) for x in range(start, len(means), step)
-            ]
-            contour_points += new_contour_pts
+            contour_points.extend([
+                (x + xmin, means[x] + ymin)
+                for x in range(start, len(means), step)
+            ])
         contour_points = np.array(contour_points, dtype=np.float32).reshape((-1, 1, 2))
         contour_points = pix2norm(shape, contour_points)
         span_points.append(contour_points)
