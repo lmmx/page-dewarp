@@ -29,7 +29,6 @@ def generate_candidate_edge(cinfo_a, cinfo_b):
         cinfo_b = tmp
     x_overlap_a = cinfo_a.local_overlap(cinfo_b)
     x_overlap_b = cinfo_b.local_overlap(cinfo_a)
-    breakpoint()
     overall_tangent = cinfo_b.center - cinfo_a.center
     overall_angle = np.arctan2(overall_tangent[1], overall_tangent[0])
     delta_angle = np.divide(
@@ -54,7 +53,6 @@ def generate_candidate_edge(cinfo_a, cinfo_b):
 
 
 def assemble_spans(name, small, pagemask, cinfo_list): 
-    breakpoint()
     cinfo_list = sorted(cinfo_list, key=lambda cinfo: cinfo.rect[1])
     candidate_edges = []
     for i, cinfo_i in enumerate(cinfo_list):
@@ -95,7 +93,7 @@ def sample_spans(shape, spans):
     for span in spans:
         contour_points = []
         for cinfo in span:
-            yvals = np.arange(cinfo.mask.shape[0]).reshape((-1, 1))
+            yvals = np.arange(cinfo.mask.shape[0]).reshape((-1, 1)) + 1
             totals = (yvals * cinfo.mask).sum(axis=0)
             means = np.divide(totals, cinfo.mask.sum(axis=0))
             xmin, ymin = cinfo.rect[:2]
