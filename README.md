@@ -120,10 +120,10 @@ Improvements on the original include:
 - [ ] Command line interface
   - [ ] Both batched mode and input directory input mode
   - [x] Alterable config options
-  - ...
+  - [ ] ...
 - [x] Repackage for pip installation
 - [x] Refactor with modules and classes
 - [ ] Speed up the optimisation
-  - Multiprocessing on CPU
-  - Optional interface to use Gpufit on GPU (or Deep Declarative Networks?)
+  - [ ] Multiprocessing on CPU
+  - [ ] Optional interface to use Gpufit on GPU (or Deep Declarative Networks?)
 
