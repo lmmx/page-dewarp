@@ -118,10 +118,8 @@ _[Work in progress]_
 Improvements on the original include:
 
 - [x] Banished Python 2
-- [ ] Command line interface
-  - [ ] Both batched mode and input directory input mode
+- [x] Command line interface
   - [x] Alterable config options
-  - [ ] ...
 - [x] Repackage for pip installation
 - [x] Refactor with modules and classes
 - [ ] Speed up the optimisation

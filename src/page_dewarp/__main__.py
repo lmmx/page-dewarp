@@ -9,14 +9,12 @@ from .options import cfg
 # for some reason pylint complains about cv2 members being undefined :(
 # pylint: disable=E1101
 
-WINDOW_NAME = "Dewarp"  # Window name for visualization
-
 
 def main():
     parser = ArgParser()
 
     if cfg.debug_lvl_opt.DEBUG_LEVEL > 0 and cfg.debug_out_opt.DEBUG_OUTPUT != "file":
-        namedWindow(WINDOW_NAME)
+        namedWindow("Dewarp")
 
     outfiles = []
 
