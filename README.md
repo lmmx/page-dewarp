@@ -111,6 +111,7 @@ _[Work in progress]_
 - See full writeup on [Matt Zucker's blog](https://mzucker.github.io/2016/08/15/page-dewarping.html)
 - See [lecture](https://www.cs.cornell.edu/courses/cs4620/2013fa/lectures/16spline-curves.pdf)
   on splines by Steve Marschner for more details and how a spline can be represented in matrix form.
+- Brief notes on this project are over on [my website](https://doc.spin.systems/page-dewarp)
 
 ## Features
 
