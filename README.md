@@ -11,8 +11,7 @@ Python 3 and NumPy, SciPy, SymPy, Matplotlib, OpenCV, and TOML Kit are required 
 
 - See [`CONDA_SETUP.md`](https://github.com/lmmx/page-dewarp/blob/master/CONDA_SETUP.md) for
   an example conda environment 
-- If you must install everything from pip, `pip install page_dewarp` will retrieve
-  [`requirements.txt`](https://github.com/lmmx/page-dewarp/blob/master/requirements.txt)
+- If you prefer to install everything from pip, run `pip install page-dewarp`
 
 This library was renovated from the [original (2016) Python 2 script](https://github.com/mzucker/page_dewarp/)
 by Matt Zucker, which you can use if you are somehow still using Python 2.
