@@ -86,7 +86,7 @@ class WarpedImage:
         # Retry if insufficient spans
         if len(spans) < 3:
             print(f"  detecting lines because only {len(spans)} text spans")
-            self.contour_list = self.contour_info(text=False) # lines not text
+            self.contour_list = self.contour_info(text=False)  # lines not text
             spans = self.attempt_reassemble_spans(spans)
         return spans
 
@@ -111,9 +111,7 @@ class WarpedImage:
         scl = int(np.ceil(max(scl_x, scl_y)))
         if scl > 1.0:
             inv_scl = 1.0 / scl
-            img = cv2_resize(
-                self.cv2_img, (0, 0), None, inv_scl, inv_scl, INTER_AREA
-            )
+            img = cv2_resize(self.cv2_img, (0, 0), None, inv_scl, inv_scl, INTER_AREA)
         elif copy:
             img = self.cv2_img.copy()
         else:

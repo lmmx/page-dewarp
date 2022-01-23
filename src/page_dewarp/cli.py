@@ -44,8 +44,12 @@ class ArgParser(argparse.ArgumentParser):
             help="One or more images to process",
         )
         self.add_default_argument(["-d", "--debug-level"], choices=[0, 1, 2, 3])
-        self.add_default_argument(["-o", "--debug-output"], choices=["file", "screen", "both"])
-        self.add_default_argument(["-p", "--pdf"], "CONVERT_TO_PDF", help="Merge dewarped images into a PDF")
+        self.add_default_argument(
+            ["-o", "--debug-output"], choices=["file", "screen", "both"]
+        )
+        self.add_default_argument(
+            ["-p", "--pdf"], "CONVERT_TO_PDF", help="Merge dewarped images into a PDF"
+        )
         self.add_default_argument(["-vw", "--max-screen-width"], "SCREEN_MAX_W")
         self.add_default_argument(["-vh", "--max-screen-height"], "SCREEN_MAX_H")
         self.add_default_argument(["-x", "--x-margin"], "PAGE_MARGIN_X")
@@ -56,7 +60,7 @@ class ArgParser(argparse.ArgumentParser):
         self.add_default_argument(["-tk", "--max-text-thickness"], "TEXT_MAX_THICKNESS")
         self.add_default_argument(["-wz", "--adaptive-winsz"])
         self.add_default_argument(["-ri", "--rotation-vec-param-idx"], "RVEC_IDX")
-        self.add_default_argument(["-ti","--translation-vec-param-idx"], "TVEC_IDX")
+        self.add_default_argument(["-ti", "--translation-vec-param-idx"], "TVEC_IDX")
         self.add_default_argument(["-ci", "--cubic-slope-param-idx"], "CUBIC_IDX")
         self.add_default_argument(["-sw", "--min-span-width"], "SPAN_MIN_WIDTH")
         self.add_default_argument(["-sp", "--span-spacing"], "SPAN_PX_PER_STEP")
@@ -72,10 +76,10 @@ class ArgParser(argparse.ArgumentParser):
     def __init__(self):
         super().__init__()
         # The config was read in already (`cfg` in `options.py`, which was imported)
-        self.prepare_arguments() # First set up the parser to read runtime parameters
+        self.prepare_arguments()  # First set up the parser to read runtime parameters
         self.parsed = self.parse_args()
         self.input_images = self.parsed.input_images
-        self.store_parsed_config() # Store any supplied parameters in the global config
+        self.store_parsed_config()  # Store any supplied parameters in the global config
         self.config_comments()
 
     def store_parsed_config(self):

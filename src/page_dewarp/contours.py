@@ -15,7 +15,14 @@ from .debug_utils import cCOLOURS, debug_show
 from .options import cfg
 from .simple_utils import fltp
 
-__all__ = ["ContourInfo", "get_contours"]
+__all__ = [
+    "blob_mean_and_tangent",
+    "interval_measure_overlap",
+    "ContourInfo",
+    "make_tight_mask",
+    "get_contours",
+    "visualize_contours",
+]
 
 
 def blob_mean_and_tangent(contour):

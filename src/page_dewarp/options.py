@@ -21,7 +21,9 @@ class Config(AttrDict):
         d = tomlkit.loads(cls.defaults_toml.read_text())
         return d
 
+
 cfg = Config.from_defaults()
+
 
 def K():
     "Default intrinsic parameter matrix, depends on FOCAL_LENGTH"
@@ -32,7 +34,8 @@ def K():
             [0, 0, 1],
         ],
         dtype=np.float32,
-    )  
+    )
+
 
 for k, v in cfg.proj_opts.items():
     setattr(cfg.proj_opts, k, slice(*v))

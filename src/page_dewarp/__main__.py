@@ -1,6 +1,4 @@
-import sys
 from cv2 import namedWindow
-import numpy as np
 from .cli import ArgParser
 from .debug_utils import cCOLOURS, debug_show
 from .image import WarpedImage

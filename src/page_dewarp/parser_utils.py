@@ -40,5 +40,5 @@ def add_default_argument(
         *name_or_flags,  # one or two values
         dest=arg_name,
         default=default_value,
-        **{kw: v for kw, v in kwargs.items() if v is not None}
+        **{kw: v for kw, v in kwargs.items() if v is not None},
     )

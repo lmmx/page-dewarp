@@ -12,7 +12,7 @@ from .debug_utils import debug_show
 from .contours import get_contours
 from .options import cfg
 
-__all__ = ["Mask", "make_tight_mask"]
+__all__ = ["box", "Mask"]
 
 
 def box(width, height):
@@ -38,7 +38,11 @@ class Mask:
             C=25 if self.text else 7,
         )
         self.log(0.1, "thresholded", mask)
-        mask = dilate(mask, box(9, 1)) if self.text else erode(mask, box(3, 1), iterations=3)
+        mask = (
+            dilate(mask, box(9, 1))
+            if self.text
+            else erode(mask, box(3, 1), iterations=3)
+        )
         self.log(0.2, "dilated" if self.text else "eroded", mask)
         mask = erode(mask, box(1, 3)) if self.text else dilate(mask, box(8, 2))
         self.log(0.3, "eroded" if self.text else "dilated", mask)
@@ -47,9 +51,8 @@ class Mask:
     def log(self, step, text, display):
         if cfg.debug_lvl_opt.DEBUG_LEVEL >= 3:
             if not self.text:
-                step += 0.3 # text images from 0.1 to 0.3, table images from 0.4 to 0.6
+                step += 0.3  # text images from 0.1 to 0.3, table images from 0.4 to 0.6
             debug_show(self.name, step, text, display)
-
 
     def contours(self):
         return get_contours(self.name, self.small, self.value)

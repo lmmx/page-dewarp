@@ -6,19 +6,20 @@ with open("README.md", "r") as fh:
 with open("requirements.txt", "r") as fh:
     reqs = fh.read().splitlines()
 
+
 def local_scheme(version):
     return ""
 
+
 def version_scheme(version):
     return version.tag.base_version
+
 
 setup(
     name="page_dewarp",
     author="Louis Maddox",
     author_email="louismmx@gmail.com",
-    description=(
-        "Page dewarping and thresholding using a cubic sheet model."
-    ),
+    description=("Page dewarping and thresholding using a cubic sheet model."),
     license="MIT License",
     long_description=long_description,
     long_description_content_type="text/markdown",

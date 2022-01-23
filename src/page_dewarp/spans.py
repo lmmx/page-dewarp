@@ -52,7 +52,7 @@ def generate_candidate_edge(cinfo_a, cinfo_b):
     # else return None
 
 
-def assemble_spans(name, small, pagemask, cinfo_list): 
+def assemble_spans(name, small, pagemask, cinfo_list):
     cinfo_list = sorted(cinfo_list, key=lambda cinfo: cinfo.rect[1])
     candidate_edges = []
     for i, cinfo_i in enumerate(cinfo_list):
@@ -99,10 +99,9 @@ def sample_spans(shape, spans):
             xmin, ymin = cinfo.rect[:2]
             step = cfg.span_opts.SPAN_PX_PER_STEP
             start = np.floor_divide((np.mod((len(means) - 1), step)), 2)
-            contour_points.extend([
-                (x + xmin, means[x] + ymin)
-                for x in range(start, len(means), step)
-            ])
+            contour_points.extend(
+                [(x + xmin, means[x] + ymin) for x in range(start, len(means), step)]
+            )
         contour_points = np.array(contour_points, dtype=np.float32).reshape((-1, 1, 2))
         contour_points = pix2norm(shape, contour_points)
         span_points.append(contour_points)

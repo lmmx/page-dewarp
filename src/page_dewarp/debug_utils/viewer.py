@@ -37,7 +37,7 @@ def debug_show(name, step, text, display):
             LINE_AA,
         )
 
-        imshow(WINDOW_NAME, image)
+        imshow("Dewarp", image)
 
         while waitKey(5) < 0:
             pass
