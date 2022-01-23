@@ -113,7 +113,7 @@ def keypoints_from_samples(name, small, pagemask, page_outline, span_points):
     all_evecs = np.array([[0.0, 0.0]])
     all_weights = 0
     for points in span_points:
-        _, evec = PCACompute(points.reshape((-1, 2)), None, maxComponents=1)
+        _, evec = PCACompute(points.reshape((-1, 2)), mean=None, maxComponents=1)
         weight = np.linalg.norm(points[-1] - points[0])
         all_evecs += evec * weight
         all_weights += weight
