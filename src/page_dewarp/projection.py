@@ -1,6 +1,7 @@
 import numpy as np
 from cv2 import projectPoints
-from .options import cfg, K
+
+from .options import K, cfg
 
 
 def project_xy(xy_coords, pvec):

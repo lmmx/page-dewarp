@@ -1,4 +1,5 @@
-from cv2 import imwrite, imshow, waitKey, FONT_HERSHEY_SIMPLEX, LINE_AA, putText
+from cv2 import FONT_HERSHEY_SIMPLEX, LINE_AA, imshow, imwrite, putText, waitKey
+
 from ..options import cfg
 
 __all__ = ["debug_show"]

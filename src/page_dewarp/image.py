@@ -1,15 +1,20 @@
-from cv2 import rectangle, imread, resize as cv2_resize, INTER_AREA
-import numpy as np
+from __future__ import annotations
+
 from pathlib import Path
+
+import numpy as np
+from cv2 import INTER_AREA, imread, rectangle
+from cv2 import resize as cv2_resize
 from scipy.optimize import minimize
+
 from .debug_utils import debug_show
-from .mask import Mask
-from .options import cfg
-from .optimise import optimise_params
-from .projection import project_xy
 from .dewarp import RemappedImage
-from .spans import assemble_spans, sample_spans, keypoints_from_samples
+from .mask import Mask
+from .optimise import optimise_params
+from .options import cfg
+from .projection import project_xy
 from .solve import get_default_params
+from .spans import assemble_spans, keypoints_from_samples, sample_spans
 
 
 def imgsize(img):
@@ -34,9 +39,11 @@ def get_page_dims(corners, rough_dims, params):
 class WarpedImage:
     written = False  # Explicitly declare the file write in this attribute
 
-    def __init__(self, imgfile):
+    def __init__(self, imgfile: str | Path):
+        if isinstance(imgfile, Path):
+            imgfile = str(imgfile)
         self.cv2_img = imread(imgfile)
-        self.file_path = Path(imgfile)
+        self.file_path = Path(imgfile).resolve()
         self.small = self.resize_to_screen()
         size, resized = self.size, self.resized
         print(f"Loaded {self.basename} at {size=} --> {resized=}")

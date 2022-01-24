@@ -1,15 +1,16 @@
 import numpy as np
 from cv2 import (
-    adaptiveThreshold,
     ADAPTIVE_THRESH_MEAN_C,
-    THRESH_BINARY_INV,
-    cvtColor,
     COLOR_RGB2GRAY,
+    THRESH_BINARY_INV,
+    adaptiveThreshold,
+    cvtColor,
     dilate,
     erode,
 )
-from .debug_utils import debug_show
+
 from .contours import get_contours
+from .debug_utils import debug_show
 from .options import cfg
 
 __all__ = ["box", "Mask"]

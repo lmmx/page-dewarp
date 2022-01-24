@@ -1,8 +1,9 @@
-from cv2 import PCACompute, convexHull, drawContours, circle, line, polylines, LINE_AA
 import numpy as np
+from cv2 import LINE_AA, PCACompute, circle, convexHull, drawContours, line, polylines
+
 from .debug_utils import cCOLOURS, debug_show
-from .options import cfg
 from .normalisation import norm2pix, pix2norm
+from .options import cfg
 from .simple_utils import fltp
 
 __all__ = ["assemble_spans", "sample_spans", "keypoints_from_samples"]

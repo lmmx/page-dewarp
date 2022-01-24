@@ -1,17 +1,18 @@
-from PIL import Image
 import numpy as np
 from cv2 import (
-    resize,
-    remap,
-    INTER_CUBIC,
-    INTER_AREA,
-    cvtColor,
-    COLOR_RGB2GRAY,
-    BORDER_REPLICATE,
-    adaptiveThreshold,
     ADAPTIVE_THRESH_MEAN_C,
+    BORDER_REPLICATE,
+    COLOR_RGB2GRAY,
+    INTER_AREA,
+    INTER_CUBIC,
     THRESH_BINARY,
+    adaptiveThreshold,
+    cvtColor,
+    remap,
+    resize,
 )
+from PIL import Image
+
 from .debug_utils import debug_show
 from .normalisation import norm2pix
 from .options import cfg

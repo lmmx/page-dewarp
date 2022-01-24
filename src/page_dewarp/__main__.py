@@ -1,10 +1,10 @@
 from cv2 import namedWindow
+
 from .cli import ArgParser
 from .debug_utils import cCOLOURS, debug_show
 from .image import WarpedImage
-from .pdf import save_pdf
 from .options import cfg
-
+from .pdf import save_pdf
 
 # for some reason pylint complains about cv2 members being undefined :(
 # pylint: disable=E1101

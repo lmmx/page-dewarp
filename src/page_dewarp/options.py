@@ -1,7 +1,9 @@
 from pathlib import Path
+
 import numpy as np
 import toml
 import tomlkit
+
 from .attr_dict import AttrDict
 
 __all__ = ["Config", "cfg"]

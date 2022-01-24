@@ -1,16 +1,17 @@
 import numpy as np
 from cv2 import (
-    circle,
-    line,
-    LINE_AA,
-    moments as cv2_moments,
-    SVDecomp,
-    drawContours,
-    boundingRect,
-    findContours,
     CHAIN_APPROX_NONE,
+    LINE_AA,
     RETR_EXTERNAL,
+    SVDecomp,
+    boundingRect,
+    circle,
+    drawContours,
+    findContours,
+    line,
 )
+from cv2 import moments as cv2_moments
+
 from .debug_utils import cCOLOURS, debug_show
 from .options import cfg
 from .simple_utils import fltp

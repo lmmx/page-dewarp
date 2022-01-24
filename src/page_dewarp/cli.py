@@ -1,7 +1,8 @@
 import argparse
-from .options import cfg, Config
-from .parser_utils import add_default_argument
 from functools import reduce
+
+from .options import Config, cfg
+from .parser_utils import add_default_argument
 
 
 class ArgParser(argparse.ArgumentParser):

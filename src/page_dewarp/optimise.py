@@ -1,11 +1,13 @@
+from datetime import datetime as dt
+
 import numpy as np
+from cv2 import LINE_AA, circle, line
 from scipy.optimize import minimize
+
 from .debug_utils import debug_show
 from .keypoints import make_keypoint_index, project_keypoints
 from .normalisation import norm2pix
 from .simple_utils import fltp
-from datetime import datetime as dt
-from cv2 import circle, line, LINE_AA
 
 __all__ = ["optimise_params"]
 

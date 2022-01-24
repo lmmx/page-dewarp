@@ -1,6 +1,7 @@
 import numpy as np
 from cv2 import solvePnP
-from .options import cfg, K
+
+from .options import K, cfg
 
 __all__ = ["get_default_params"]
 
