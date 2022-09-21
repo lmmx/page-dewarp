@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 import numpy as np
 from cv2 import (
     CHAIN_APPROX_NONE,
@@ -65,9 +67,13 @@ class ContourInfo:
         self.pred = None
         self.succ = None
 
-    def proj_x(self, point):
-        return np.dot(self.tangent, point.flatten() - self.center)
-
+ 
+    def __repr__(self) -> str:
+        return (
+            f"ContourInfo: contour={self.contour}, rect={self.rect}, mask={self.mask}, "
+            f"center={self.center}, tangent={self.tangent}, angle={self.angle}"
+        )
+    
     def local_overlap(self, other):
         xmin = self.proj_x(other.point0)
         xmax = self.proj_x(other.point1)
