@@ -1,7 +1,6 @@
 from cv2 import namedWindow
 
 from .cli import ArgParser
-from .debug_utils import cCOLOURS, debug_show
 from .image import WarpedImage
 from .options import cfg
 from .pdf import save_pdf
