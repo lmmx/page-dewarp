@@ -1,3 +1,6 @@
+__all__ = ["AttrDict", "stop"]
+
+
 class AttrDict(dict):
     # Core attribute logic adapted from util of the same name in fastcore
     "`dict` subclass that also provides access to keys as attrs"

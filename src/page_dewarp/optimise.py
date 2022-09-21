@@ -9,7 +9,7 @@ from .keypoints import make_keypoint_index, project_keypoints
 from .normalisation import norm2pix
 from .simple_utils import fltp
 
-__all__ = ["optimise_params"]
+__all__ = ["draw_correspondences", "optimise_params"]
 
 
 def draw_correspondences(img, dstpoints, projpts):
@@ -24,6 +24,7 @@ def draw_correspondences(img, dstpoints, projpts):
     return display
 
 
+# TODO: don't use inner function ideally (curry or dataclass)
 def optimise_params(name, small, dstpoints, span_counts, params, debug_lvl):
     keypoint_index = make_keypoint_index(span_counts)
 

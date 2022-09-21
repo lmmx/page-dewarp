@@ -67,13 +67,12 @@ class ContourInfo:
         self.pred = None
         self.succ = None
 
- 
     def __repr__(self) -> str:
         return (
             f"ContourInfo: contour={self.contour}, rect={self.rect}, mask={self.mask}, "
             f"center={self.center}, tangent={self.tangent}, angle={self.angle}"
         )
-    
+
     def local_overlap(self, other):
         xmin = self.proj_x(other.point0)
         xmax = self.proj_x(other.point1)

@@ -18,7 +18,7 @@ from .normalisation import norm2pix
 from .options import cfg
 from .projection import project_xy
 
-__all__ = ["RemappedImage"]
+__all__ = ["round_nearest_multiple", "RemappedImage"]
 
 
 def round_nearest_multiple(i, factor):

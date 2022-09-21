@@ -6,7 +6,15 @@ from .normalisation import norm2pix, pix2norm
 from .options import cfg
 from .simple_utils import fltp
 
-__all__ = ["assemble_spans", "sample_spans", "keypoints_from_samples"]
+__all__ = [
+    "angle_dist",
+    "generate_candidate_edge",
+    "assemble_spans",
+    "sample_spans",
+    "keypoints_from_samples",
+    "visualize_spans",
+    "visualize_span_points",
+]
 
 
 def angle_dist(angle_b, angle_a):

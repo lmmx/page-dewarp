@@ -4,6 +4,8 @@ from functools import reduce
 from .options import Config, cfg
 from .parser_utils import add_default_argument
 
+__all__ = ["ArgParser"]
+
 
 class ArgParser(argparse.ArgumentParser):
     config_map = {k: section for section in cfg for k in cfg[section]}

@@ -16,6 +16,7 @@ from .projection import project_xy
 from .solve import get_default_params
 from .spans import assemble_spans, keypoints_from_samples, sample_spans
 
+__all__ = ["imgsize", "get_page_dims", "WarpedImage"]
 
 def imgsize(img):
     height, width = img.shape[:2]

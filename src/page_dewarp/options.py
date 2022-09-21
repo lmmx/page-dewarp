@@ -6,7 +6,7 @@ import tomlkit
 
 from .attr_dict import AttrDict
 
-__all__ = ["Config", "cfg"]
+__all__ = ["Config", "cfg", "K"]
 
 
 class Config(AttrDict):
