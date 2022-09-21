@@ -77,6 +77,10 @@ class WarpedImage:
                 cfg.debug_lvl_opt.DEBUG_LEVEL,
             )
             page_dims = get_page_dims(corners, rough_dims, params)
+            if np.any(page_dims < 0):
+                # Fallback: see https://github.com/lmmx/page-dewarp/issues/9
+                print("Got a negative page dimension! Falling back to rough estimate")
+                page_dims = rough_dims
             self.threshold(page_dims, params)
             self.written = True
 
