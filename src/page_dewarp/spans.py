@@ -62,7 +62,10 @@ def assemble_spans(name, small, pagemask, cinfo_list):
             edge = generate_candidate_edge(cinfo_i, cinfo_list[j])
             if edge is not None:
                 candidate_edges.append(edge)
-    candidate_edges.sort()  # sort candidate edges by score (lower is better)
+    # Sort candidate edges by score (lower is better)
+    candidate_edges.sort(key=lambda e: e[0])
+    # TODO: implement comparison operators on ContourInfo class to permit tie breaking,
+    # see: https://github.com/lmmx/page-dewarp/pull/6/
     for _, cinfo_a, cinfo_b in candidate_edges:  # for each candidate edge
         # if left and right are unassigned, join them
         if cinfo_a.succ is None and cinfo_b.pred is None:
