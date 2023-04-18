@@ -21,13 +21,15 @@ by Matt Zucker, which you can use if you are somehow still using Python 2.
 ```
 usage: page-dewarp [-h] [-d {0,1,2,3}] [-o {file,screen,both}] [-p]
                    [-vw SCREEN_MAX_W] [-vh SCREEN_MAX_H] [-x PAGE_MARGIN_X]
-                   [-y PAGE_MARGIN_Y] [-tw TEXT_MIN_WIDTH] [-th TEXT_MIN_HEIGHT]
-                   [-ta TEXT_MIN_ASPECT] [-tk TEXT_MAX_THICKNESS]
-                   [-wz ADAPTIVE_WINSZ] [-ri RVEC_IDX] [-ti TVEC_IDX]
-                   [-ci CUBIC_IDX] [-sw SPAN_MIN_WIDTH] [-sp SPAN_PX_PER_STEP]
+                   [-y PAGE_MARGIN_Y] [-tw TEXT_MIN_WIDTH]
+                   [-th TEXT_MIN_HEIGHT] [-ta TEXT_MIN_ASPECT]
+                   [-tk TEXT_MAX_THICKNESS] [-wz ADAPTIVE_WINSZ]
+                   [-ri RVEC_IDX] [-ti TVEC_IDX] [-ci CUBIC_IDX]
+                   [-sw SPAN_MIN_WIDTH] [-sp SPAN_PX_PER_STEP]
                    [-eo EDGE_MAX_OVERLAP] [-el EDGE_MAX_LENGTH]
-                   [-ec EDGE_ANGLE_COST] [-ea EDGE_MAX_ANGLE] [-f FOCAL_LENGTH]
-                   [-z OUTPUT_ZOOM] [-dpi OUTPUT_DPI] [-s REMAP_DECIMATE]
+                   [-ec EDGE_ANGLE_COST] [-ea EDGE_MAX_ANGLE]
+                   [-f FOCAL_LENGTH] [-z OUTPUT_ZOOM] [-dpi OUTPUT_DPI]
+                   [-nb NO_BINARY] [-s REMAP_DECIMATE]
                    IMAGE_FILE_OR_FILES [IMAGE_FILE_OR_FILES ...]
 
 positional arguments:
@@ -81,6 +83,8 @@ optional arguments:
                         How much to zoom output relative to *original* image
   -dpi OUTPUT_DPI, --output-dpi OUTPUT_DPI
                         Just affects stated DPI of PNG, not appearance
+  -nb NO_BINARY, --no-binary NO_BINARY
+                        Disable output conversion to binary thresholded image
   -s REMAP_DECIMATE, --shrink REMAP_DECIMATE
                         Downscaling factor for remapping image
 ```

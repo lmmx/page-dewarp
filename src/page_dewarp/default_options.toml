@@ -41,7 +41,7 @@ FOCAL_LENGTH = 1.2  # Normalized focal length of camera
 OUTPUT_ZOOM = 1.0  # How much to zoom output relative to *original* image
 OUTPUT_DPI = 300  # Just affects stated DPI of PNG, not appearance
 REMAP_DECIMATE = 16  # Downscaling factor for remapping image
-NO_BINARY = false # Disable output conversion to binary thresholded image
+NO_BINARY = 0  # Disable output conversion to binary thresholded image
 
 [pdf_opts]
 CONVERT_TO_PDF = false  # Merge dewarped images into a PDF
