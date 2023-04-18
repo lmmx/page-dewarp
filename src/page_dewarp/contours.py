@@ -73,6 +73,9 @@ class ContourInfo:
             f"center={self.center}, tangent={self.tangent}, angle={self.angle}"
         )
 
+    def proj_x(self, point):
+        return np.dot(self.tangent, point.flatten() - self.center)
+
     def local_overlap(self, other):
         xmin = self.proj_x(other.point0)
         xmax = self.proj_x(other.point1)
