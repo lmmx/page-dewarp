@@ -67,16 +67,20 @@ class RemappedImage:
             None,
             BORDER_REPLICATE,
         )
-        thresh = adaptiveThreshold(
-            remapped,
-            255,
-            ADAPTIVE_THRESH_MEAN_C,
-            THRESH_BINARY,
-            cfg.mask_opts.ADAPTIVE_WINSZ,
-            25,
-        )
-        pil_image = Image.fromarray(thresh)
-        pil_image = pil_image.convert("1")
+        if cfg.output_opts.NO_BINARY:
+            thresh = remapped
+            pil_image = Image.fromarray(thresh)
+        else:
+            thresh = adaptiveThreshold(
+                remapped,
+                255,
+                ADAPTIVE_THRESH_MEAN_C,
+                THRESH_BINARY,
+                cfg.mask_opts.ADAPTIVE_WINSZ,
+                25,
+            )
+            pil_image = Image.fromarray(thresh)
+            pil_image = pil_image.convert("1")
         self.threshfile = name + "_thresh.png"
         pil_image.save(
             self.threshfile,
