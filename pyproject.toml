@@ -1,2 +1,62 @@
-[build-system]
-requires = ["setuptools>=42", "wheel", "setuptools_scm[toml]>=3.4"]
+[project]
+authors = [
+    {email = "louismmx@gmail.com", name = "Louis Maddox"},
+]
+classifiers = [
+    "Development Status :: 6 - Mature",
+    "Intended Audience :: Developers",
+    "Programming Language :: Python :: 3",
+    "Topic :: Software Development :: Libraries",
+]
+dependencies = []
+description = "Document image dewarping library using a cubic sheet model."
+keywords = []
+name = "page-dewarp"
+readme = "README.md"
+requires-python = ">=3.9,<3.11"
+version = "0.0.1"
+
+[project.urls]
+Homepage = "https://github.com/lmmx/page-dewarp"
+Repository = "https://github.com/lmmx/page-dewarp.git"
+
+[tool.isort]
+known_first_party = ["page_dewarp"]
+
+[tool.pdm]
+package-type = "application"
+
+[tool.pdm.dev-dependencies]
+develop = []
+docs = [
+    "mkdocs-material[recommended,imaging]>=9.5.2",
+    "mkdocs-section-index>=0.3.8",
+    "mkdocs>=1.5.3",
+    "mkdocstrings[python]>=0.24.0",
+    "urllib3<2",  # Vercel: https://github.com/squidfunk/mkdocs-material/discussions/6470
+]
+test = [
+    "pytest>=7.4.0",
+]
+
+[tool.ruff]
+ignore = ["C408", "C901", "E501", "E722", "E741"]
+ignore-init-module-imports = true
+select = ["C", "D", "E", "F", "I", "UP", "W"]
+
+[tool.ruff.isort]
+lines-after-imports = 2
+
+[tool.ruff.lint.isort]
+known-first-party = ["page_dewarp"]
+
+[tool.ruff.per-file-ignores]
+# Ignore `E401` (unused imports) in all `__init__.py` files.
+"__init__.py" = ["E401", "F401"]
+
+[tool.tomlsort]
+all = true
+in_place = true
+spaces_before_inline_comment = 2
+spaces_indent_inline_array = 4
+trailing_comma_inline_array = true
