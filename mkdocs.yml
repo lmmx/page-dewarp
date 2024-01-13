@@ -1,0 +1,104 @@
+site_name: Page Dewarp
+site_author: Louis Maddox
+site_description: >-
+  Document image dewarping library using a cubic sheet model
+site_url: https://page-dewarp.readthedocs.io/
+repo_name: lmmx/page-dewarp
+repo_url: https://github.com/lmmx/page-dewarp
+strict: true
+watch: [src]
+
+extra_css:
+  - stylesheets/extra.css
+
+copyright: Copyright &copy; 2021-present Louis Maddox
+
+theme:
+  name: material
+  custom_dir: docs/theme
+  palette:
+    - scheme: default
+      primary: white
+  icon:
+    repo: fontawesome/brands/github
+  features:
+    - announce.dismiss
+    - content.tabs.link
+    - content.code.annotate
+    - content.code.copy
+    - header.autohide
+    - navigation.indexes
+    - navigation.instant
+    - navigation.instant.progress
+    - navigation.prune
+    - navigation.tabs
+    - navigation.tabs.sticky
+    - navigation.sections
+    - search
+    - search.suggest
+  font:
+    text: Inter
+    code: Source Code Pro
+
+extra:
+  social:
+    - icon: fontawesome/brands/github
+      link: https://github.com/lmmx
+  generator: false
+
+markdown_extensions:
+  - admonition
+  - attr_list
+  - md_in_html
+  - pymdownx.blocks.definition
+  - pymdownx.details
+  - pymdownx.emoji:
+      emoji_index: !!python/name:material.extensions.emoji.twemoji
+      emoji_generator: !!python/name:material.extensions.emoji.to_svg
+  - pymdownx.highlight:
+      anchor_linenums: true
+      line_spans: __span
+      pygments_lang_class: true
+      noclasses: True
+      pygments_style: lovelace
+  - pymdownx.inlinehilite
+  - toc:
+      permalink: true
+
+plugins:
+  - autorefs
+  - mkdocstrings:
+      default_handler: python
+      handlers:
+        python:
+          paths: [src/*/]
+          options:
+            members_order: source
+            separate_signature: true
+            filters: ["!^_"]
+            docstring_options:
+              ignore_init_summary: true
+            merge_init_into_class: true
+            line_length: 88 # default: 60
+            # show_if_no_docstring: true
+            show_root_full_path: false
+            show_root_toc_entry: false
+            show_source: true
+            show_submodules: true
+            show_signature_annotations: true
+  - search
+  - section-index
+  - social:
+      cards_layout_options:
+        color: #de0
+
+nav:
+  - Home: index.md
+  - Getting Started:
+      - Welcome to Page Dewarp: get_started.md
+  - Usage:
+      - User guide: usage/index.md
+      - usage/page_dewarp.md
+  - API Reference:
+      - APIs: api/index.md
+      - api/page_dewarp.md
