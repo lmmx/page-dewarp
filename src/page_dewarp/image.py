@@ -49,7 +49,7 @@ class WarpedImage:
         self.small = self.resize_to_screen()
         size, resized = self.size, self.resized
         print(f"Loaded {self.basename} at {size=} --> {resized=}")
-        if cfg.debug_lvl_opt.DEBUG_LEVEL >= 3:
+        if cfg.DEBUG_LEVEL >= 3:
             debug_show(self.stem, 0.0, "original", self.small)
 
         self.calculate_page_extents()  # set pagemask & page_outline attributes
@@ -82,7 +82,7 @@ class WarpedImage:
                 dstpoints,
                 span_counts,
                 params,
-                cfg.debug_lvl_opt.DEBUG_LEVEL,
+                cfg.DEBUG_LEVEL,
             )
             page_dims = get_page_dims(corners, rough_dims, params)
             if np.any(page_dims < 0):
@@ -128,8 +128,8 @@ class WarpedImage:
 
     def resize_to_screen(self, copy=False):
         height, width = self.cv2_img.shape[:2]
-        scl_x = float(width) / cfg.image_opts.SCREEN_MAX_W
-        scl_y = float(height) / cfg.image_opts.SCREEN_MAX_H
+        scl_x = float(width) / cfg.SCREEN_MAX_W
+        scl_y = float(height) / cfg.SCREEN_MAX_H
         scl = int(np.ceil(max(scl_x, scl_y)))
         if scl > 1.0:
             inv_scl = 1.0 / scl
@@ -142,8 +142,8 @@ class WarpedImage:
 
     def calculate_page_extents(self):
         height, width = self.small.shape[:2]
-        xmin = cfg.image_opts.PAGE_MARGIN_X
-        ymin = cfg.image_opts.PAGE_MARGIN_Y
+        xmin = cfg.PAGE_MARGIN_X
+        ymin = cfg.PAGE_MARGIN_Y
         xmax, ymax = (width - xmin), (height - ymin)
         self.pagemask = np.zeros((height, width), dtype=np.uint8)
         rectangle(self.pagemask, (xmin, ymin), (xmax, ymax), color=255, thickness=-1)

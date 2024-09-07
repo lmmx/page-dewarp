@@ -97,16 +97,16 @@ def get_contours(name, small, mask):
         rect = boundingRect(contour)
         xmin, ymin, width, height = rect
         if (
-            width < cfg.contour_opts.TEXT_MIN_WIDTH
-            or height < cfg.contour_opts.TEXT_MIN_HEIGHT
-            or width < cfg.contour_opts.TEXT_MIN_ASPECT * height
+            width < cfg.TEXT_MIN_WIDTH
+            or height < cfg.TEXT_MIN_HEIGHT
+            or width < cfg.TEXT_MIN_ASPECT * height
         ):
             continue
         tight_mask = make_tight_mask(contour, xmin, ymin, width, height)
-        if tight_mask.sum(axis=0).max() > cfg.contour_opts.TEXT_MAX_THICKNESS:
+        if tight_mask.sum(axis=0).max() > cfg.TEXT_MAX_THICKNESS:
             continue
         contours_out.append(ContourInfo(contour, rect, tight_mask))
-    if cfg.debug_lvl_opt.DEBUG_LEVEL >= 2:
+    if cfg.DEBUG_LEVEL >= 2:
         visualize_contours(name, small, contours_out)
     return contours_out
 

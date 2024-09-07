@@ -1,6 +1,8 @@
 import argparse
 from functools import reduce
 
+import msgspec
+
 from .options import Config, cfg
 from .parser_utils import add_default_argument
 
@@ -8,37 +10,29 @@ __all__ = ["ArgParser"]
 
 
 class ArgParser(argparse.ArgumentParser):
-    config_map = {k: section for section in cfg for k in cfg[section]}
+    config_map = msgspec.structs.asdict(cfg)
 
     @classmethod
     def config_comments(cls):
         # Formerly was a way to access field descriptions in TOML
         config_map = cls.config_map
-        default_toml = Config.parse_defaults_with_comments()
+        # default_toml = Config.parse_defaults_with_comments()
         comments_dict = {}
-        for k, section in config_map.items():
-            value = default_toml[section][k]
-            if hasattr(value, "trivia"):
-                comment = value.trivia.comment.lstrip("# ")
-                if comment == "":
-                    comment = None
-            else:
-                comment = None
-            comments_dict.update({k: comment})
+        # for field_name, value in msgspec.structs.asdict(cfg).items():
+        #     if comment == "":
+        #         comment = None
+        #     comments_dict.update({k: comment})
         return comments_dict
 
     @classmethod
     def set_config_param(cls, param, value):
-        section = cls.config_map[param]
-        config_section = getattr(cfg, section)
-        setattr(config_section, param, value)
+        cls.config_map.update({param: value})
 
     @classmethod
     def get_config_param(cls, param):
-        section = cls.config_map[param]
-        return reduce(getattr, [section, param], cfg)
+        return cls.config_map[param]
 
-    add_default_argument = add_default_argument
+    add_default_argument = add_default_argument # overwrite
 
     def prepare_arguments(self):
         self.add_argument(

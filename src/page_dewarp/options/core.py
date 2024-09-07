@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 from pathlib import Path
 from typing import Annotated
 
@@ -6,7 +8,7 @@ from msgspec import Meta, Struct
 __all__ = ["Config", "cfg"]
 
 
-def desc(typ, description: str):
+def desc(typ, /, description: str):
     """Annotate a `msgspec.Struct` field with a description"""
     return Annotated[typ, Meta(description=description)]
 
@@ -46,8 +48,6 @@ class Config(Struct):
     RVEC_IDX: desc(tuple[int, int], "Index of rvec in params vector (slice: pair of values)") = (0, 3)
     TVEC_IDX: desc(tuple[int, int], "Index of tvec in params vector (slice: pair of values)") = (3, 6)
     CUBIC_IDX: desc(tuple[int, int], "Index of cubic slopes in params vector (slice: pair of values)") = (6, 8)
-    # for k, v in cfg.proj_opts.items():
-    #     setattr(cfg.proj_opts, k, slice(*v))
     # [span_opts]
     SPAN_MIN_WIDTH: desc(int, "Minimum reduced px width for span") = 30
     SPAN_PX_PER_STEP: desc(int, "Reduced px spacing for sampling along spans") = 20

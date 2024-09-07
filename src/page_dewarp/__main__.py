@@ -12,7 +12,7 @@ from .pdf import save_pdf
 def main():
     parser = ArgParser()
 
-    if cfg.debug_lvl_opt.DEBUG_LEVEL > 0 and cfg.debug_out_opt.DEBUG_OUTPUT != "file":
+    if cfg.DEBUG_LEVEL > 0 and cfg.DEBUG_OUTPUT != "file":
         namedWindow("Dewarp")
 
     outfiles = []
@@ -23,7 +23,7 @@ def main():
             outfiles.append(processed_img.outfile)
             print(f"  wrote {processed_img.outfile}", end="\n\n")
 
-    if cfg.pdf_opts.CONVERT_TO_PDF:
+    if cfg.CONVERT_TO_PDF:
         save_pdf(outfiles)
 
 

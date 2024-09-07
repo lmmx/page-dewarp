@@ -35,7 +35,7 @@ class Mask:
             maxValue=255,
             adaptiveMethod=ADAPTIVE_THRESH_MEAN_C,
             thresholdType=THRESH_BINARY_INV,
-            blockSize=cfg.mask_opts.ADAPTIVE_WINSZ,
+            blockSize=cfg.ADAPTIVE_WINSZ,
             C=25 if self.text else 7,
         )
         self.log(0.1, "thresholded", mask)
@@ -50,7 +50,7 @@ class Mask:
         self.value = np.minimum(mask, self.pagemask)
 
     def log(self, step, text, display):
-        if cfg.debug_lvl_opt.DEBUG_LEVEL >= 3:
+        if cfg.DEBUG_LEVEL >= 3:
             if not self.text:
                 step += 0.3  # text images from 0.1 to 0.3, table images from 0.4 to 0.6
             debug_show(self.name, step, text, display)
