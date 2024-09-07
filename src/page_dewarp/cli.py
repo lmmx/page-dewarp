@@ -5,6 +5,7 @@ import msgspec
 
 from .options import Config, cfg
 from .parser_utils import add_default_argument
+from .snoopy import snoop
 
 __all__ = ["ArgParser"]
 
@@ -84,6 +85,7 @@ class ArgParser(argparse.ArgumentParser):
         self.store_parsed_config()  # Store any supplied parameters in the global config
         self.config_comments()
 
+    @snoop()
     def store_parsed_config(self):
         for opt in self.config_map:
             # Redundant but thorough: any unchanged defaults will be reassigned

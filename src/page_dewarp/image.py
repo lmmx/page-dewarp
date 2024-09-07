@@ -11,7 +11,7 @@ from .debug_utils import debug_show
 from .dewarp import RemappedImage
 from .mask import Mask
 from .optimise import optimise_params
-from .options import cfg
+from .options import Config
 from .projection import project_xy
 from .solve import get_default_params
 from .spans import assemble_spans, keypoints_from_samples, sample_spans
@@ -40,8 +40,10 @@ def get_page_dims(corners, rough_dims, params):
 
 class WarpedImage:
     written = False  # Explicitly declare the file write in this attribute
+    config: Config
 
-    def __init__(self, imgfile: str | Path):
+    def __init__(self, imgfile: str | Path, config: Config = Config()):
+        self.config = config
         if isinstance(imgfile, Path):
             imgfile = str(imgfile)
         self.cv2_img = imread(imgfile)
@@ -49,7 +51,7 @@ class WarpedImage:
         self.small = self.resize_to_screen()
         size, resized = self.size, self.resized
         print(f"Loaded {self.basename} at {size=} --> {resized=}")
-        if cfg.DEBUG_LEVEL >= 3:
+        if self.config.DEBUG_LEVEL >= 3:
             debug_show(self.stem, 0.0, "original", self.small)
 
         self.calculate_page_extents()  # set pagemask & page_outline attributes
@@ -82,7 +84,7 @@ class WarpedImage:
                 dstpoints,
                 span_counts,
                 params,
-                cfg.DEBUG_LEVEL,
+                self.config.DEBUG_LEVEL,
             )
             page_dims = get_page_dims(corners, rough_dims, params)
             if np.any(page_dims < 0):
@@ -93,7 +95,9 @@ class WarpedImage:
             self.written = True
 
     def threshold(self, page_dims, params):
-        remap = RemappedImage(self.stem, self.cv2_img, self.small, page_dims, params)
+        remap = RemappedImage(
+            self.stem, self.cv2_img, self.small, page_dims, params, config=self.config
+        )
         self.outfile = remap.threshfile
 
     def iteratively_assemble_spans(self):
@@ -128,8 +132,8 @@ class WarpedImage:
 
     def resize_to_screen(self, copy=False):
         height, width = self.cv2_img.shape[:2]
-        scl_x = float(width) / cfg.SCREEN_MAX_W
-        scl_y = float(height) / cfg.SCREEN_MAX_H
+        scl_x = float(width) / self.config.SCREEN_MAX_W
+        scl_y = float(height) / self.config.SCREEN_MAX_H
         scl = int(np.ceil(max(scl_x, scl_y)))
         if scl > 1.0:
             inv_scl = 1.0 / scl
@@ -142,8 +146,8 @@ class WarpedImage:
 
     def calculate_page_extents(self):
         height, width = self.small.shape[:2]
-        xmin = cfg.PAGE_MARGIN_X
-        ymin = cfg.PAGE_MARGIN_Y
+        xmin = self.config.PAGE_MARGIN_X
+        ymin = self.config.PAGE_MARGIN_Y
         xmax, ymax = (width - xmin), (height - ymin)
         self.pagemask = np.zeros((height, width), dtype=np.uint8)
         rectangle(self.pagemask, (xmin, ymin), (xmax, ymax), color=255, thickness=-1)
