@@ -54,14 +54,12 @@ class RemappedImage:
         image_y_coords = image_points[:, 0, 1].reshape(page_y_coords.shape)
         image_x_coords = resize(
             image_x_coords, (width, height), interpolation=INTER_CUBIC
-        )
+        ).astype(np.float32)
         image_y_coords = resize(
             image_y_coords, (width, height), interpolation=INTER_CUBIC
-        )
+        ).astype(np.float32)
         img_gray = cvtColor(img, COLOR_RGB2GRAY)
         # Ensure image_x_coords and image_y_coords are of the correct type
-        image_x_coords = image_x_coords.astype(np.float32)
-        image_y_coords = image_y_coords.astype(np.float32)
         remapped = remap(
             img_gray,
             image_x_coords,
