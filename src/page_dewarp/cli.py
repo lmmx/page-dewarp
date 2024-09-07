@@ -12,6 +12,7 @@ class ArgParser(argparse.ArgumentParser):
 
     @classmethod
     def config_comments(cls):
+        # Formerly was a way to access field descriptions in TOML
         config_map = cls.config_map
         default_toml = Config.parse_defaults_with_comments()
         comments_dict = {}
