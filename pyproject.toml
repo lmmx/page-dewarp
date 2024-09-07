@@ -1,2 +1,53 @@
 [build-system]
-requires = ["setuptools>=42", "wheel", "setuptools_scm[toml]>=3.4"]
+requires = ["pdm-backend"]
+build-backend = "pdm.backend"
+
+[project]
+authors = [
+    {email = "louismmx@gmail.com", name = "Louis Maddox"},
+]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Programming Language :: Python :: 3",
+    "Operating System :: OS Independent",
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3.8",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Topic :: Multimedia :: Graphics :: Graphics Conversion",
+    "Topic :: Scientific/Engineering :: Image Processing",
+]
+dependencies = [
+    "numpy",
+    "matplotlib",
+    "scipy",
+    "sympy",
+    "opencv-python",
+    "tomlkit",
+    "toml",
+]
+description = "Page dewarping and thresholding using a cubic sheet model."
+keywords = [
+    "image processing",
+    "cubic spline",
+    "dewarping",
+    "document scanning",
+    "image correction",
+    "computer vision",
+]
+license = {text = "MIT"}
+name = "page-dewarp"
+readme = "README.md"
+requires-python = ">=3.8"
+version = "0.1.5"
+
+[project.urls]
+Homepage = "https://github.com/lmmx/page-dewarp"
+Repository = "https://github.com/lmmx/page-dewarp.git"
+
+[project.scripts]
+page-dewarp = "page_dewarp.__main__:main"
+
+[tool.pdm]
