@@ -18,9 +18,10 @@ from .spans import assemble_spans, keypoints_from_samples, sample_spans
 
 __all__ = ["imgsize", "get_page_dims", "WarpedImage"]
 
+
 def imgsize(img):
     height, width = img.shape[:2]
-    return "{}x{}".format(width, height)
+    return f"{width}x{height}"
 
 
 def get_page_dims(corners, rough_dims, params):
@@ -63,10 +64,16 @@ class WarpedImage:
             print(f"  got {len(spans)} spans with {n_pts} points.")
 
             corners, ycoords, xcoords = keypoints_from_samples(
-                self.stem, self.small, self.pagemask, self.page_outline, span_points
+                self.stem,
+                self.small,
+                self.pagemask,
+                self.page_outline,
+                span_points,
             )
             rough_dims, span_counts, params = get_default_params(
-                corners, ycoords, xcoords
+                corners,
+                ycoords,
+                xcoords,
             )
             dstpoints = np.vstack((corners[0].reshape((1, 1, 2)),) + tuple(span_points))
             params = optimise_params(
@@ -104,7 +111,10 @@ class WarpedImage:
 
     def attempt_reassemble_spans(self, prev_spans):
         new_spans = assemble_spans(
-            self.stem, self.small, self.pagemask, self.contour_list
+            self.stem,
+            self.small,
+            self.pagemask,
+            self.contour_list,
         )
         return new_spans if len(new_spans) > len(prev_spans) else prev_spans
 
@@ -138,7 +148,7 @@ class WarpedImage:
         self.pagemask = np.zeros((height, width), dtype=np.uint8)
         rectangle(self.pagemask, (xmin, ymin), (xmax, ymax), color=255, thickness=-1)
         self.page_outline = np.array(
-            [[xmin, ymin], [xmin, ymax], [xmax, ymax], [xmax, ymin]]
+            [[xmin, ymin], [xmin, ymax], [xmax, ymax], [xmax, ymin]],
         )
 
     @property
