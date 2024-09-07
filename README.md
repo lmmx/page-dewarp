@@ -5,16 +5,22 @@ Document image dewarping library using a cubic sheet model
 Python 3 library for page dewarping and thresholding,
 [available on PyPI](https://pypi.org/project/page_dewarp/).
 
-## Requirements
+## Installation
 
-Python 3 and NumPy, SciPy, SymPy, Matplotlib, OpenCV, and TOML Kit are required to run `page-dewarp`.
+To install from PyPI, optionally using [uv](https://docs.astral.sh/uv/) (recommended), run:
 
-- See [`CONDA_SETUP.md`](https://github.com/lmmx/page-dewarp/blob/master/CONDA_SETUP.md) for
-  an example conda environment 
-- If you prefer to install everything from pip, run `pip install page-dewarp`
+- `uv pip install page-dewarp` (recommended)
+- or `pip install page-dewarp`
+```
+
+## Dependencies
+
+Python 3.8+ and NumPy, SciPy, SymPy, Matplotlib, OpenCV, and TOML Kit are required to run `page-dewarp`.
+
+## Background
 
 This library was renovated from the [original (2016) Python 2 script](https://github.com/mzucker/page_dewarp/)
-by Matt Zucker, which you can use if you are somehow still using Python 2.
+by Matt Zucker, as Python 2 is now long since decommissioned.
 
 ## Usage
 
