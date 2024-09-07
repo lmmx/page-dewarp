@@ -50,3 +50,8 @@ page-dewarp = "page_dewarp.__main__:main"
 [project.urls]
 Homepage = "https://github.com/lmmx/page-dewarp"
 Repository = "https://github.com/lmmx/page-dewarp.git"
+
+[tool.uv]
+dev-dependencies = [
+    "pysnooper>=1.2.0",
+]

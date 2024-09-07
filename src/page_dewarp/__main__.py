@@ -4,11 +4,12 @@ from .cli import ArgParser
 from .image import WarpedImage
 from .options import cfg
 from .pdf import save_pdf
+from .snoopy import snoop
 
 # for some reason pylint complains about cv2 members being undefined :(
 # pylint: disable=E1101
 
-
+@snoop()
 def main():
     parser = ArgParser()
 
