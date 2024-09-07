@@ -40,7 +40,8 @@ def blob_mean_and_tangent(contour):
     mean_x = moments["m10"] / area
     mean_y = moments["m01"] / area
     covariance_matrix = np.divide(
-        [[moments["mu20"], moments["mu11"]], [moments["mu11"], moments["mu02"]]], area
+        [[moments["mu20"], moments["mu11"]], [moments["mu11"], moments["mu02"]]],
+        area,
     )
     _, svd_u, _ = SVDecomp(covariance_matrix)
     center = np.array([mean_x, mean_y])

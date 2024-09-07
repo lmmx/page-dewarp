@@ -5,13 +5,13 @@ from sympy import symbols, solve
 a, b, c, d, x, α, β = symbols("a b c d x α β")
 
 # polynomial function f(x) = ax³ + bx² + cx + d
-f = a * x ** 3 + b * x ** 2 + c * x + d
+f = a * x**3 + b * x**2 + c * x + d
 
 fp = f.diff(x)  # derivative f'(x)
 
 # evaluate both at x=0 and x=1
-f0, f1 = [f.subs(x, i) for i in range(2)]
-fp0, fp1 = [fp.subs(x, i) for i in range(2)]
+f0, f1 = (f.subs(x, i) for i in range(2))
+fp0, fp1 = (fp.subs(x, i) for i in range(2))
 
 # we want a, b, c, d such that the following conditions hold:
 #

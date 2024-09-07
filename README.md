@@ -134,4 +134,3 @@ Improvements on the original include:
 - [ ] Speed up the optimisation
   - [ ] Multiprocessing on CPU
   - [ ] Optional interface to use Gpufit on GPU (or Deep Declarative Networks?)
-

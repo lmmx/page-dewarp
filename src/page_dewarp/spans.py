@@ -112,7 +112,7 @@ def sample_spans(shape, spans):
             step = cfg.span_opts.SPAN_PX_PER_STEP
             start = np.floor_divide((np.mod((len(means) - 1), step)), 2)
             contour_points.extend(
-                [(x + xmin, means[x] + ymin) for x in range(start, len(means), step)]
+                [(x + xmin, means[x] + ymin) for x in range(start, len(means), step)],
             )
         contour_points = np.array(contour_points, dtype=np.float32).reshape((-1, 1, 2))
         contour_points = pix2norm(shape, contour_points)
@@ -135,7 +135,7 @@ def keypoints_from_samples(name, small, pagemask, page_outline, span_points):
     y_dir = np.array([-x_dir[1], x_dir[0]])
     pagecoords = convexHull(page_outline)
     pagecoords = pix2norm(pagemask.shape, pagecoords.reshape((-1, 1, 2))).reshape(
-        (-1, 2)
+        (-1, 2),
     )
     px_coords = np.dot(pagecoords, x_dir)
     py_coords = np.dot(pagecoords, y_dir)

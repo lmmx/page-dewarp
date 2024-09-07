@@ -32,11 +32,13 @@ class RemappedImage:
         height = 0.5 * page_dims[1] * cfg.output_opts.OUTPUT_ZOOM * img.shape[0]
         height = round_nearest_multiple(height, cfg.output_opts.REMAP_DECIMATE)
         width = round_nearest_multiple(
-            height * page_dims[0] / page_dims[1], cfg.output_opts.REMAP_DECIMATE
+            height * page_dims[0] / page_dims[1],
+            cfg.output_opts.REMAP_DECIMATE,
         )
-        print("  output will be {}x{}".format(width, height))
+        print(f"  output will be {width}x{height}")
         height_small, width_small = np.floor_divide(
-            [height, width], cfg.output_opts.REMAP_DECIMATE
+            [height, width],
+            cfg.output_opts.REMAP_DECIMATE,
         )
         page_x_range = np.linspace(0, page_dims[0], width_small)
         page_y_range = np.linspace(0, page_dims[1], height_small)
@@ -45,7 +47,7 @@ class RemappedImage:
             (
                 page_x_coords.flatten().reshape((-1, 1)),
                 page_y_coords.flatten().reshape((-1, 1)),
-            )
+            ),
         )
         page_xy_coords = page_xy_coords.astype(np.float32)
         image_points = project_xy(page_xy_coords, params)
@@ -53,10 +55,14 @@ class RemappedImage:
         image_x_coords = image_points[:, 0, 0].reshape(page_x_coords.shape)
         image_y_coords = image_points[:, 0, 1].reshape(page_y_coords.shape)
         image_x_coords = resize(
-            image_x_coords, (width, height), interpolation=INTER_CUBIC
+            image_x_coords,
+            (width, height),
+            interpolation=INTER_CUBIC,
         )
         image_y_coords = resize(
-            image_y_coords, (width, height), interpolation=INTER_CUBIC
+            image_y_coords,
+            (width, height),
+            interpolation=INTER_CUBIC,
         )
         img_gray = cvtColor(img, COLOR_RGB2GRAY)
         remapped = remap(
