@@ -12,7 +12,6 @@ def debug_show(name, step, text, display):
         imwrite(outfile, display)
 
     if cfg.debug_out_opt.DEBUG_OUTPUT != "file":
-
         image = display.copy()
         height = image.shape[0]
 
