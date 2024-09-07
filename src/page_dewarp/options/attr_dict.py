@@ -1,4 +1,4 @@
-__all__ = ["AttrDict", "stop"]
+__all__ = ("AttrDict", "stop")
 
 
 class AttrDict(dict):

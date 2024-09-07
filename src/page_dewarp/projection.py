@@ -1,7 +1,8 @@
 import numpy as np
 from cv2 import projectPoints
 
-from .options import K, cfg
+from .options import cfg
+from .options.k_opt import K
 
 __all__ = ["project_xy"]
 
@@ -24,7 +25,7 @@ def project_xy(xy_coords, pvec):
         objpoints,
         pvec[cfg.proj_opts.RVEC_IDX],
         pvec[cfg.proj_opts.TVEC_IDX],
-        K(),
+        K(cfg=cfg),
         np.zeros(5),
     )
     return image_points
