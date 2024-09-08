@@ -86,7 +86,7 @@ git log --since="1 week ago" --pretty=format:"%h %s" | while read -r commit_hash
         change_type=$(get_change_type "$commit_message" "")
         if [[ "$change_type" != "exclude" ]]; then
             cleaned_message=$(remove_prefix "$commit_message")
-            echo "$cleaned_message" > "news/${commit_hash}.${change_type}.md"
+            echo "${cleaned_message^}" > "news/${commit_hash}.${change_type}.md"
             echo "Created news fragment for commit ${commit_hash}: $cleaned_message (Type: ${change_type})"
         else
             echo "Excluded commit ${commit_hash}: $commit_message"
