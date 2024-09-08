@@ -52,7 +52,8 @@ if [[ "$1" == "next" ]]; then
     start_commit=$(get_commit_hash "$latest_tag")
     echo "Looked up start commit from get_commit_hash $latest_tag as $start_commit"
     current_version=$(pdm show --version --quiet)
-    version="($current_version++)"
+    # version="($current_version++)"
+    version="Unreleased"
     echo "Generating changelog for the next (unreleased) version: start_commit=$start_commit, latest_commit=$latest_commit, version=$version"
     generate_changelog "$start_commit" "$latest_commit" "$version"
 elif [[ "$1" == "all" ]]; then
@@ -77,7 +78,8 @@ elif [[ "$1" == "all" ]]; then
     echo
     echo "Generating changelog for unreleased changes: previous_commit=$previous_commit, latest_commit=$latest_commit, version=next"
     current_version=$(pdm show --version --quiet)
-    version="($current_version++)"
+    version="Unreleased"
+    # version="($current_version++)"
     generate_changelog "$previous_commit" "$latest_commit" "$version"
 else
     echo "Usage: $0 [next|all]"
