@@ -15,7 +15,7 @@ from PIL import Image
 
 from .debug_utils import debug_show
 from .normalisation import norm2pix
-from .options import cfg
+from .options import Config
 from .projection import project_xy
 
 __all__ = ["round_nearest_multiple", "RemappedImage"]
@@ -28,17 +28,19 @@ def round_nearest_multiple(i, factor):
 
 
 class RemappedImage:
-    def __init__(self, name, img, small, page_dims, params):
-        height = 0.5 * page_dims[1] * cfg.output_opts.OUTPUT_ZOOM * img.shape[0]
-        height = round_nearest_multiple(height, cfg.output_opts.REMAP_DECIMATE)
+    # TODO: refactor. This class doesn't use any state! It's a function in OOP disguise
+    def __init__(self, name, img, small, page_dims, params, config: Config = Config()):
+        self.config = config
+        height = 0.5 * page_dims[1] * config.OUTPUT_ZOOM * img.shape[0]
+        height = round_nearest_multiple(height, config.REMAP_DECIMATE)
         width = round_nearest_multiple(
             height * page_dims[0] / page_dims[1],
-            cfg.output_opts.REMAP_DECIMATE,
+            config.REMAP_DECIMATE,
         )
         print(f"  output will be {width}x{height}")
         height_small, width_small = np.floor_divide(
             [height, width],
-            cfg.output_opts.REMAP_DECIMATE,
+            config.REMAP_DECIMATE,
         )
         page_x_range = np.linspace(0, page_dims[0], width_small)
         page_y_range = np.linspace(0, page_dims[1], height_small)
@@ -74,7 +76,7 @@ class RemappedImage:
             None,
             BORDER_REPLICATE,
         )
-        if cfg.output_opts.NO_BINARY:
+        if config.NO_BINARY:
             thresh = remapped
             pil_image = Image.fromarray(thresh)
         else:
@@ -83,7 +85,7 @@ class RemappedImage:
                 255,
                 ADAPTIVE_THRESH_MEAN_C,
                 THRESH_BINARY,
-                cfg.mask_opts.ADAPTIVE_WINSZ,
+                config.ADAPTIVE_WINSZ,
                 25,
             )
             pil_image = Image.fromarray(thresh)
@@ -91,9 +93,9 @@ class RemappedImage:
         self.threshfile = name + "_thresh.png"
         pil_image.save(
             self.threshfile,
-            dpi=(cfg.output_opts.OUTPUT_DPI, cfg.output_opts.OUTPUT_DPI),
+            dpi=(config.OUTPUT_DPI, config.OUTPUT_DPI),
         )
-        if cfg.debug_lvl_opt.DEBUG_LEVEL >= 1:
+        if config.DEBUG_LEVEL >= 1:
             height = small.shape[0]
             width = int(round(height * float(thresh.shape[1]) / thresh.shape[0]))
             display = resize(thresh, (width, height), interpolation=INTER_AREA)

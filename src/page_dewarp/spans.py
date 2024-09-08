@@ -52,11 +52,11 @@ def generate_candidate_edge(cinfo_a, cinfo_b):
     x_overlap = max(x_overlap_a, x_overlap_b)
     dist = np.linalg.norm(cinfo_b.point0 - cinfo_a.point1)
     if not (
-        dist > cfg.edge_opts.EDGE_MAX_LENGTH
-        or x_overlap > cfg.edge_opts.EDGE_MAX_OVERLAP
-        or delta_angle > cfg.edge_opts.EDGE_MAX_ANGLE
+        dist > cfg.EDGE_MAX_LENGTH
+        or x_overlap > cfg.EDGE_MAX_OVERLAP
+        or delta_angle > cfg.EDGE_MAX_ANGLE
     ):
-        score = dist + delta_angle * cfg.edge_opts.EDGE_ANGLE_COST
+        score = dist + delta_angle * cfg.EDGE_ANGLE_COST
         return (score, cinfo_a, cinfo_b)
     # else return None
 
@@ -93,9 +93,9 @@ def assemble_spans(name, small, pagemask, cinfo_list):
             cur_span.append(cinfo)  # add to span
             width += cinfo.local_xrng[1] - cinfo.local_xrng[0]
             cinfo = cinfo.succ  # set successor
-        if width > cfg.span_opts.SPAN_MIN_WIDTH:
+        if width > cfg.SPAN_MIN_WIDTH:
             spans.append(cur_span)  # add if long enough
-    if cfg.debug_lvl_opt.DEBUG_LEVEL >= 2:
+    if cfg.DEBUG_LEVEL >= 2:
         visualize_spans(name, small, pagemask, spans)
     return spans
 
@@ -109,7 +109,7 @@ def sample_spans(shape, spans):
             totals = (yvals * cinfo.mask).sum(axis=0)
             means = np.divide(totals, cinfo.mask.sum(axis=0))
             xmin, ymin = cinfo.rect[:2]
-            step = cfg.span_opts.SPAN_PX_PER_STEP
+            step = cfg.SPAN_PX_PER_STEP
             start = np.floor_divide((np.mod((len(means) - 1), step)), 2)
             contour_points.extend(
                 [(x + xmin, means[x] + ymin) for x in range(start, len(means), step)],
@@ -152,7 +152,7 @@ def keypoints_from_samples(name, small, pagemask, page_outline, span_points):
         px_coords, py_coords = np.dot(pts, np.transpose([x_dir, y_dir])).T
         xcoords.append(px_coords - px0)
         ycoords.append(py_coords.mean() - py0)
-    if cfg.debug_lvl_opt.DEBUG_LEVEL >= 2:
+    if cfg.DEBUG_LEVEL >= 2:
         visualize_span_points(name, small, span_points, corners)
     return corners, np.array(ycoords), xcoords
 
