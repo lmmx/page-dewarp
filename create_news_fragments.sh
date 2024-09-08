@@ -70,7 +70,7 @@ echo "$prs" | jq -c '.[] | select(.mergedAt >= "2024-09-01")' | while read pr; d
     # Create news fragment if not excluded
     if [[ "$change_type" != "exclude" ]]; then
         cleaned_title=$(remove_prefix "$title")
-        echo "$cleaned_title" > "news/${number}.${change_type}.md"
+        echo "${cleaned_title^}" > "news/${number}.${change_type}.md"
         echo "Created news fragment for PR #$number: $cleaned_title (Type: $change_type)"
     else
         echo "Excluded PR #$number: $title"
