@@ -7,13 +7,13 @@ mkdir -p news
 get_change_type() {
     local message="$1"
     local labels="$2"
-    
+
     # Check for excluded messages
     if [[ "$message" == "style: lint" || "$message" == "style: pre-commit linting" ]]; then
         echo "exclude"
         return
     fi
-    
+
     # Define prefix mappings
     local -A prefix_map=(
         ["feat:"]="feature"
@@ -24,7 +24,7 @@ get_change_type() {
         ["chore:"]="misc"
         ["style:"]="misc"
     )
-    
+
     # Check for prefixes
     for prefix in "${!prefix_map[@]}"; do
         if [[ "$message" == "$prefix"* ]]; then
@@ -32,7 +32,7 @@ get_change_type() {
             return
         fi
     done
-    
+
     # Fall back to label-based categorization if no prefix is found
     if [[ $labels == *"bug"* ]]; then
         echo "bugfix"
@@ -63,9 +63,9 @@ echo "$prs" | jq -c '.[] | select(.mergedAt >= "2024-09-01")' | while read pr; d
     title=$(echo $pr | jq -r '.title')
     labels=$(echo $pr | jq -r '.labels[].name' | tr '\n' ' ')
     body=$(echo $pr | jq -r '.body')
-    
+
     change_type=$(get_change_type "$title $body" "$labels")
-    
+
     # Create news fragment if not excluded
     if [[ "$change_type" != "exclude" ]]; then
         cleaned_title=$(remove_prefix "$title")

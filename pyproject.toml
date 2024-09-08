@@ -105,5 +105,5 @@ showcontent = true
 [tool.uv]
 dev-dependencies = [
   "pysnooper>=1.2.0",
-  "towncrier>=24.8.0",
+  "towncrier>=24.8.0"
 ]
