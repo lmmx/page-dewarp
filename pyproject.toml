@@ -47,18 +47,18 @@ version = "0.1.5"
 [project.scripts]
 page-dewarp = "page_dewarp.__main__:main"
 
+[project.urls]
+Homepage = "https://github.com/lmmx/page-dewarp"
+Repository = "https://github.com/lmmx/page-dewarp.git"
+
 # The following scripts are package development release reminders and/or shortcuts
 [tool.pdm.scripts]
 version = "bash news/scripts/get_version.sh"
 erase-news = "rm -rf news/fragments"
 write-news = "bash news/scripts/version_based_changelog.sh next"
 write-all-news = "bash news/scripts/version_based_changelog.sh all"
-build-news= "bash news/scripts/build_changelog.sh"
+build-news = "bash news/scripts/build_changelog.sh"
 refresh-changelog = "echo 'pdm run erase-news && pdm run write-news && pdm run build-news'"
-
-[project.urls]
-Homepage = "https://github.com/lmmx/page-dewarp"
-Repository = "https://github.com/lmmx/page-dewarp.git"
 
 [tool.towncrier]
 package = "page_dewarp"
