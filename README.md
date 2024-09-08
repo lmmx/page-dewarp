@@ -18,7 +18,6 @@ To install from PyPI, optionally using [uv](https://docs.astral.sh/uv/) (recomme
 
 - `uv pip install page-dewarp` (recommended)
 - or `pip install page-dewarp`
-```
 
 ## Dependencies
 
