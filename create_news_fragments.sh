@@ -14,23 +14,43 @@ get_change_type() {
         return
     fi
     
-    if [[ $labels == *"bug"* || $message == *"fix:"* || $message == *"Fix"* ]]; then
+    # Define prefix mappings
+    local -A prefix_map=(
+        ["feat:"]="feature"
+        ["fix:"]="bugfix"
+        ["docs:"]="doc"
+        ["build:"]="packaging"
+        ["refactor:"]="refactor"
+        ["chore:"]="misc"
+        ["style:"]="misc"
+    )
+    
+    # Check for prefixes
+    for prefix in "${!prefix_map[@]}"; do
+        if [[ "$message" == "$prefix"* ]]; then
+            echo "${prefix_map[$prefix]}"
+            return
+        fi
+    done
+    
+    # Fall back to label-based categorization if no prefix is found
+    if [[ $labels == *"bug"* ]]; then
         echo "bugfix"
-    elif [[ $labels == *"enhancement"* || $message == *"feat:"* || $message == *"feature"* ]]; then
+    elif [[ $labels == *"enhancement"* ]]; then
         echo "feature"
-    elif [[ $labels == *"documentation"* || $message == *"docs:"* ]]; then
+    elif [[ $labels == *"documentation"* ]]; then
         echo "doc"
     elif [[ $message == *"remove:"* || $message == *"deprecate:"* ]]; then
         echo "removal"
-    elif [[ $message == *"build:"* ]]; then
-        echo "packaging"
-    elif [[ $message == *"refactor:"* ]]; then
-        echo "refactor"
-    elif [[ $message == *"chore:"* || $message == *"style:"* ]]; then
-        echo "misc"
     else
         echo "misc"
     fi
+}
+
+# Function to remove Conventional Commit prefix from message
+remove_prefix() {
+    local message="$1"
+    echo "$message" | sed -E 's/^(feat|fix|docs|build|refactor|chore|style):\s*//'
 }
 
 # Get merged PRs from the last week
@@ -47,8 +67,9 @@ echo "$prs" | jq -c '.[] | select(.mergedAt >= "2024-09-01")' | while read pr; d
     
     # Create news fragment if not excluded
     if [[ "$change_type" != "exclude" ]]; then
-        echo "$title" > "news/${number}.${change_type}.md"
-        echo "Created news fragment for PR #$number: $title (Type: $change_type)"
+        cleaned_title=$(remove_prefix "$title")
+        echo "$cleaned_title" > "news/${number}.${change_type}.md"
+        echo "Created news fragment for PR #$number: $cleaned_title (Type: $change_type)"
     else
         echo "Excluded PR #$number: $title"
     fi
@@ -62,10 +83,11 @@ git log --since="1 week ago" --pretty=format:"%h %s" | while read -r commit_hash
     if [ -z "$pr_number" ]; then
         change_type=$(get_change_type "$commit_message" "")
         if [[ "$change_type" != "exclude" ]]; then
-            echo "$commit_message" > "news/${commit_hash}.${change_type}.md"
-            echo "Created news fragment for commit ${commit_hash}: ${commit_message} (Type: ${change_type})"
+            cleaned_message=$(remove_prefix "$commit_message")
+            echo "$cleaned_message" > "news/${commit_hash}.${change_type}.md"
+            echo "Created news fragment for commit ${commit_hash}: $cleaned_message (Type: ${change_type})"
         else
-            echo "Excluded commit ${commit_hash}: ${commit_message}"
+            echo "Excluded commit ${commit_hash}: $commit_message"
         fi
     fi
 done
