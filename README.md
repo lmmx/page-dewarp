@@ -2,7 +2,8 @@
 
 [![uv](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/astral-sh/uv/main/assets/badge/v0.json)](https://github.com/astral-sh/uv)
 [![pdm-managed](https://img.shields.io/badge/pdm-managed-blueviolet)](https://pdm.fming.dev)
-[![Supported Python versions](https://img.shields.io/pypi/v/page-dewarp.svg)](https://pypi.python.org/pypi/page-dewarp)
+[![PyPI](https://img.shields.io/pypi/v/page-dewarp.svg)](https://pypi.org/projects/page-dewarp)
+[![Supported Python versions](https://img.shields.io/pypi/pyversions/page-dewarp.svg)](https://pypi.org/project/page-dewarp)
 [![License](https://img.shields.io/pypi/l/page-dewarp.svg)](https://pypi.python.org/pypi/page-dewarp)
 [![pre-commit.ci status](https://results.pre-commit.ci/badge/github/lmmx/page-dewarp/master.svg)](https://results.pre-commit.ci/latest/github/lmmx/page-dewarp/master)
 
