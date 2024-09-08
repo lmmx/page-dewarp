@@ -63,14 +63,15 @@ elif [[ "$1" == "all" ]]; then
         echo "Looked up current commit from get_commit_hash $version as $current_commit"
         if [[ -n "$previous_commit" ]]; then
             echo "Generating changelog for $version: current_commit=$current_commit, previous_commit=$previous_commit, version=$version"
-            echo generate_changelog "$current_commit" "$previous_commit" "$version"
+            generate_changelog "$current_commit" "$previous_commit" "$version"
         fi
+        read dummyvar
         previous_commit="$current_commit"
     done
 
     echo
     echo "Generating changelog for unreleased changes: previous_commit=$previous_commit, latest_commit=$latest_commit, version=next"
-    echo generate_changelog "$previous_commit" "$latest_commit" "next"
+    generate_changelog "$previous_commit" "$latest_commit" "next"
 else
     echo "Usage: $0 [next|all]"
     exit 1
