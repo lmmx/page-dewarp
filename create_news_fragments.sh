@@ -8,8 +8,9 @@ get_change_type() {
     local message="$1"
     local labels="$2"
 
-    # Check for excluded messages
-    if [[ "$message" == "style: lint" || "$message" == "style: pre-commit linting" ]]; then
+    # Exclude messages that just say "ran the linter" (including pre-commit CI auto-linting bot)
+    linting_messages=("style: lint" "style: pre-commit linting" "chore(pre-commit): autofix run")
+    if [[ " ${linting_messages[@]} " =~ " $message " ]]; then
         echo "exclude"
         return
     fi
