@@ -96,7 +96,12 @@ class WarpedImage:
 
     def threshold(self, page_dims, params):
         remap = RemappedImage(
-            self.stem, self.cv2_img, self.small, page_dims, params, config=self.config
+            self.stem,
+            self.cv2_img,
+            self.small,
+            page_dims,
+            params,
+            config=self.config,
         )
         self.outfile = remap.threshfile
 

@@ -9,4 +9,5 @@ except ImportError:
     def snoop(*args, **kwargs):
         def decorator(func):
             return func
+
         return decorator
