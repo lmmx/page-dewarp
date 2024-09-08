@@ -41,6 +41,7 @@ get_change_type() {
     elif [[ $labels == *"documentation"* ]]; then
         echo "doc"
     elif [[ $message == *"remove:"* || $message == *"deprecate:"* ]]; then
+        # Non-Conventional Commit prefixes... Might delete these
         echo "removal"
     else
         echo "misc"
