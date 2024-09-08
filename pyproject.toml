@@ -78,6 +78,11 @@ name = "Improved Documentation"
 showcontent = true
 
 [[tool.towncrier.type]]
+directory = "packaging"
+name = "Packaging & Build Process"
+showcontent = true
+
+[[tool.towncrier.type]]
 directory = "dep"
 name = "Dependencies"
 showcontent = true
@@ -85,6 +90,11 @@ showcontent = true
 [[tool.towncrier.type]]
 directory = "removal"
 name = "Removals and Deprecations"
+showcontent = true
+
+[[tool.towncrier.type]]
+directory = "refactor"
+name = "Code Refactoring"
 showcontent = true
 
 [[tool.towncrier.type]]
