@@ -27,3 +27,5 @@ No significant changes.
 No significant changes.
 {% endif %}
 {% endfor %}
+
+{# This comment and newline ensures the file ends with a newline #}
