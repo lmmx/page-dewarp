@@ -1,7 +1,12 @@
 #!/bin/bash
 
-# Ensure the news directory exists
-mkdir -p news
+# Ensure the news directory exists: do not proceed otherwise
+newsdir="news"
+[ -d "$newsdir" ] || { echo "Error: The directory $newsdir does not exist." >&2; exit 1; }
+# Ensure the fragments directory does not exist: do not assume it can be deleted (use PDM erase-history script)
+frags="$newsdir/fragments"
+[ ! -d "$frags" ] || { echo "Error: The directory $frags already exists." >&2; exit 1; }
+mkdir "$frags"
 
 # Function to determine change type based on commit message or PR labels
 get_change_type() {
@@ -70,7 +75,7 @@ echo "$prs" | jq -c '.[] | select(.mergedAt >= "2024-09-01")' | while read pr; d
     # Create news fragment if not excluded
     if [[ "$change_type" != "exclude" ]]; then
         cleaned_title=$(remove_prefix "$title")
-        echo "${cleaned_title^}" > "news/${number}.${change_type}.md"
+        echo "${cleaned_title^}" > "$frags/${number}.${change_type}.md"
         echo "Created news fragment for PR #$number: $cleaned_title (Type: $change_type)"
     else
         echo "Excluded PR #$number: $title"
@@ -86,7 +91,7 @@ git log --since="1 week ago" --pretty=format:"%h %s" | while read -r commit_hash
         change_type=$(get_change_type "$commit_message" "")
         if [[ "$change_type" != "exclude" ]]; then
             cleaned_message=$(remove_prefix "$commit_message")
-            echo "${cleaned_message^}" > "news/${commit_hash}.${change_type}.md"
+            echo "${cleaned_message^}" > "$frags/${commit_hash}.${change_type}.md"
             echo "Created news fragment for commit ${commit_hash}: $cleaned_message (Type: ${change_type})"
         else
             echo "Excluded commit ${commit_hash}: $commit_message"
