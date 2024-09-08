@@ -20,7 +20,7 @@ classifiers = [
 ]
 dependencies = [
   "numpy>1.25",
-  # NumPy 1.25+ equires Python >= 3.9
+  # NumPy 1.25+ requires Python >= 3.9
   "matplotlib",
   "scipy",
   "sympy",
@@ -51,7 +51,59 @@ page-dewarp = "page_dewarp.__main__:main"
 Homepage = "https://github.com/lmmx/page-dewarp"
 Repository = "https://github.com/lmmx/page-dewarp.git"
 
+[tool.towncrier]
+package = "page_dewarp"
+package_dir = "src/"
+filename = "CHANGELOG.md"
+issue_format = "[#{issue}](https://github.com/lmmx/page-dewarp/issues/{issue})"
+directory = "news/"
+start_string = "<!-- insertion marker -->"
+title_format = "[v{version}](https://github.com/lmmx/page-dewarp/releases/tag/{version}) ({project_date})"
+template = "news/towncrier_template.md"
+underlines = "-~^"
+
+[[tool.towncrier.type]]
+directory = "feature"
+name = "Features & Improvements"
+showcontent = true
+
+[[tool.towncrier.type]]
+directory = "bugfix"
+name = "Bug Fixes"
+showcontent = true
+
+[[tool.towncrier.type]]
+directory = "doc"
+name = "Improved Documentation"
+showcontent = true
+
+[[tool.towncrier.type]]
+directory = "packaging"
+name = "Packaging & Build Process"
+showcontent = true
+
+[[tool.towncrier.type]]
+directory = "dep"
+name = "Dependencies"
+showcontent = true
+
+[[tool.towncrier.type]]
+directory = "removal"
+name = "Removals and Deprecations"
+showcontent = true
+
+[[tool.towncrier.type]]
+directory = "refactor"
+name = "Code Refactoring"
+showcontent = true
+
+[[tool.towncrier.type]]
+directory = "misc"
+name = "Miscellany"
+showcontent = true
+
 [tool.uv]
 dev-dependencies = [
-  "pysnooper>=1.2.0"
+  "pysnooper>=1.2.0",
+  "towncrier>=24.8.0"
 ]

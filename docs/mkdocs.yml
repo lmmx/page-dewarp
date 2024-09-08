@@ -1,0 +1,36 @@
+site_name: "page-dewarp"
+site_description: "Page dewarping and thresholding using a cubic sheet model."
+site_url: "https://lmmx.github.io/page-dewarp"
+repo_url: "https://github.com/lmmx/page-dewarp"
+repo_name: "lmmx/page-dewarp"
+site_dir: "site"
+
+nav:
+  - Home:
+    - Overview: index.md
+    - Changelog: changelog.md
+
+theme:
+  name: material
+  palette:
+    primary: deep purple
+    accent: teal
+  font:
+    text: Open Sans
+    code: Fira Code
+
+
+markdown_extensions:
+  - admonition
+  - pymdownx.emoji
+  - pymdownx.magiclink
+  - pymdownx.snippets:
+      check_paths: true
+  - pymdownx.superfences
+  - pymdownx.tabbed
+  - pymdownx.tasklist
+  - toc:
+      permalink: "#"
+
+plugins:
+  - search
