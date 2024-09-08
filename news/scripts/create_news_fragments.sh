@@ -1,12 +1,41 @@
 #!/bin/bash
 
+# Function to check if a command exists
+command_exists() { command -v "$1" >/dev/null 2>&1 ; }
+
+# Check for required commands
+required_commands=("jq" "gh" "git" "sed" "tr")
+missing_commands=()
+
+for cmd in "${required_commands[@]}"; do
+    if ! command_exists "$cmd"; then
+        missing_commands+=("$cmd")
+    fi
+done
+
+if [ ${#missing_commands[@]} -ne 0 ]; then
+    echo "Error: The following required commands are missing:" >&2
+    printf " - %s\n" "${missing_commands[@]}" >&2
+    echo "Please install these commands and try again." >&2
+    exit 1
+fi
+
+start_commit="$1"
+end_commit="$2"
+
+if [[ -z "$start_commit" || -z "$end_commit" ]]; then
+    echo "Usage: $0 <start_commit> <end_commit>"
+    exit 1
+fi
+
 # Ensure the news directory exists: do not proceed otherwise
 root_hint="(Hint: run this script from the repo root)"
+delete_hint="(Hint: it can be deleted with `rm -rf news/fragments/`)"
 newsdir="news"
 [ -d "$newsdir" ] || { echo "Error: The directory $newsdir does not exist. $root_hint" >&2; exit 1; }
 # Ensure the fragments directory does not exist: do not assume it can be deleted (use PDM erase-history script)
 frags="$newsdir/fragments"
-[ ! -d "$frags" ] || { echo "Error: The directory $frags already exists. $root_hint" >&2; exit 1; }
+[ ! -d "$frags" ] || { echo "Error: The directory $frags already exists. $delete_hint" >&2; exit 1; }
 mkdir "$frags"
 
 # Function to determine change type based on commit message or PR labels
@@ -62,10 +91,10 @@ remove_prefix() {
 }
 
 # Get merged PRs from the last week
-echo "Processing merged PRs from the last week..."
-prs=$(gh pr list --limit 100 --state merged --json number,title,labels,mergedAt,body --search "merged:>=2024-09-01")
+echo "Processing merged PRs between $start_commit and $end_commit..."
+prs=$(gh pr list --limit 1000 --state merged --json number,title,labels,mergedAt,body --search "merged:$start_commit..$end_commit")
 
-echo "$prs" | jq -c '.[] | select(.mergedAt >= "2024-09-01")' | while read pr; do
+echo "$prs" | jq -c '.[]' | while read pr; do
     number=$(echo $pr | jq -r '.number')
     title=$(echo $pr | jq -r '.title')
     labels=$(echo $pr | jq -r '.labels[].name' | tr '\n' ' ')
@@ -84,8 +113,8 @@ echo "$prs" | jq -c '.[] | select(.mergedAt >= "2024-09-01")' | while read pr; d
 done
 
 # Get commits that are not associated with PRs
-echo "Processing commits not associated with PRs..."
-git log --since="1 week ago" --pretty=format:"%h %s" | while read -r commit_hash commit_message; do
+echo "Processing commits not associated with PRs between $start_commit and $end_commit..."
+git log "$start_commit..$end_commit" --pretty=format:"%h %s" | while read -r commit_hash commit_message; do
     # Check if this commit is associated with a PR
     pr_number=$(gh pr list --state merged --search "$commit_hash" --json number --jq '.[0].number')
     if [ -z "$pr_number" ]; then
