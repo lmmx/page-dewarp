@@ -51,8 +51,10 @@ echo
 if [[ "$1" == "next" ]]; then
     start_commit=$(get_commit_hash "$latest_tag")
     echo "Looked up start commit from get_commit_hash $latest_tag as $start_commit"
-    echo "Generating changelog for the next (unreleased) version: start_commit=$start_commit, latest_commit=$latest_commit, version=next"
-    echo generate_changelog "$start_commit" "$latest_commit" "next"
+    current_version=$(pdm show --version --quiet)
+    version="($current_version++)"
+    echo "Generating changelog for the next (unreleased) version: start_commit=$start_commit, latest_commit=$latest_commit, version=$version"
+    generate_changelog "$start_commit" "$latest_commit" "$version"
 elif [[ "$1" == "all" ]]; then
     # Generate changelog for all versions
     versions=($(git tag --sort=v:refname))
@@ -67,14 +69,16 @@ elif [[ "$1" == "all" ]]; then
         echo "Looked up current commit from get_commit_hash $version as $current_commit"
         if [[ -n "$previous_commit" ]]; then
             echo "Generating changelog for $version: current_commit=$current_commit, previous_commit=$previous_commit, version=$version"
-            generate_changelog "$current_commit" "$previous_commit" "$version"
+            generate_changelog "$previous_commit" "$current_commit" "$version"
         fi
         previous_commit="$current_commit"
     done
 
     echo
     echo "Generating changelog for unreleased changes: previous_commit=$previous_commit, latest_commit=$latest_commit, version=next"
-    generate_changelog "$previous_commit" "$latest_commit" "next"
+    current_version=$(pdm show --version --quiet)
+    version="($current_version++)"
+    generate_changelog "$previous_commit" "$latest_commit" "$version"
 else
     echo "Usage: $0 [next|all]"
     exit 1
