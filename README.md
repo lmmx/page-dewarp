@@ -1,5 +1,11 @@
 # page-dewarp
 
+[![uv](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/astral-sh/uv/main/assets/badge/v0.json)](https://github.com/astral-sh/uv)
+[![pdm-managed](https://img.shields.io/badge/pdm-managed-blueviolet)](https://pdm.fming.dev)
+[![Supported Python versions](https://img.shields.io/pypi/v/page-dewarp.svg)](https://pypi.python.org/pypi/page-dewarp)
+[![License](https://img.shields.io/pypi/l/page-dewarp.svg)](https://pypi.python.org/pypi/page-dewarp)
+[![pre-commit.ci status](https://results.pre-commit.ci/badge/github/lmmx/page-dewarp/master.svg)](https://results.pre-commit.ci/latest/github/lmmx/page-dewarp/master)
+
 Document image dewarping library using a cubic sheet model
 
 Python 3 library for page dewarping and thresholding,
