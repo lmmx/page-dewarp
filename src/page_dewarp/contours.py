@@ -17,6 +17,7 @@ from cv2 import moments as cv2_moments
 from .debug_utils import cCOLOURS, debug_show
 from .options import cfg
 from .simple_utils import fltp
+from .snoopy import snoop
 
 __all__ = [
     "blob_mean_and_tangent",
@@ -28,7 +29,8 @@ __all__ = [
 ]
 
 
-def blob_mean_and_tangent(contour):
+@snoop()
+def blob_mean_and_tangent(contour) -> tuple[float, float] | None:
     """
     Construct blob image's covariance matrix from second order central moments
     (i.e. dividing them by the 0-order 'area moment' to make them translationally
@@ -37,16 +39,24 @@ def blob_mean_and_tangent(contour):
     """
     moments = cv2_moments(contour)
     area = moments["m00"]
-    mean_x = moments["m10"] / area
-    mean_y = moments["m01"] / area
-    covariance_matrix = np.divide(
-        [[moments["mu20"], moments["mu11"]], [moments["mu11"], moments["mu02"]]],
-        area,
-    )
-    _, svd_u, _ = SVDecomp(covariance_matrix)
-    center = np.array([mean_x, mean_y])
-    tangent = svd_u[:, 0].flatten().copy()
-    return center, tangent
+    if area:
+        mean_x = moments["m10"] / area
+        mean_y = moments["m01"] / area
+        covariance_matrix = np.divide(
+            [[moments["mu20"], moments["mu11"]], [moments["mu11"], moments["mu02"]]],
+            area,
+        )
+        _, svd_u, _ = SVDecomp(covariance_matrix)
+        center = np.array([mean_x, mean_y])
+        tangent = svd_u[:, 0].flatten().copy()
+        if cfg.DEBUG_LEVEL > 2:
+            print(f"Got contour with {center=} {tangent=}")
+        return center, tangent
+    else:
+        # Sometimes `cv2.moments()` returns all-zero moments. Prevent ZeroDivisionError
+        if cfg.DEBUG_LEVEL > 0:
+            print("Discarding contour with zero moments")
+        return None
 
 
 def interval_measure_overlap(int_a, int_b):
@@ -54,11 +64,11 @@ def interval_measure_overlap(int_a, int_b):
 
 
 class ContourInfo:
-    def __init__(self, contour, rect, mask):
+    def __init__(self, contour, moments, rect, mask):
         self.contour = contour
         self.rect = rect
         self.mask = mask
-        self.center, self.tangent = blob_mean_and_tangent(contour)
+        self.center, self.tangent = moments
         self.angle = np.arctan2(self.tangent[1], self.tangent[0])
         clx = [self.proj_x(point) for point in self.contour]
         lxmin, lxmax = min(clx), max(clx)
@@ -105,7 +115,10 @@ def get_contours(name, small, mask):
         tight_mask = make_tight_mask(contour, xmin, ymin, width, height)
         if tight_mask.sum(axis=0).max() > cfg.TEXT_MAX_THICKNESS:
             continue
-        contours_out.append(ContourInfo(contour, rect, tight_mask))
+        if (moments := blob_mean_and_tangent(contour)) is None:
+            continue
+        info = ContourInfo(contour=contour, moments=moments, rect=rect, mask=tight_mask)
+        contours_out.append(info)
     if cfg.DEBUG_LEVEL >= 2:
         visualize_contours(name, small, contours_out)
     return contours_out
