@@ -43,7 +43,9 @@ class ArgParser(argparse.ArgumentParser):
             "required": required,
         }
         if arg_name is None:
-            title = name_or_flags if isinstance(name_or_flags, str) else name_or_flags[1]
+            title = (
+                name_or_flags if isinstance(name_or_flags, str) else name_or_flags[1]
+            )
             arg_name = title.lstrip("-").upper().replace("-", "_")
         default_value = self.get_config_param(arg_name)
         default_type = type(default_value)
