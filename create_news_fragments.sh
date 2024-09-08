@@ -8,6 +8,12 @@ get_change_type() {
     local message="$1"
     local labels="$2"
     
+    # Check for excluded messages
+    if [[ "$message" == "style: lint" || "$message" == "style: pre-commit linting" ]]; then
+        echo "exclude"
+        return
+    fi
+    
     if [[ $labels == *"bug"* || $message == *"fix:"* || $message == *"Fix"* ]]; then
         echo "bugfix"
     elif [[ $labels == *"enhancement"* || $message == *"feat:"* || $message == *"feature"* ]]; then
@@ -16,7 +22,11 @@ get_change_type() {
         echo "doc"
     elif [[ $message == *"remove:"* || $message == *"deprecate:"* ]]; then
         echo "removal"
-    elif [[ $message == *"build:"* || $message == *"chore:"* || $message == *"style:"* || $message == *"refactor:"* ]]; then
+    elif [[ $message == *"build:"* ]]; then
+        echo "packaging"
+    elif [[ $message == *"refactor:"* ]]; then
+        echo "refactor"
+    elif [[ $message == *"chore:"* || $message == *"style:"* ]]; then
         echo "misc"
     else
         echo "misc"
@@ -35,9 +45,13 @@ echo "$prs" | jq -c '.[] | select(.mergedAt >= "2024-09-01")' | while read pr; d
     
     change_type=$(get_change_type "$title $body" "$labels")
     
-    # Create news fragment
-    echo "$title" > "news/${number}.${change_type}.md"
-    echo "Created news fragment for PR #$number: $title (Type: $change_type)"
+    # Create news fragment if not excluded
+    if [[ "$change_type" != "exclude" ]]; then
+        echo "$title" > "news/${number}.${change_type}.md"
+        echo "Created news fragment for PR #$number: $title (Type: $change_type)"
+    else
+        echo "Excluded PR #$number: $title"
+    fi
 done
 
 # Get commits that are not associated with PRs
@@ -47,8 +61,12 @@ git log --since="1 week ago" --pretty=format:"%h %s" | while read -r commit_hash
     pr_number=$(gh pr list --state merged --search "$commit_hash" --json number --jq '.[0].number')
     if [ -z "$pr_number" ]; then
         change_type=$(get_change_type "$commit_message" "")
-        echo "$commit_message" > "news/${commit_hash}.${change_type}.md"
-        echo "Created news fragment for commit ${commit_hash}: ${commit_message} (Type: ${change_type})"
+        if [[ "$change_type" != "exclude" ]]; then
+            echo "$commit_message" > "news/${commit_hash}.${change_type}.md"
+            echo "Created news fragment for commit ${commit_hash}: ${commit_message} (Type: ${change_type})"
+        else
+            echo "Excluded commit ${commit_hash}: ${commit_message}"
+        fi
     fi
 done
 
