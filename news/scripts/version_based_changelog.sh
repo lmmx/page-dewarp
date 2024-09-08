@@ -29,8 +29,12 @@ generate_changelog() {
 
     echo "Generating changelog for version $version..."
     ./news/scripts/create_news_fragments.sh "$start_commit" "$end_commit"
+    echo "Created news fragments"
     ./news/scripts/build_changelog.sh "$version"
-    ./news/scripts/erase_news_fragments.sh
+    echo "Built changelog"
+    rm -rf ./news/fragments/
+    echo "Finished generating changelog (deleted fragments directory)"
+    echo
 }
 
 # Main script logic
@@ -65,7 +69,6 @@ elif [[ "$1" == "all" ]]; then
             echo "Generating changelog for $version: current_commit=$current_commit, previous_commit=$previous_commit, version=$version"
             generate_changelog "$current_commit" "$previous_commit" "$version"
         fi
-        read dummyvar
         previous_commit="$current_commit"
     done
 
