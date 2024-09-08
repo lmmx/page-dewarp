@@ -51,7 +51,8 @@ page-dewarp = "page_dewarp.__main__:main"
 [tool.pdm.scripts]
 version = "bash news/scripts/get_version.sh"
 erase-news = "rm -rf news/fragments"
-write-news = "bash news/scripts/create_news_fragments.sh"
+write-news = "bash news/scripts/version_based_changelog.sh next"
+write-all-news = "bash news/scripts/version_based_changelog.sh all"
 build-news= "bash news/scripts/build_changelog.sh"
 refresh-changelog = "echo 'pdm run erase-news && pdm run write-news && pdm run build-news'"
 
