@@ -1,5 +1,25 @@
 #!/bin/bash
 
+# Function to check if a command exists
+command_exists() { command -v "$1" >/dev/null 2>&1 ; }
+
+# Check for required commands
+required_commands=("jq" "gh" "git" "sed" "tr")
+missing_commands=()
+
+for cmd in "${required_commands[@]}"; do
+    if ! command_exists "$cmd"; then
+        missing_commands+=("$cmd")
+    fi
+done
+
+if [ ${#missing_commands[@]} -ne 0 ]; then
+    echo "Error: The following required commands are missing:" >&2
+    printf " - %s\n" "${missing_commands[@]}" >&2
+    echo "Please install these commands and try again." >&2
+    exit 1
+fi
+
 # Ensure the news directory exists: do not proceed otherwise
 root_hint="(Hint: run this script from the repo root)"
 newsdir="news"
