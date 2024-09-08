@@ -52,6 +52,7 @@ if [[ "$1" == "next" ]]; then
 elif [[ "$1" == "all" ]]; then
     # Generate changelog for all versions
     versions=($(git tag --sort=v:refname))
+
     previous_commit="$initial_commit"
     echo "Initialised previous_commit as initial commit ($initial_commit)."
 
@@ -68,9 +69,6 @@ elif [[ "$1" == "all" ]]; then
     done
 
     echo
-    echo "Generating changelog for the initial version: initial_commit=$initial_commit, previous_commit=$previous_commit, version=${versions[-1]}"
-    echo generate_changelog "$initial_commit" "$previous_commit" "${versions[-1]}"
-
     echo "Generating changelog for unreleased changes: previous_commit=$previous_commit, latest_commit=$latest_commit, version=next"
     echo generate_changelog "$previous_commit" "$latest_commit" "next"
 else
