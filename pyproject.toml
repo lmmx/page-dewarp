@@ -49,11 +49,11 @@ page-dewarp = "page_dewarp.__main__:main"
 
 # The following scripts are package development release reminders and/or shortcuts
 [tool.pdm.scripts]
-erase-history = "rm -rf news/fragments"
-make-history = "bash create_news_fragments.sh"
-# Following 2 scripts require 1 positional arg: the new version to write changelog for
-build-history = "towncrier build --version"
-write-changelog = "erase-history && make-history && build-history"
+version = "bash news/scripts/get_version.sh"
+erase-news = "rm -rf news/fragments"
+write-news = "bash news/scripts/create_news_fragments.sh"
+build-news= "bash news/scripts/build_changelog.sh"
+refresh-changelog = "echo 'pdm run erase-news && pdm run write-news && pdm run build-news'"
 
 [project.urls]
 Homepage = "https://github.com/lmmx/page-dewarp"

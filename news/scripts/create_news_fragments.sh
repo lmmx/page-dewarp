@@ -1,11 +1,12 @@
 #!/bin/bash
 
 # Ensure the news directory exists: do not proceed otherwise
+root_hint="(Hint: run this script from the repo root)"
 newsdir="news"
-[ -d "$newsdir" ] || { echo "Error: The directory $newsdir does not exist." >&2; exit 1; }
+[ -d "$newsdir" ] || { echo "Error: The directory $newsdir does not exist. $root_hint" >&2; exit 1; }
 # Ensure the fragments directory does not exist: do not assume it can be deleted (use PDM erase-history script)
 frags="$newsdir/fragments"
-[ ! -d "$frags" ] || { echo "Error: The directory $frags already exists." >&2; exit 1; }
+[ ! -d "$frags" ] || { echo "Error: The directory $frags already exists. $root_hint" >&2; exit 1; }
 mkdir "$frags"
 
 # Function to determine change type based on commit message or PR labels
