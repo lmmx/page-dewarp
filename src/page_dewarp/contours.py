@@ -28,6 +28,7 @@ __all__ = [
     "visualize_contours",
 ]
 
+
 @snoop()
 def blob_mean_and_tangent(contour) -> tuple[float, float] | None:
     """
@@ -54,7 +55,7 @@ def blob_mean_and_tangent(contour) -> tuple[float, float] | None:
     else:
         # Sometimes `cv2.moments()` returns all-zero moments. Prevent ZeroDivisionError
         if cfg.DEBUG_LEVEL > 0:
-            print(f"Discarding contour with zero moments")
+            print("Discarding contour with zero moments")
         return None
 
 
