@@ -1,29 +1,83 @@
 import argparse
-from functools import reduce
+from typing import Annotated, get_args, get_origin, get_type_hints
 
 import msgspec
 
 from .options import Config, cfg
-from .parser_utils import add_default_argument
 from .snoopy import snoop
 
 __all__ = ["ArgParser"]
 
 
+def stringify_hint(type_hint) -> str:
+    match type_hint:
+        case type():
+            hint = type_hint.__name__
+        case _:
+            hint = str(type_hint)
+    return hint
+
+
 class ArgParser(argparse.ArgumentParser):
     config_map = msgspec.structs.asdict(cfg)
 
-    @classmethod
-    def config_comments(cls):
-        # Formerly was a way to access field descriptions in TOML
-        config_map = cls.config_map
-        # default_toml = Config.parse_defaults_with_comments()
-        comments_dict = {}
-        # for field_name, value in msgspec.structs.asdict(cfg).items():
-        #     if comment == "":
-        #         comment = None
-        #     comments_dict.update({k: comment})
-        return comments_dict
+    def add_default_argument(
+        self,
+        name_or_flags,
+        arg_name=None,
+        action=None,
+        help=None,
+        const=None,
+        choices=None,
+        nargs=None,
+        metavar=None,
+        required=None,
+    ):
+        kwargs = {
+            "action": action,
+            "nargs": nargs,
+            "const": const,
+            "choices": choices,
+            "help": help,
+            "metavar": metavar,
+            "required": required,
+        }
+        if arg_name is None:
+            title = name_or_flags if isinstance(name_or_flags, str) else name_or_flags[1]
+            arg_name = title.lstrip("-").upper().replace("-", "_")
+        default_value = self.get_config_param(arg_name)
+        default_type = type(default_value)
+        if default_type is bool and action is const is None:
+            kwargs["action"] = f"store_{'false' if default_value else 'true'}"
+        else:
+            kwargs["type"] = default_type
+        if isinstance(name_or_flags, str):
+            name_or_flags = [name_or_flags]  # will be star-expanded so must be sequence
+        if kwargs["help"] is None:
+            kwargs["help"] = self.get_description(arg_name)
+            # comment in TOML as a string if present, or `None` if absent
+            # kwargs["help"] = self.config_comments().get(arg_name)
+        self.add_argument(
+            *name_or_flags,  # one or two values
+            dest=arg_name,
+            default=default_value,
+            **{kw: v for kw, v in kwargs.items() if v is not None},
+        )
+
+    def get_description(self, field_name: str) -> str:
+        hints = get_type_hints(Config, include_extras=True)
+        if field_name in Config.__struct_fields__:
+            if get_origin(hints[field_name]) is Annotated:
+                type_hint, meta = get_args(hints[field_name])
+                hint = stringify_hint(type_hint)
+                desc = meta.description + " "
+            else:
+                # If the type is unannotated no meta so no description
+                hint = stringify_hint(hints[field_name])
+                desc = ""
+            return f"{desc}(type: {hint})"
+        else:
+            raise TypeError(f"{field_name} is not a field in Config")
 
     @classmethod
     def set_config_param(cls, param, value):
@@ -33,7 +87,7 @@ class ArgParser(argparse.ArgumentParser):
     def get_config_param(cls, param):
         return cls.config_map[param]
 
-    add_default_argument = add_default_argument # overwrite
+    add_default_argument = add_default_argument  # overwrite
 
     def prepare_arguments(self):
         self.add_argument(
@@ -83,7 +137,6 @@ class ArgParser(argparse.ArgumentParser):
         self.parsed = self.parse_args()
         self.input_images = self.parsed.input_images
         self.store_parsed_config()  # Store any supplied parameters in the global config
-        self.config_comments()
 
     @snoop()
     def store_parsed_config(self):
