@@ -1,10 +1,14 @@
 # Changelog
 
 <!-- insertion marker -->
-[vUnreleased](https://github.com/lmmx/page-dewarp/releases/tag/Unreleased) (2024-09-09)
+## [vUnreleased](https://github.com/lmmx/page-dewarp/releases/tag/Unreleased) (2024-09-09)
 
 ### Bug Fixes
 - Finishing touches to changelog generation [57f7635](https://github.com/lmmx/page-dewarp/commit/57f7635)
+
+
+### Improved Documentation
+- Build changelog (PRs and commits look different now) [14b0e17](https://github.com/lmmx/page-dewarp/commit/14b0e17)
 
 
 ### Code Refactoring
@@ -15,7 +19,7 @@
 - Store example outputs as well as inputs [0e6b8f3](https://github.com/lmmx/page-dewarp/commit/0e6b8f3)
 
 
-[v0.1.5](https://github.com/lmmx/page-dewarp/releases/tag/0.1.5) (2024-09-09)
+## [v0.1.5](https://github.com/lmmx/page-dewarp/releases/tag/0.1.5) (2024-09-09)
 
 ### Bug Fixes
 - Added toml to requirements.txt [#16](https://github.com/lmmx/page-dewarp/pull/16)
@@ -25,7 +29,7 @@
 - CLI support for no binarisation mode (#12) [c691e09](https://github.com/lmmx/page-dewarp/commit/c691e09)
 
 
-[v0.1.4](https://github.com/lmmx/page-dewarp/releases/tag/0.1.4) (2024-09-09)
+## [v0.1.4](https://github.com/lmmx/page-dewarp/releases/tag/0.1.4) (2024-09-09)
 
 ### Bug Fixes
 - Added toml to requirements.txt [#16](https://github.com/lmmx/page-dewarp/pull/16)
@@ -37,16 +41,16 @@
 - List namespaces [ac38628](https://github.com/lmmx/page-dewarp/commit/ac38628)
 
 
-[v0.1.3](https://github.com/lmmx/page-dewarp/releases/tag/0.1.3) (2024-09-09)
+## [v0.1.3](https://github.com/lmmx/page-dewarp/releases/tag/0.1.3) (2024-09-09)
 
 ### Miscellany
 - Do not tie break edge sorting on ContourInfo (PR #6 from @Anphisa) [e502980](https://github.com/lmmx/page-dewarp/commit/e502980)
 
 
-[v0.1.2](https://github.com/lmmx/page-dewarp/releases/tag/0.1.2) (2024-09-09)
+## [v0.1.2](https://github.com/lmmx/page-dewarp/releases/tag/0.1.2) (2024-09-09)
 No significant changes.
 
-[v0.1.1](https://github.com/lmmx/page-dewarp/releases/tag/0.1.1) (2024-09-09)
+## [v0.1.1](https://github.com/lmmx/page-dewarp/releases/tag/0.1.1) (2024-09-09)
 
 ### Miscellany
 - Link to my mini write-up [3a13779](https://github.com/lmmx/page-dewarp/commit/3a13779)
@@ -56,7 +60,7 @@ No significant changes.
 - Fix package name in README [e9e7ecf](https://github.com/lmmx/page-dewarp/commit/e9e7ecf)
 
 
-[v0.1.0](https://github.com/lmmx/page-dewarp/releases/tag/0.1.0) (2024-09-09)
+## [v0.1.0](https://github.com/lmmx/page-dewarp/releases/tag/0.1.0) (2024-09-09)
 
 ### Miscellany
 - Typo [0c4de88](https://github.com/lmmx/page-dewarp/commit/0c4de88)

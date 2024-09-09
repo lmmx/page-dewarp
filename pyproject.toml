@@ -64,7 +64,7 @@ filename = "CHANGELOG.md"
 issue_format = "[#{issue}](https://github.com/lmmx/page-dewarp/issues/{issue})"
 directory = "news/fragments/"
 start_string = "<!-- insertion marker -->"
-title_format = "[v{version}](https://github.com/lmmx/page-dewarp/releases/tag/{version}) ({project_date})"
+title_format = "## [v{version}](https://github.com/lmmx/page-dewarp/releases/tag/{version}) ({project_date})"
 template = "news/towncrier_template.md"
 underlines = "-~^"
 
