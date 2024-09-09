@@ -92,7 +92,7 @@ remove_prefix() {
 
 # Get merged PRs from the last week
 echo "Processing merged PRs between $start_commit and $end_commit..."
-prs=$(gh pr list --limit 1000 --state merged --json number,title,labels,mergedAt,body --search "merged:$start_commit..$end_commit")
+prs=$(gh pr list --limit 1000 --state merged --json number,title,labels,mergedAt,body --search "$start_commit..$end_commit")
 
 echo "$prs" | jq -c '.[]' | while read pr; do
     number=$(echo $pr | jq -r '.number')
