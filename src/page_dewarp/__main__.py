@@ -1,6 +1,7 @@
 import msgspec
 from cv2 import namedWindow
 
+from .check_version import enforce_version
 from .cli import ArgParser
 from .image import WarpedImage
 from .options import Config
@@ -10,6 +11,7 @@ from .snoopy import snoop
 # for some reason pylint complains about cv2 members being undefined :(
 # pylint: disable=E1101
 
+enforce_version()
 
 @snoop()
 def main():
