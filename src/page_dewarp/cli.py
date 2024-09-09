@@ -69,6 +69,7 @@ class ArgParser(argparse.ArgumentParser):
     def get_description(self, field_name: str) -> str:
         hints = get_type_hints(Config, include_extras=True)
         if field_name in Config.__struct_fields__:
+            field_idx = Config.__struct_fields__.index(field_name)
             if get_origin(hints[field_name]) is Annotated:
                 type_hint, meta = get_args(hints[field_name])
                 hint = stringify_hint(type_hint)
@@ -77,7 +78,8 @@ class ArgParser(argparse.ArgumentParser):
                 # If the type is unannotated no meta so no description
                 hint = stringify_hint(hints[field_name])
                 desc = ""
-            return f"{desc}(type: {hint})"
+            default = Config.__struct_defaults__[field_idx]
+            return f"{desc}(type: {hint}, default: {default})"
         else:
             raise TypeError(f"{field_name} is not a field in Config")
 
