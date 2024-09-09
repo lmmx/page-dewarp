@@ -13,6 +13,7 @@ from .snoopy import snoop
 
 enforce_version()
 
+
 @snoop()
 def main():
     parser = ArgParser()
