@@ -8,22 +8,25 @@
 ### {{ definitions[category]['name'] }}
 {% if definitions[category]['showcontent'] %}
 {% for text, values in sections[section][category]|dictsort(by='value') %}
-
-- {{ text }} {% if category != 'process' %}{{ values|sort|join(',\n  ') }}{% endif %}
+{% set issue = values|first %}
+{% set issue_number = issue.split('#')[1].split(']')[0] %}
+{% if 'pr.' in issue %}
+- {{ text }} [#{{ issue_number.split('.')[-1] }}](https://github.com/lmmx/page-dewarp/pull/{{ issue_number.split('.')[-1] }})
+{% elif 'co.' in issue %}
+- {{ text }} [{{ issue_number.split('.')[-1] }}](https://github.com/lmmx/page-dewarp/commit/{{ issue_number.split('.')[-1] }})
+{% else %}
+- {{ text }} {{ values|sort|join(',\n  ') }}
+{% endif %}
 
 {% endfor %}
 {% else %}
-
 - {{ sections[section][category]['']|sort|join(', ') }}
-  {% endif %}
-  {% if sections[section][category]|length == 0 %}
-
+{% endif %}
+{% if sections[section][category]|length == 0 %}
 No significant changes.
-{% else %}
 {% endif %}
 {% endfor %}
 {% else %}
-
 No significant changes.
 {% endif %}
 {% endfor %}

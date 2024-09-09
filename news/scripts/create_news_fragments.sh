@@ -95,6 +95,8 @@ echo "Processing merged PRs between $start_commit and $end_commit..."
 prs=$(gh pr list --limit 1000 --state merged --json number,title,labels,mergedAt,body --search "$start_commit..$end_commit")
 
 echo "$prs" | jq -c '.[]' | while read pr; do
+    echo " -- Looking at PR:"
+    echo " -- $pr"
     number=$(echo $pr | jq -r '.number')
     title=$(echo $pr | jq -r '.title')
     labels=$(echo $pr | jq -r '.labels[].name' | tr '\n' ' ')
@@ -105,7 +107,7 @@ echo "$prs" | jq -c '.[]' | while read pr; do
     # Create news fragment if not excluded
     if [[ "$change_type" != "exclude" ]]; then
         cleaned_title=$(remove_prefix "$title")
-        echo "${cleaned_title^}" > "$frags/${number}.${change_type}.md"
+        echo "${cleaned_title^}" > "$frags/pr.${number}.${change_type}.md"
         echo "Created news fragment for PR #$number: $cleaned_title (Type: $change_type)"
     else
         echo "Excluded PR #$number: $title"
@@ -121,7 +123,7 @@ git log "$start_commit..$end_commit" --pretty=format:"%h %s" | while read -r com
         change_type=$(get_change_type "$commit_message" "")
         if [[ "$change_type" != "exclude" ]]; then
             cleaned_message=$(remove_prefix "$commit_message")
-            echo "${cleaned_message^}" > "$frags/${commit_hash}.${change_type}.md"
+            echo "${cleaned_message^}" > "$frags/co.${commit_hash}.${change_type}.md"
             echo "Created news fragment for commit ${commit_hash}: $cleaned_message (Type: ${change_type})"
         else
             echo "Excluded commit ${commit_hash}: $commit_message"

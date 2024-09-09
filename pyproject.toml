@@ -69,6 +69,17 @@ template = "news/towncrier_template.md"
 underlines = "-~^"
 
 [[tool.towncrier.type]]
+directory = "pr"
+name = "Pull Requests"
+showcontent = true
+
+[[tool.towncrier.type]]
+# Commit
+directory = "co"
+name = "Other Changes"
+showcontent = true
+
+[[tool.towncrier.type]]
 directory = "feature"
 name = "Features & Improvements"
 showcontent = true
