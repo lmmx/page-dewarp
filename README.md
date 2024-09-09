@@ -1,5 +1,12 @@
 # page-dewarp
 
+[![uv](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/astral-sh/uv/main/assets/badge/v0.json)](https://github.com/astral-sh/uv)
+[![pdm-managed](https://img.shields.io/badge/pdm-managed-blueviolet)](https://pdm.fming.dev)
+[![PyPI](https://img.shields.io/pypi/v/page-dewarp.svg)](https://pypi.org/projects/page-dewarp)
+[![Supported Python versions](https://img.shields.io/pypi/pyversions/page-dewarp.svg)](https://pypi.org/project/page-dewarp)
+[![License](https://img.shields.io/pypi/l/page-dewarp.svg)](https://pypi.python.org/pypi/page-dewarp)
+[![pre-commit.ci status](https://results.pre-commit.ci/badge/github/lmmx/page-dewarp/master.svg)](https://results.pre-commit.ci/latest/github/lmmx/page-dewarp/master)
+
 Document image dewarping library using a cubic sheet model
 
 Python 3 library for page dewarping and thresholding,
@@ -11,11 +18,10 @@ To install from PyPI, optionally using [uv](https://docs.astral.sh/uv/) (recomme
 
 - `uv pip install page-dewarp` (recommended)
 - or `pip install page-dewarp`
-```
 
 ## Dependencies
 
-Python 3.8+ and NumPy, SciPy, SymPy, Matplotlib, OpenCV, and TOML Kit are required to run `page-dewarp`.
+Python 3.9+ and NumPy, SciPy, SymPy, Matplotlib and OpenCV are required to run `page-dewarp`.
 
 ## Background
 
