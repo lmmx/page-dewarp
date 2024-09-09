@@ -22,5 +22,6 @@ def test_page_dewarp_output(temp_dir):
 
     assert output_file.exists(), "Output file was not created"
     assert filecmp.cmp(
-        output_file, expected_output
+        output_file,
+        expected_output,
     ), "Output file does not match expected output"
