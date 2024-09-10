@@ -10,4 +10,4 @@ version="$1"
 # Remove the 'v' prefix if present
 version="${version#v}"
 
-towncrier build --version "$version"
+towncrier build --version "$version" --yes

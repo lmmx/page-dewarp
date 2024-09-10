@@ -64,9 +64,20 @@ filename = "CHANGELOG.md"
 issue_format = "[#{issue}](https://github.com/lmmx/page-dewarp/issues/{issue})"
 directory = "news/fragments/"
 start_string = "<!-- insertion marker -->"
-title_format = "[v{version}](https://github.com/lmmx/page-dewarp/releases/tag/{version}) ({project_date})"
+title_format = "## [v{version}](https://github.com/lmmx/page-dewarp/releases/tag/{version}) ({project_date})"
 template = "news/towncrier_template.md"
 underlines = "-~^"
+
+[[tool.towncrier.type]]
+directory = "pr"
+name = "Pull Requests"
+showcontent = true
+
+[[tool.towncrier.type]]
+# Commit
+directory = "co"
+name = "Other Changes"
+showcontent = true
 
 [[tool.towncrier.type]]
 directory = "feature"
