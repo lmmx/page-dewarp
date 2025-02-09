@@ -103,6 +103,7 @@ nav:
   - Getting Started: get_started.md
   - Changelog: changelog.md
   - API Reference:
+      - api/index.md
       - "check_version": api/check_version.md
       - "cli": api/cli.md
       - "colours": api/colours.md

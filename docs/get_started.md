@@ -7,9 +7,18 @@ icon: material/human-greeting
 
 ## 1. Installation
 
-`page-dewarp` is on PyPI:
+`page-dewarp` is [on PyPI](https://pypi.org/project/page-dewarp), the Python Package Index. Install with
 
+```bash
 pip install page-dewarp
+```
+
+!!! info "Use `uv` for the best developer experience"
+
+    If you set up [uv](https://docs.astral.sh/uv/getting-started/installation/)
+    (recommended) you can install with `uv pip install page-dewarp`
+    or set up a project (e.g. with `uv init --app --package`, `uv venv`, then activate the venv
+    following the instructions it gives) you can add it with `uv add page-dewarp`.
 
 ## 2. Usage
 
@@ -20,10 +29,12 @@ page-dewarp input.jpg
 This produces a `input_thresh.png` file with a thresholded and dewarped image. If you have multiple
 images:
 
+```bash
 page-dewarp image1.jpg image2.jpg
+```
 
-That creates `image1_thresh.png` and `image2_thresh.png`. For more advanced details, see the [Usage
-guide](usage/index.md) or the [API Reference](../api/index.md).
+That creates `image1_thresh.png` and `image2_thresh.png`. For more advanced details,
+see the [API Reference](api/index.md).
 
 ## 3. Local Development
 
@@ -50,4 +61,4 @@ guide](usage/index.md) or the [API Reference](../api/index.md).
 
 `page-dewarp` uses a global config object (`cfg` in `options/core.py`) for parameters like
 `DEBUG_LEVEL`, `FOCAL_LENGTH`, or `REMAP_DECIMATE`. You can override them via CLI flags or by
-editing `cfg`. See [CLI Usage](page_dewarp.md) for argument specifics.
+editing `cfg`. See [CLI Usage](index.md) for argument specifics.
