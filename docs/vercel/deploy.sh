@@ -7,6 +7,8 @@ yum install -y wget
 # 2) Download and install uv. This script typically places uv into ~/.local/bin/.
 wget -qO- https://astral.sh/uv/install.sh | sh
 
+find ./ -iname uv -type f 2> /dev/null
+
 # 3) Make sure ~/.local/bin is on PATH so that 'uv' can be used directly.
 export PATH="$HOME/.local/bin:$PATH"
 
