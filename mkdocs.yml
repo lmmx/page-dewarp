@@ -2,7 +2,7 @@ site_name: Page Dewarp
 site_author: Louis Maddox
 site_description: >-
   Document image dewarping library using a cubic sheet model
-site_url: https://page-dewarp.readthedocs.io/
+site_url: https://page-dewarp.vercel.app
 repo_name: lmmx/page-dewarp
 repo_url: https://github.com/lmmx/page-dewarp
 strict: true
