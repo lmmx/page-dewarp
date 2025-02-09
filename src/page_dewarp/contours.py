@@ -1,3 +1,14 @@
+"""Utilities for detecting, filtering, and analyzing contours within images.
+
+This module provides functions to:
+- Find external contours in a binary mask,
+- Calculate centroid and orientation for each contour (via SVD on central moments),
+- Filter contours by size and shape,
+- Construct minimal masks,
+- And visualize the resulting contours for debugging.
+
+"""
+
 from __future__ import annotations
 
 import numpy as np

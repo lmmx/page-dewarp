@@ -96,6 +96,7 @@ write-news = "bash news/scripts/version_based_changelog.sh next"
 # Ruff config moved under [tool.ruff.lint] to avoid deprecation warnings
 # ------------------------------------------------------------------------------
 [tool.ruff]
+
 [tool.ruff.lint]
 ignore = ["C408", "C901", "E501", "E722", "E741"]
 # Removed deprecated `ignore-init-module-imports`.
