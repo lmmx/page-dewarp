@@ -42,16 +42,7 @@ readme = "README.md"
 requires-python = ">=3.9"
 version = "0.1.6"
 
-
-
 [project.optional-dependencies]
-docs = [
-    "mkdocs-material[recommended,imaging]>=9.5.2",
-    "mkdocs-section-index>=0.3.8",
-    "mkdocs>=1.5.3",
-    "mkdocstrings[python]>=0.24.0",
-    "urllib3<2",
-]
 dev = [
     "pdm-bump>=0.9.10",
     "pdm>=2.22.3",
@@ -59,6 +50,13 @@ dev = [
     "pysnooper>=1.2.0",
     "pytest>=8.3.2",
     "towncrier>=24.8.0",
+]
+docs = [
+    "mkdocs-material[recommended,imaging]>=9.5.2",
+    "mkdocs-section-index>=0.3.8",
+    "mkdocs>=1.5.3",
+    "mkdocstrings[python]>=0.24.0",
+    "urllib3<2",
 ]
 
 [project.scripts]
