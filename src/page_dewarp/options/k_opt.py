@@ -6,7 +6,7 @@ __all__ = ("K",)
 
 
 def K(cfg: Config):
-    "Default intrinsic parameter matrix, depends on FOCAL_LENGTH"
+    """Default intrinsic parameter matrix, depends on FOCAL_LENGTH"""
     return np.array(
         [
             [cfg.FOCAL_LENGTH, 0, 0],

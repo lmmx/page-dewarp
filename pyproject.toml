@@ -1,40 +1,40 @@
 [build-system]
-requires = ["pdm-backend"]
 build-backend = "pdm.backend"
+requires = ["pdm-backend"]
 
 [project]
 authors = [
-  {email = "louismmx@gmail.com", name = "Louis Maddox"}
+    {email = "louismmx@gmail.com", name = "Louis Maddox"},
 ]
 classifiers = [
-  "Development Status :: 6 - Mature",
-  "Operating System :: OS Independent",
-  "License :: OSI Approved :: MIT License",
-  "Programming Language :: Python :: 3.9",
-  "Programming Language :: Python :: 3.10",
-  "Programming Language :: Python :: 3.11",
-  "Programming Language :: Python :: 3.12",
-  "Programming Language :: Python :: 3.13",
-  "Topic :: Multimedia :: Graphics :: Graphics Conversion",
-  "Topic :: Scientific/Engineering :: Image Processing"
+    "Development Status :: 6 - Mature",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Programming Language :: Python :: 3.9",
+    "Topic :: Multimedia :: Graphics :: Graphics Conversion",
+    "Topic :: Scientific/Engineering :: Image Processing",
 ]
 dependencies = [
-  "numpy>1.25",
-  # NumPy 1.25+ requires Python >= 3.9
-  "matplotlib",
-  "scipy",
-  "sympy",
-  "opencv-python",
-  "msgspec>=0.18.6"
+    # NumPy 1.25+ requires Python >= 3.9
+    "matplotlib",
+    "msgspec>=0.18.6",
+    "numpy>1.25",
+    "opencv-python",
+    "scipy",
+    "sympy",
 ]
 description = "Page dewarping and thresholding using a cubic sheet model."
 keywords = [
-  "image processing",
-  "cubic spline",
-  "dewarping",
-  "document scanning",
-  "image correction",
-  "computer vision"
+    "computer vision",
+    "cubic spline",
+    "dewarping",
+    "document scanning",
+    "image correction",
+    "image processing",
 ]
 license = {text = "MIT"}
 name = "page-dewarp"
@@ -42,21 +42,21 @@ readme = "README.md"
 requires-python = ">=3.9"
 version = "0.1.6"
 
+[project.optional-dependencies]
+docs = [
+    "mkdocs-material[recommendedimaging]>=9.5.2",
+    "mkdocs-section-index>=0.3.8",
+    "mkdocs>=1.5.3",
+    "mkdocstrings[python]>=0.24.0",
+    "urllib3<2",
+]
+
 [project.scripts]
 page-dewarp = "page_dewarp.__main__:main"
 
 [project.urls]
 Homepage = "https://github.com/lmmx/page-dewarp"
 Repository = "https://github.com/lmmx/page-dewarp.git"
-
-[project.optional-dependencies]
-docs = [
-    "mkdocs>=1.5.3",
-    "mkdocs-material[recommendedimaging]>=9.5.2",
-    "mkdocs-section-index>=0.3.8",
-    "mkdocstrings[python]>=0.24.0",
-    "urllib3<2",
-]
 
 # ----------------------------------------------------------------------
 # Linter settings etc. from HEAD:
@@ -69,8 +69,19 @@ package-type = "application"
 
 [tool.pdm.dev-dependencies]
 test = [
-  "pytest>=7.4.0",
+    "pytest>=7.4.0",
 ]
+
+# ----------------------------------------------------------------------
+# Additional scripts and other sections from master:
+# ----------------------------------------------------------------------
+[tool.pdm.scripts]
+build-news = "bash news/scripts/build_changelog.sh"
+erase-news = "rm -rf news/fragments"
+refresh-changelog = "echo 'pdm run erase-news && pdm run write-news && pdm run build-news'"
+version = "bash news/scripts/get_version.sh"
+write-all-news = "bash news/scripts/version_based_changelog.sh all"
+write-news = "bash news/scripts/version_based_changelog.sh next"
 
 [tool.ruff]
 ignore = ["C408", "C901", "E501", "E722", "E741"]
@@ -93,26 +104,15 @@ spaces_before_inline_comment = 2
 spaces_indent_inline_array = 4
 trailing_comma_inline_array = true
 
-# ----------------------------------------------------------------------
-# Additional scripts and other sections from master:
-# ----------------------------------------------------------------------
-[tool.pdm.scripts]
-version = "bash news/scripts/get_version.sh"
-erase-news = "rm -rf news/fragments"
-write-news = "bash news/scripts/version_based_changelog.sh next"
-write-all-news = "bash news/scripts/version_based_changelog.sh all"
-build-news = "bash news/scripts/build_changelog.sh"
-refresh-changelog = "echo 'pdm run erase-news && pdm run write-news && pdm run build-news'"
-
 [tool.towncrier]
-package = "page_dewarp"
-package_dir = "src/"
+directory = "news/fragments/"
 filename = "CHANGELOG.md"
 issue_format = "[#{issue}](https://github.com/lmmx/page-dewarp/issues/{issue})"
-directory = "news/fragments/"
+package = "page_dewarp"
+package_dir = "src/"
 start_string = "<!-- insertion marker -->"
-title_format = "[v{version}](https://github.com/lmmx/page-dewarp/releases/tag/{version}) ({project_date})"
 template = "news/towncrier_template.md"
+title_format = "[v{version}](https://github.com/lmmx/page-dewarp/releases/tag/{version}) ({project_date})"
 underlines = "-~^"
 
 [[tool.towncrier.type]]
@@ -157,10 +157,10 @@ showcontent = true
 
 [tool.uv]
 dev-dependencies = [
-  "pdm>=2.22.3",
-  "pdm-bump>=0.9.10",
-  "pre-commit>=4.1.0",
-  "pysnooper>=1.2.0",
-  "pytest>=8.3.2",
-  "towncrier>=24.8.0"
+    "pdm-bump>=0.9.10",
+    "pdm>=2.22.3",
+    "pre-commit>=4.1.0",
+    "pysnooper>=1.2.0",
+    "pytest>=8.3.2",
+    "towncrier>=24.8.0",
 ]

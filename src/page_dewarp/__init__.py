@@ -1,5 +1,5 @@
-from .check_version import enforce_version
 from .__main__ import main
+from .check_version import enforce_version
 
 __all__ = ("main",)
 

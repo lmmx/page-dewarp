@@ -1,6 +1,7 @@
+import filecmp
 import subprocess
 from pathlib import Path
-import filecmp
+
 import pytest
 
 repo_root = Path(__file__).parents[1]

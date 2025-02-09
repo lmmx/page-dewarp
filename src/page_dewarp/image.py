@@ -106,8 +106,7 @@ class WarpedImage:
         self.outfile = remap.threshfile
 
     def iteratively_assemble_spans(self):
-        """
-        First try to assemble spans from contours, if too few spans then make spans by
+        """First try to assemble spans from contours, if too few spans then make spans by
         line detection (borders of a table box) rather than text detection.
         """
         spans = assemble_spans(self.stem, self.small, self.pagemask, self.contour_list)

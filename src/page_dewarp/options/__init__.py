@@ -1,3 +1,3 @@
-from .core import cfg, Config
+from .core import Config, cfg
 
 __all__ = ("cfg", "Config")

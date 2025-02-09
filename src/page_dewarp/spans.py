@@ -27,8 +27,7 @@ def angle_dist(angle_b, angle_a):
 
 
 def generate_candidate_edge(cinfo_a, cinfo_b):
-    """
-    We want a left of b (so a's successor will be b and b's
+    """We want a left of b (so a's successor will be b and b's
     predecessor will be a). Make sure right endpoint of b is to the
     right of left endpoint of a (swap them if not the case).
     """

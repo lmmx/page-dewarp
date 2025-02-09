@@ -8,11 +8,10 @@ __all__ = ["project_xy"]
 
 
 def project_xy(xy_coords, pvec):
-    """
-    Get cubic polynomial coefficients given by:
+    """Get cubic polynomial coefficients given by:
 
-      f(0) = 0, f'(0) = alpha
-      f(1) = 0, f'(1) = beta
+    f(0) = 0, f'(0) = alpha
+    f(1) = 0, f'(1) = beta
     """
     alpha, beta = tuple(pvec[slice(*cfg.CUBIC_IDX)])
     poly = np.array([alpha + beta, -2 * alpha - beta, alpha, 0])

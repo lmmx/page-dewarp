@@ -1,6 +1,6 @@
 import numpy as np
 from matplotlib import pyplot as plt
-from sympy import symbols, solve
+from sympy import solve, symbols
 
 a, b, c, d, x, α, β = symbols("a b c d x α β")
 

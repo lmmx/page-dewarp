@@ -31,8 +31,7 @@ __all__ = [
 
 @snoop()
 def blob_mean_and_tangent(contour) -> tuple[float, float] | None:
-    """
-    Construct blob image's covariance matrix from second order central moments
+    """Construct blob image's covariance matrix from second order central moments
     (i.e. dividing them by the 0-order 'area moment' to make them translationally
     invariant), from the eigenvectors of which the blob orientation can be
     extracted (they are its principle components).
