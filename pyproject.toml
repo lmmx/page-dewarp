@@ -59,6 +59,7 @@ docs = [
     "urllib3<2",
     "mkdocs-extra-sass-mathshim>=0.1.0",
     "livereload>=2.7.1",
+    "ruff>=0.9.5",
 ]
 
 [project.scripts]
