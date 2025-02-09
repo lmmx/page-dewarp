@@ -44,6 +44,7 @@ def get_page_dims(corners, rough_dims, params):
 
     Returns:
         A 1D array of floats [height, width] representing the optimized page dimensions.
+
     """
     dst_br = corners[2].flatten()
     dims = np.array(rough_dims)
@@ -74,6 +75,7 @@ class WarpedImage:
         Args:
             imgfile: Path to the image file to load.
             config: A `Config` object that specifies various parameters and defaults.
+
         """
         self.config = config
         if isinstance(imgfile, Path):
@@ -133,6 +135,7 @@ class WarpedImage:
         Args:
             page_dims: The final (height, width) dimensions for the page layout.
             params: The optimization parameters (e.g. rotation, translation, cubic slopes).
+
         """
         remap = RemappedImage(
             self.stem,
@@ -167,6 +170,7 @@ class WarpedImage:
 
         Returns:
             The new line-detected spans if larger in number; else the original spans.
+
         """
         new_spans = assemble_spans(
             self.stem,
@@ -193,9 +197,10 @@ class WarpedImage:
             copy: If True, returns a copy even if no resizing is needed.
 
         Returns:
-            A potentially resized NumPy array. 
-            If the image is already smaller than SCREEN_MAX_W/H, 
+            A potentially resized NumPy array.
+            If the image is already smaller than SCREEN_MAX_W/H,
             the same array (or its copy) is returned.
+
         """
         height, width = self.cv2_img.shape[:2]
         scl_x = float(width) / self.config.SCREEN_MAX_W
@@ -240,6 +245,7 @@ class WarpedImage:
 
         Returns:
             A list of contour objects (ContourInfo instances).
+
         """
         c_type = "text" if text else "line"
         mask = Mask(self.stem, self.small, self.pagemask, c_type)
