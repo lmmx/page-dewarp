@@ -110,6 +110,8 @@ showcontent = true
 
 [tool.uv]
 dev-dependencies = [
+  "pdm>=2.22.3",
+  "pdm-bump>=0.9.10",
   "pre-commit>=4.1.0",
   "pysnooper>=1.2.0",
   "pytest>=8.3.2",
