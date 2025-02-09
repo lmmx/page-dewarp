@@ -11,16 +11,17 @@ from .debug_utils import debug_show
 from .dewarp import RemappedImage
 from .mask import Mask
 from .optimise import optimise_params
-from .options import cfg
+from .options import Config
 from .projection import project_xy
 from .solve import get_default_params
 from .spans import assemble_spans, keypoints_from_samples, sample_spans
 
 __all__ = ["imgsize", "get_page_dims", "WarpedImage"]
 
+
 def imgsize(img):
     height, width = img.shape[:2]
-    return "{}x{}".format(width, height)
+    return f"{width}x{height}"
 
 
 def get_page_dims(corners, rough_dims, params):
@@ -39,8 +40,10 @@ def get_page_dims(corners, rough_dims, params):
 
 class WarpedImage:
     written = False  # Explicitly declare the file write in this attribute
+    config: Config
 
-    def __init__(self, imgfile: str | Path):
+    def __init__(self, imgfile: str | Path, config: Config = Config()):
+        self.config = config
         if isinstance(imgfile, Path):
             imgfile = str(imgfile)
         self.cv2_img = imread(imgfile)
@@ -48,7 +51,7 @@ class WarpedImage:
         self.small = self.resize_to_screen()
         size, resized = self.size, self.resized
         print(f"Loaded {self.basename} at {size=} --> {resized=}")
-        if cfg.debug_lvl_opt.DEBUG_LEVEL >= 3:
+        if self.config.DEBUG_LEVEL >= 3:
             debug_show(self.stem, 0.0, "original", self.small)
 
         self.calculate_page_extents()  # set pagemask & page_outline attributes
@@ -63,10 +66,16 @@ class WarpedImage:
             print(f"  got {len(spans)} spans with {n_pts} points.")
 
             corners, ycoords, xcoords = keypoints_from_samples(
-                self.stem, self.small, self.pagemask, self.page_outline, span_points
+                self.stem,
+                self.small,
+                self.pagemask,
+                self.page_outline,
+                span_points,
             )
             rough_dims, span_counts, params = get_default_params(
-                corners, ycoords, xcoords
+                corners,
+                ycoords,
+                xcoords,
             )
             dstpoints = np.vstack((corners[0].reshape((1, 1, 2)),) + tuple(span_points))
             params = optimise_params(
@@ -75,7 +84,7 @@ class WarpedImage:
                 dstpoints,
                 span_counts,
                 params,
-                cfg.debug_lvl_opt.DEBUG_LEVEL,
+                self.config.DEBUG_LEVEL,
             )
             page_dims = get_page_dims(corners, rough_dims, params)
             if np.any(page_dims < 0):
@@ -86,7 +95,14 @@ class WarpedImage:
             self.written = True
 
     def threshold(self, page_dims, params):
-        remap = RemappedImage(self.stem, self.cv2_img, self.small, page_dims, params)
+        remap = RemappedImage(
+            self.stem,
+            self.cv2_img,
+            self.small,
+            page_dims,
+            params,
+            config=self.config,
+        )
         self.outfile = remap.threshfile
 
     def iteratively_assemble_spans(self):
@@ -104,7 +120,10 @@ class WarpedImage:
 
     def attempt_reassemble_spans(self, prev_spans):
         new_spans = assemble_spans(
-            self.stem, self.small, self.pagemask, self.contour_list
+            self.stem,
+            self.small,
+            self.pagemask,
+            self.contour_list,
         )
         return new_spans if len(new_spans) > len(prev_spans) else prev_spans
 
@@ -118,8 +137,8 @@ class WarpedImage:
 
     def resize_to_screen(self, copy=False):
         height, width = self.cv2_img.shape[:2]
-        scl_x = float(width) / cfg.image_opts.SCREEN_MAX_W
-        scl_y = float(height) / cfg.image_opts.SCREEN_MAX_H
+        scl_x = float(width) / self.config.SCREEN_MAX_W
+        scl_y = float(height) / self.config.SCREEN_MAX_H
         scl = int(np.ceil(max(scl_x, scl_y)))
         if scl > 1.0:
             inv_scl = 1.0 / scl
@@ -132,13 +151,13 @@ class WarpedImage:
 
     def calculate_page_extents(self):
         height, width = self.small.shape[:2]
-        xmin = cfg.image_opts.PAGE_MARGIN_X
-        ymin = cfg.image_opts.PAGE_MARGIN_Y
+        xmin = self.config.PAGE_MARGIN_X
+        ymin = self.config.PAGE_MARGIN_Y
         xmax, ymax = (width - xmin), (height - ymin)
         self.pagemask = np.zeros((height, width), dtype=np.uint8)
         rectangle(self.pagemask, (xmin, ymin), (xmax, ymax), color=255, thickness=-1)
         self.page_outline = np.array(
-            [[xmin, ymin], [xmin, ymax], [xmax, ymax], [xmax, ymin]]
+            [[xmin, ymin], [xmin, ymax], [xmax, ymax], [xmax, ymin]],
         )
 
     @property

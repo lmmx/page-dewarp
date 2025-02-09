@@ -1,29 +1,36 @@
+import msgspec
 from cv2 import namedWindow
 
+from .check_version import enforce_version
 from .cli import ArgParser
 from .image import WarpedImage
-from .options import cfg
+from .options import Config
 from .pdf import save_pdf
+from .snoopy import snoop
 
 # for some reason pylint complains about cv2 members being undefined :(
 # pylint: disable=E1101
 
+enforce_version()
 
+
+@snoop()
 def main():
     parser = ArgParser()
-
-    if cfg.debug_lvl_opt.DEBUG_LEVEL > 0 and cfg.debug_out_opt.DEBUG_OUTPUT != "file":
+    config = msgspec.convert(parser.config_map, Config)
+    if config.DEBUG_LEVEL > 0 and config.DEBUG_OUTPUT != "file":
         namedWindow("Dewarp")
 
     outfiles = []
+    print(f"Parsed config: {config}")
 
     for imgfile in parser.input_images:
-        processed_img = WarpedImage(imgfile)
+        processed_img = WarpedImage(imgfile, config=config)
         if processed_img.written:
             outfiles.append(processed_img.outfile)
             print(f"  wrote {processed_img.outfile}", end="\n\n")
 
-    if cfg.pdf_opts.CONVERT_TO_PDF:
+    if config.CONVERT_TO_PDF:
         save_pdf(outfiles)
 
 

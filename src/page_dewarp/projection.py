@@ -1,7 +1,8 @@
 import numpy as np
 from cv2 import projectPoints
 
-from .options import K, cfg
+from .options import cfg
+from .options.k_opt import K
 
 __all__ = ["project_xy"]
 
@@ -13,7 +14,7 @@ def project_xy(xy_coords, pvec):
       f(0) = 0, f'(0) = alpha
       f(1) = 0, f'(1) = beta
     """
-    alpha, beta = tuple(pvec[cfg.proj_opts.CUBIC_IDX])
+    alpha, beta = tuple(pvec[slice(*cfg.CUBIC_IDX)])
     poly = np.array([alpha + beta, -2 * alpha - beta, alpha, 0])
 
     xy_coords = xy_coords.reshape((-1, 2))
@@ -22,9 +23,9 @@ def project_xy(xy_coords, pvec):
     objpoints = np.hstack((xy_coords, z_coords.reshape((-1, 1))))
     image_points, _ = projectPoints(
         objpoints,
-        pvec[cfg.proj_opts.RVEC_IDX],
-        pvec[cfg.proj_opts.TVEC_IDX],
-        K(),
+        pvec[slice(*cfg.RVEC_IDX)],
+        pvec[slice(*cfg.TVEC_IDX)],
+        K(cfg=cfg),
         np.zeros(5),
     )
     return image_points

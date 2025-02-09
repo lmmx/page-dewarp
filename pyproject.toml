@@ -1,25 +1,66 @@
+[build-system]
+requires = ["pdm-backend"]
+build-backend = "pdm.backend"
+
 [project]
 authors = [
-    {email = "louismmx@gmail.com", name = "Louis Maddox"},
+  {email = "louismmx@gmail.com", name = "Louis Maddox"}
 ]
 classifiers = [
-    "Development Status :: 6 - Mature",
-    "Intended Audience :: Developers",
-    "Programming Language :: Python :: 3",
-    "Topic :: Software Development :: Libraries",
+  "Development Status :: 6 - Mature",
+  "Operating System :: OS Independent",
+  "License :: OSI Approved :: MIT License",
+  "Programming Language :: Python :: 3.9",
+  "Programming Language :: Python :: 3.10",
+  "Programming Language :: Python :: 3.11",
+  "Programming Language :: Python :: 3.12",
+  "Programming Language :: Python :: 3.13",
+  "Topic :: Multimedia :: Graphics :: Graphics Conversion",
+  "Topic :: Scientific/Engineering :: Image Processing"
 ]
-dependencies = []
-description = "Document image dewarping library using a cubic sheet model."
-keywords = []
+dependencies = [
+  "numpy>1.25",
+  # NumPy 1.25+ requires Python >= 3.9
+  "matplotlib",
+  "scipy",
+  "sympy",
+  "opencv-python",
+  "msgspec>=0.18.6"
+]
+description = "Page dewarping and thresholding using a cubic sheet model."
+keywords = [
+  "image processing",
+  "cubic spline",
+  "dewarping",
+  "document scanning",
+  "image correction",
+  "computer vision"
+]
+license = {text = "MIT"}
 name = "page-dewarp"
 readme = "README.md"
-requires-python = ">=3.9,<3.11"
-version = "0.0.1"
+requires-python = ">=3.9"
+version = "0.1.6"
+
+[project.scripts]
+page-dewarp = "page_dewarp.__main__:main"
 
 [project.urls]
 Homepage = "https://github.com/lmmx/page-dewarp"
 Repository = "https://github.com/lmmx/page-dewarp.git"
 
+[project.optional-dependencies]
+docs = [
+    "mkdocs>=1.5.3",
+    "mkdocs-material[recommendedimaging]>=9.5.2",
+    "mkdocs-section-index>=0.3.8",
+    "mkdocstrings[python]>=0.24.0",
+    "urllib3<2",
+]
+
+# ----------------------------------------------------------------------
+# Linter settings etc. from HEAD:
+# ----------------------------------------------------------------------
 [tool.isort]
 known_first_party = ["page_dewarp"]
 
@@ -27,16 +68,8 @@ known_first_party = ["page_dewarp"]
 package-type = "application"
 
 [tool.pdm.dev-dependencies]
-develop = []
-docs = [
-    "mkdocs-material[recommended,imaging]>=9.5.2",
-    "mkdocs-section-index>=0.3.8",
-    "mkdocs>=1.5.3",
-    "mkdocstrings[python]>=0.24.0",
-    "urllib3<2",  # Vercel: https://github.com/squidfunk/mkdocs-material/discussions/6470
-]
 test = [
-    "pytest>=7.4.0",
+  "pytest>=7.4.0",
 ]
 
 [tool.ruff]
@@ -51,7 +84,6 @@ lines-after-imports = 2
 known-first-party = ["page_dewarp"]
 
 [tool.ruff.per-file-ignores]
-# Ignore `E401` (unused imports) in all `__init__.py` files.
 "__init__.py" = ["E401", "F401"]
 
 [tool.tomlsort]
@@ -60,3 +92,75 @@ in_place = true
 spaces_before_inline_comment = 2
 spaces_indent_inline_array = 4
 trailing_comma_inline_array = true
+
+# ----------------------------------------------------------------------
+# Additional scripts and other sections from master:
+# ----------------------------------------------------------------------
+[tool.pdm.scripts]
+version = "bash news/scripts/get_version.sh"
+erase-news = "rm -rf news/fragments"
+write-news = "bash news/scripts/version_based_changelog.sh next"
+write-all-news = "bash news/scripts/version_based_changelog.sh all"
+build-news = "bash news/scripts/build_changelog.sh"
+refresh-changelog = "echo 'pdm run erase-news && pdm run write-news && pdm run build-news'"
+
+[tool.towncrier]
+package = "page_dewarp"
+package_dir = "src/"
+filename = "CHANGELOG.md"
+issue_format = "[#{issue}](https://github.com/lmmx/page-dewarp/issues/{issue})"
+directory = "news/fragments/"
+start_string = "<!-- insertion marker -->"
+title_format = "[v{version}](https://github.com/lmmx/page-dewarp/releases/tag/{version}) ({project_date})"
+template = "news/towncrier_template.md"
+underlines = "-~^"
+
+[[tool.towncrier.type]]
+directory = "feature"
+name = "Features & Improvements"
+showcontent = true
+
+[[tool.towncrier.type]]
+directory = "bugfix"
+name = "Bug Fixes"
+showcontent = true
+
+[[tool.towncrier.type]]
+directory = "doc"
+name = "Improved Documentation"
+showcontent = true
+
+[[tool.towncrier.type]]
+directory = "packaging"
+name = "Packaging & Build Process"
+showcontent = true
+
+[[tool.towncrier.type]]
+directory = "dep"
+name = "Dependencies"
+showcontent = true
+
+[[tool.towncrier.type]]
+directory = "removal"
+name = "Removals and Deprecations"
+showcontent = true
+
+[[tool.towncrier.type]]
+directory = "refactor"
+name = "Code Refactoring"
+showcontent = true
+
+[[tool.towncrier.type]]
+directory = "misc"
+name = "Miscellany"
+showcontent = true
+
+[tool.uv]
+dev-dependencies = [
+  "pdm>=2.22.3",
+  "pdm-bump>=0.9.10",
+  "pre-commit>=4.1.0",
+  "pysnooper>=1.2.0",
+  "pytest>=8.3.2",
+  "towncrier>=24.8.0"
+]

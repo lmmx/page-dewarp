@@ -6,13 +6,12 @@ __all__ = ["debug_show"]
 
 
 def debug_show(name, step, text, display):
-    if cfg.debug_out_opt.DEBUG_OUTPUT != "screen":
+    if cfg.DEBUG_OUTPUT != "screen":
         filetext = text.replace(" ", "_")
         outfile = name + "_debug_" + str(step) + "_" + filetext + ".png"
         imwrite(outfile, display)
 
-    if cfg.debug_out_opt.DEBUG_OUTPUT != "file":
-
+    if cfg.DEBUG_OUTPUT != "file":
         image = display.copy()
         height = image.shape[0]
 
