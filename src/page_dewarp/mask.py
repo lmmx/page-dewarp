@@ -7,8 +7,6 @@ This module provides:
 - An interface to retrieve the final contours from this mask.
 """
 
-from typing import List, Union
-
 import numpy as np
 from cv2 import (
     ADAPTIVE_THRESH_MEAN_C,
@@ -23,6 +21,7 @@ from cv2 import (
 from .contours import ContourInfo, get_contours
 from .debug_utils import debug_show
 from .options import cfg
+
 
 __all__ = ["box", "Mask"]
 
@@ -47,7 +46,7 @@ class Mask:
         name: str,
         small: np.ndarray,
         pagemask: np.ndarray,
-        text: Union[bool, str] = True,
+        text: bool | str = True,
     ) -> None:
         """Initialize the Mask with the given image data and type.
 
@@ -113,7 +112,7 @@ class Mask:
                 step += 0.3
             debug_show(self.name, step, text, display)
 
-    def contours(self) -> List[ContourInfo]:
+    def contours(self) -> list[ContourInfo]:
         """Extract the final contours from `self.value`.
 
         Calls `get_contours` to find external contours in the thresholded,

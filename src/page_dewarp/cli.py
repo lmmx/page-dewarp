@@ -12,6 +12,7 @@ import msgspec
 from .options import Config, cfg
 from .snoopy import snoop
 
+
 __all__ = ["ArgParser"]
 
 

@@ -15,6 +15,7 @@ import numpy as np
 from matplotlib import pyplot as plt
 from sympy import solve, symbols
 
+
 a, b, c, d, x, α, β = symbols("a b c d x α β")
 
 # polynomial function f(x) = ax³ + bx² + cx + d

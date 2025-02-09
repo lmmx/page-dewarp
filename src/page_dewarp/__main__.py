@@ -18,6 +18,7 @@ from .options import Config
 from .pdf import save_pdf
 from .snoopy import snoop
 
+
 # for some reason pylint complains about cv2 members being undefined :(
 # pylint: disable=E1101
 

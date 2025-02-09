@@ -5,6 +5,7 @@ Currently provides a small helper (`fltp`) to flatten integer coordinates.
 
 import numpy as np
 
+
 __all__ = ["fltp"]
 
 

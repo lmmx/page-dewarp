@@ -1,7 +1,5 @@
 from __future__ import annotations
 
-from typing import List, Optional, Tuple
-
 import numpy as np
 from cv2 import (
     CHAIN_APPROX_NONE,
@@ -21,6 +19,7 @@ from .options import cfg
 from .simple_utils import fltp
 from .snoopy import snoop
 
+
 __all__ = [
     "blob_mean_and_tangent",
     "interval_measure_overlap",
@@ -32,7 +31,7 @@ __all__ = [
 
 
 @snoop()
-def blob_mean_and_tangent(contour: np.ndarray) -> Optional[Tuple[np.ndarray, np.ndarray]]:
+def blob_mean_and_tangent(contour: np.ndarray) -> tuple[np.ndarray, np.ndarray] | None:
     """Compute the centroid and principal orientation of a contour.
 
     Constructs the blob image's covariance matrix from second-order central moments
@@ -72,7 +71,10 @@ def blob_mean_and_tangent(contour: np.ndarray) -> Optional[Tuple[np.ndarray, np.
         return None
 
 
-def interval_measure_overlap(int_a: Tuple[float, float], int_b: Tuple[float, float]) -> float:
+def interval_measure_overlap(
+    int_a: tuple[float, float],
+    int_b: tuple[float, float],
+) -> float:
     """Return the overlap length of two 1D intervals.
 
     Each interval is given as (start, end). The overlap is computed as:
@@ -95,8 +97,8 @@ class ContourInfo:
     def __init__(
         self,
         contour: np.ndarray,
-        moments: Tuple[np.ndarray, np.ndarray],
-        rect: Tuple[int, int, int, int],
+        moments: tuple[np.ndarray, np.ndarray],
+        rect: tuple[int, int, int, int],
         mask: np.ndarray,
     ) -> None:
         """Initialize a contour's geometry, orientation, bounding rect, and mask.
@@ -184,7 +186,7 @@ def make_tight_mask(
     return tight_mask
 
 
-def get_contours(name: str, small: np.ndarray, mask: np.ndarray) -> List[ContourInfo]:
+def get_contours(name: str, small: np.ndarray, mask: np.ndarray) -> list[ContourInfo]:
     """Detect and filter contours in a binary mask, returning their ContourInfo objects.
 
     This function finds external contours, filters them by size/aspect,
@@ -223,7 +225,11 @@ def get_contours(name: str, small: np.ndarray, mask: np.ndarray) -> List[Contour
     return contours_out
 
 
-def visualize_contours(name: str, small: np.ndarray, cinfo_list: List[ContourInfo]) -> None:
+def visualize_contours(
+    name: str,
+    small: np.ndarray,
+    cinfo_list: list[ContourInfo],
+) -> None:
     """Overlay colored contours on a copy of the image for debugging or inspection.
 
     Each contour is filled with a unique color. The center and principal axis are

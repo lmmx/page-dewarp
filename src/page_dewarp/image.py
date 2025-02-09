@@ -9,7 +9,6 @@ This module includes:
 
 from __future__ import annotations
 
-from typing import List, Optional, Tuple, Union
 from pathlib import Path
 
 import numpy as np
@@ -17,6 +16,7 @@ from cv2 import INTER_AREA, imread, rectangle
 from cv2 import resize as cv2_resize
 from scipy.optimize import minimize
 
+from .contours import ContourInfo
 from .debug_utils import debug_show
 from .dewarp import RemappedImage
 from .mask import Mask
@@ -25,7 +25,7 @@ from .options import Config
 from .projection import project_xy
 from .solve import get_default_params
 from .spans import assemble_spans, keypoints_from_samples, sample_spans
-from .contours import ContourInfo
+
 
 __all__ = ["imgsize", "get_page_dims", "WarpedImage"]
 
@@ -38,7 +38,7 @@ def imgsize(img: np.ndarray) -> str:
 
 def get_page_dims(
     corners: np.ndarray,
-    rough_dims: Union[np.ndarray, list],
+    rough_dims: np.ndarray | list,
     params: np.ndarray,
 ) -> np.ndarray:
     """Optimize final page dimensions using a cubic polynomial model.
@@ -75,7 +75,7 @@ class WarpedImage:
     written = False  # Explicitly declare the file-write attribute
     config: Config
 
-    def __init__(self, imgfile: Union[str, Path], config: Config = Config()) -> None:
+    def __init__(self, imgfile: str | Path, config: Config = Config()) -> None:
         """Initialize the WarpedImage with a source file and configuration.
 
         Args:
@@ -243,7 +243,7 @@ class WarpedImage:
         """Return a formatted string 'widthxheight' for the downsampled (small) image."""
         return imgsize(self.small)
 
-    def contour_info(self, text: bool = True) -> List[ContourInfo]:
+    def contour_info(self, text: bool = True) -> list[ContourInfo]:
         """Compute contour information for either text or line detection.
 
         Args:

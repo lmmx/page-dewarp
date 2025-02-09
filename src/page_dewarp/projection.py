@@ -5,13 +5,12 @@ This module provides a `project_xy` function, which:
 - Uses OpenCV's `projectPoints` to map the resulting 3D points into image coordinates.
 """
 
-from typing import Union
-
 import numpy as np
 from cv2 import projectPoints
 
 from .options import cfg
 from .options.k_opt import K
+
 
 __all__ = ["project_xy"]
 

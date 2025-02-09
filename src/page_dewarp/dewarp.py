@@ -6,8 +6,6 @@ This module provides:
   rectified, thresholded output using a cubic parameterization of the page.
 """
 
-from typing import Union
-
 import numpy as np
 from cv2 import (
     ADAPTIVE_THRESH_MEAN_C,
@@ -27,6 +25,7 @@ from .debug_utils import debug_show
 from .normalisation import norm2pix
 from .options import Config
 from .projection import project_xy
+
 
 __all__ = ["round_nearest_multiple", "RemappedImage"]
 
@@ -59,7 +58,7 @@ class RemappedImage:
         name: str,
         img: np.ndarray,
         small: np.ndarray,
-        page_dims: Union[list, np.ndarray],
+        page_dims: list | np.ndarray,
         params: np.ndarray,
         config: Config = Config(),
     ) -> None:

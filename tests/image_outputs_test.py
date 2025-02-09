@@ -10,6 +10,7 @@ from pathlib import Path
 
 import pytest
 
+
 repo_root = Path(__file__).parents[1]
 example_inputs_dir = repo_root / "example_input"
 example_outputs_dir = repo_root / "example_output"

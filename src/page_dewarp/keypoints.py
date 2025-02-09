@@ -5,16 +5,15 @@ This module provides helper functions to:
 - Project keypoints (in a parameter vector) into 2D coordinates using a cubic model.
 """
 
-from typing import List, Tuple
-
 import numpy as np
 
 from .projection import project_xy
 
+
 __all__ = ["make_keypoint_index", "project_keypoints"]
 
 
-def make_keypoint_index(span_counts: List[int]) -> np.ndarray:
+def make_keypoint_index(span_counts: list[int]) -> np.ndarray:
     """Construct an index array to map spans to keypoint parameters.
 
     Given a list of `span_counts`, where each value indicates how many keypoints

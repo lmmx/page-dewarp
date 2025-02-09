@@ -5,13 +5,12 @@ This module contains a function (`get_default_params`) that:
 - Includes default cubic slopes and any y/x coordinates from sampled spans.
 """
 
-from typing import List, Tuple, Union
-
 import numpy as np
 from cv2 import solvePnP
 
 from .options import cfg
 from .options.k_opt import K
+
 
 __all__ = ["get_default_params"]
 
@@ -19,8 +18,8 @@ __all__ = ["get_default_params"]
 def get_default_params(
     corners: np.ndarray,
     ycoords: np.ndarray,
-    xcoords: List[np.ndarray],
-) -> Tuple[Tuple[float, float], List[int], np.ndarray]:
+    xcoords: list[np.ndarray],
+) -> tuple[tuple[float, float], list[int], np.ndarray]:
     """Assemble an initial parameter vector for page flattening.
 
     Args:

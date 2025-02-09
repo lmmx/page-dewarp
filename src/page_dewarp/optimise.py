@@ -6,8 +6,6 @@ This module provides:
   to refine the parameter vector for page dewarping.
 """
 
-from typing import List
-
 from datetime import datetime as dt
 
 import numpy as np
@@ -19,10 +17,15 @@ from .keypoints import make_keypoint_index, project_keypoints
 from .normalisation import norm2pix
 from .simple_utils import fltp
 
+
 __all__ = ["draw_correspondences", "optimise_params"]
 
 
-def draw_correspondences(img: np.ndarray, dstpoints: np.ndarray, projpts: np.ndarray) -> np.ndarray:
+def draw_correspondences(
+    img: np.ndarray,
+    dstpoints: np.ndarray,
+    projpts: np.ndarray,
+) -> np.ndarray:
     """Draw matching points (projected vs. desired) on a copy of the image.
 
     Args:
@@ -49,7 +52,7 @@ def optimise_params(
     name: str,
     small: np.ndarray,
     dstpoints: np.ndarray,
-    span_counts: List[int],
+    span_counts: list[int],
     params: np.ndarray,
     debug_lvl: int,
 ) -> np.ndarray:

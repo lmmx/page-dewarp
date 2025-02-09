@@ -1,6 +1,6 @@
 # API Reference
 
-Welcome to the API Reference for **page-dewarp**! 
+Welcome to the API Reference for **page-dewarp**!
 
 Below, you'll find documentation for the library’s primary modules and classes. These pages are
 generated from the source code and include details on function signatures, class methods, and

@@ -6,17 +6,21 @@ or "both"), the image is displayed in an OpenCV window with an overlaid label,
 and the script waits for a keypress to close the window.
 """
 
-from typing import Union
-
 import numpy as np
 from cv2 import FONT_HERSHEY_SIMPLEX, LINE_AA, imshow, imwrite, putText, waitKey
 
 from ..options import cfg
 
+
 __all__ = ["debug_show"]
 
 
-def debug_show(name: str, step: Union[float, int, str], text: str, display: np.ndarray) -> None:
+def debug_show(
+    name: str,
+    step: float | int | str,
+    text: str,
+    display: np.ndarray,
+) -> None:
     """Show or save a debug image, possibly with an overlay of text.
 
     Args:

@@ -8,6 +8,7 @@ import numpy as np
 
 from .core import Config
 
+
 __all__ = ("K",)
 
 

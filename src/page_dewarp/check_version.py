@@ -6,6 +6,7 @@ the minimum supported version (3.9).
 
 import sys
 
+
 __all__ = ("enforce_version",)
 
 MIN_SUPPORTED_V = (3, 9)

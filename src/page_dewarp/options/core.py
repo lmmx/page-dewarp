@@ -11,6 +11,7 @@ from typing import Annotated
 
 from msgspec import Meta, Struct
 
+
 __all__ = ["Config", "cfg"]
 
 
