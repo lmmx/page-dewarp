@@ -1,0 +1,151 @@
+////
+/// Copyright (c) 2016-2020 Martin Donath <martin.donath@squidfunk.com>
+///
+/// Permission is hereby granted, free of charge, to any person obtaining a
+/// copy of this software and associated documentation files (the "Software"),
+/// to deal in the Software without restriction, including without limitation
+/// the rights to use, copy, modify, merge, publish, distribute, sublicense,
+/// and/or sell copies of the Software, and to permit persons to whom the
+/// Software is furnished to do so, subject to the following conditions:
+///
+/// The above copyright notice and this permission notice shall be included in
+/// all copies or substantial portions of the Software.
+///
+/// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+/// IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+/// FITNESS FOR A PARTICULAR PURPOSE AND NON-INFRINGEMENT. IN NO EVENT SHALL
+/// THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+/// LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+/// FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
+/// DEALINGS
+////
+
+// ----------------------------------------------------------------------------
+// Helpers
+// ----------------------------------------------------------------------------
+
+///
+/// Convert color in HEX to HSL
+///
+@function hex2hsl($color) {
+  @return
+    math.round(color.channel($color, "hue", $space: hsl)),
+    math.round(color.channel($color, "saturation", $space: hsl)),
+    math.round(color.channel($color, "lightness", $space: hsl));
+}
+
+// ----------------------------------------------------------------------------
+
+///
+/// Convert font size in px to em
+///
+@function px2em($size, $base: 16px) {
+  @if math.unit($size) == px {
+    @if math.unit($base) == px {
+      @return math.div($size, $base) * 1em;
+    } @else {
+      @error "Invalid base: #{$base} - unit must be 'px'";
+    }
+  } @else {
+    @error "Invalid size: #{$size} - unit must be 'px'";
+  }
+}
+
+///
+/// Convert font size in px to rem
+///
+@function px2rem($size, $base: 20px) {
+  @if math.unit($size) == px {
+    @if math.unit($base) == px {
+      @return math.div($size, $base) * 1.0rem;
+    } @else {
+      @error "Invalid base: #{$base} - unit must be 'px'";
+    }
+  } @else {
+    @error "Invalid size: #{$size} - unit must be 'px'";
+  }
+}
+
+// General styling for repository link icons
+:root > * {
+  --magiclink-email-icon: svg-load("@mdi/svg/svg/mail.svg");
+  --magiclink-github-icon: svg-load("@mdi/svg/svg/github.svg");
+  --magiclink-bitbucket-icon: svg-load("@mdi/svg/svg/bitbucket.svg");
+  --magiclink-gitlab-icon: svg-load("@mdi/svg/svg/gitlab.svg");
+  --magiclink-commit-icon: svg-load("@primer/octicons/build/svg/git-commit-24.svg");
+  --magiclink-compare-icon: svg-load("@primer/octicons/build/svg/file-diff-24.svg");
+  --magiclink-pull-icon: svg-load("@primer/octicons/build/svg/git-pull-request-24.svg");
+  --magiclink-issue-icon: svg-load("@primer/octicons/build/svg/issue-opened-24.svg");
+  --magiclink-discussion-icon: svg-load("@primer/octicons/build/svg/comment-discussion-24.svg");
+}
+
+.md-typeset {
+  a[href^="mailto:"]:not(.magiclink-ignore)::before {
+    mask-image: var(--magiclink-email-icon);
+  }
+
+  .magiclink-repository,
+  .magiclink-compare,
+  .magiclink-commit,
+  .magiclink-pull,
+  .magiclink-issue,
+  .magiclink-discussion,
+  a[href^="mailto:"] {
+    &:not(.magiclink-ignore) {
+      position: relative;
+      padding-left: px2em(22px);
+
+      &::before {
+        position: absolute;
+        top: 0;
+        left: 0;
+        display: block;
+        box-sizing: border-box;
+        width: px2em(20px);
+        height: px2em(20px);
+        background-color: var(--md-typeset-a-color);
+        background-size: px2em(20px);
+        transition: background-color 125ms;
+        mask-repeat: no-repeat;
+        mask-size: contain;
+        content: "";
+      }
+
+      &:hover::before {
+        background-color: var(--md-accent-fg-color);
+      }
+    }
+  }
+}
+
+// Assign icons to repository links
+@each $name, $icon in (
+  "commit": "commit",
+  "compare": "compare",
+  "pull": "pull",
+  "issue": "issue",
+  "discussion": "discussion"
+) {
+  .md-typeset {
+    .magiclink-#{$name}:not(.magiclink-ignore) {
+      &::before {
+        mask-image: var(--magiclink-#{$icon}-icon);
+      }
+    }
+  }
+}
+
+// Assign icons to repository links
+@each $name, $icon in (
+  "github": "github",
+  "gitlab": "gitlab",
+  "bitbucket": "bitbucket"
+) {
+  .md-typeset {
+    .magiclink-repository.magiclink-#{$name}:not(.magiclink-ignore) {
+      &::before {
+        mask-image: var(--magiclink-#{$icon}-icon);
+      }
+    }
+  }
+}

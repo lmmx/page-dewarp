@@ -5,7 +5,7 @@ site_description: >-
 site_url: https://page-dewarp.readthedocs.io/
 repo_name: lmmx/page-dewarp
 repo_url: https://github.com/lmmx/page-dewarp
-strict: true # false
+strict: false # true
 watch: [src]
 
 extra_css:
@@ -57,9 +57,12 @@ markdown_extensions:
       anchor_linenums: true
       line_spans: __span
       pygments_lang_class: true
-      noclasses: True
+      noclasses: true
       pygments_style: lovelace
   - pymdownx.inlinehilite
+  - pymdownx.magiclink:
+      repo_url_shortener: true
+      normalize_issue_symbols: true
   - pymdownx.snippets:
       check_paths: true
   - pymdownx.superfences
@@ -70,6 +73,7 @@ markdown_extensions:
 
 plugins:
   - autorefs
+  - extra-sass
   - mkdocstrings:
       default_handler: python
       handlers:

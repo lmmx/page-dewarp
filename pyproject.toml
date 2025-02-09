@@ -57,6 +57,8 @@ docs = [
     "mkdocs>=1.5.3",
     "mkdocstrings[python]>=0.24.0",
     "urllib3<2",
+    "mkdocs-extra-sass-mathshim>=0.1.0",
+    "livereload>=2.7.1",
 ]
 
 [project.scripts]
