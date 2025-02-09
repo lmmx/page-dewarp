@@ -38,8 +38,8 @@ keywords = [
 license = {text = "MIT"}
 name = "page-dewarp"
 readme = "README.md"
-requires-python = ">=3.9,<3.13"
-version = "0.1.5"
+requires-python = ">=3.9"
+version = "0.1.6"
 
 [project.scripts]
 page-dewarp = "page_dewarp.__main__:main"
@@ -110,6 +110,9 @@ showcontent = true
 
 [tool.uv]
 dev-dependencies = [
+  "pdm>=2.22.3",
+  "pdm-bump>=0.9.10",
+  "pre-commit>=4.1.0",
   "pysnooper>=1.2.0",
   "pytest>=8.3.2",
   "towncrier>=24.8.0"
