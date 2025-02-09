@@ -1,20 +1,31 @@
 #!/bin/bash
+set -e
 
-yum install wget
+# 1) Ensure wget is available (Vercel's Amazon Linux images may not include it by default).
+yum install -y wget
 
-wget -qO- https://micromamba.snakepit.net/api/micromamba/linux-64/latest | tar -xvj bin/micromamba
+# 2) Download and install uv. This script typically places uv into ~/.local/bin/.
+wget -qO- https://astral.sh/uv/install.sh | sh
 
-./bin/micromamba shell init -s bash -p ~/micromamba
-# Python interpreter lives at /vercel/micromamba/bin/python
-source ~/.bashrc
+# 3) Make sure ~/.local/bin is on PATH so that 'uv' can be used directly.
+export PATH="$HOME/.local/bin:$PATH"
 
-# activate the environment and install a new version of Python
-micromamba activate
-micromamba install python=3.11 -c conda-forge -y
+# 4) Create a Python 3.11 venv using uv’s built-in venv command.
+uv venv --python 3.11
 
-# install the dependencies
+# 5) Activate the venv. (Alternatively, you could use $(uv python find) but activating is simpler.)
+source .venv/bin/activate
+
+# 6) Check the Python version, just to confirm everything is correct.
 python --version
-python -m pip install pdm 'urllib3<2'
-# pdm install -dG docs -v
-pdm install --no-default -dG docs -v
-pdm run mkdocs
+
+# 7) Install dependencies:
+#    - First pin urllib3<2 (to avoid known breakage).
+#    - Then install your docs extra so that mkdocs & related are available.
+uv pip install "urllib3<2"
+uv pip install .[docs]
+
+# 8) Optionally run mkdocs here if you need it immediately in “deploy”
+#    (e.g., if your older script used ‘pdm run mkdocs’ at this point).
+#    Otherwise, you can defer building to build.sh. For parity with your old deploy script:
+uv run mkdocs
