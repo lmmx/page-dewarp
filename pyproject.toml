@@ -52,13 +52,13 @@ dev = [
     "towncrier>=24.8.0",
 ]
 docs = [
+    "livereload>=2.7.1",
+    "mkdocs-extra-sass-mathshim>=0.1.0",
     "mkdocs-material[recommended,imaging]>=9.5.2",
     "mkdocs-section-index>=0.3.8",
     "mkdocs>=1.5.3",
     "mkdocstrings[python]>=0.24.0",
     "urllib3<2",
-    "mkdocs-extra-sass-mathshim>=0.1.0",
-    "livereload>=2.7.1",
 ]
 
 [project.scripts]
