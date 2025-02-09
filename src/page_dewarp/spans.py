@@ -94,6 +94,7 @@ def assemble_spans(name, small, pagemask, cinfo_list):
 
     Returns:
         A list of spans, where each span is a list of ContourInfo objects.
+
     """
     cinfo_list = sorted(cinfo_list, key=lambda cinfo: cinfo.rect[1])
     candidate_edges = []
@@ -162,6 +163,7 @@ def sample_spans(shape, spans):
 
     Returns:
         A list of arrays, each array containing the sampled points (in normalized coords).
+
     """
     span_points = []
     for span in spans:
@@ -201,6 +203,7 @@ def keypoints_from_samples(name, small, pagemask, page_outline, span_points):
             - `corners` is an (4,1,2) array of the page corners in normalized coords.
             - `ycoords` is a 1D array of the average y-locations of each span.
             - `xcoords` is a list of x-locations of each span's sample points.
+
     """
     all_evecs = np.array([[0.0, 0.0]])
     all_weights = 0

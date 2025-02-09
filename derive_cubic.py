@@ -1,3 +1,16 @@
+"""Solve for a cubic polynomial's coefficients given boundary and slope constraints.
+
+This script uses Sympy to solve for coefficients a, b, c, and d in the cubic polynomial
+f(x) = a*x^3 + b*x^2 + c*x + d, subject to:
+    f(0) = 0,
+    f(1) = 0,
+    f'(0) = α,
+    f'(1) = β.
+
+It then substitutes numeric values for α and β, prints the resulting coefficients,
+and plots the polynomial using matplotlib.
+"""
+
 import numpy as np
 from matplotlib import pyplot as plt
 from sympy import solve, symbols
@@ -6,19 +19,17 @@ a, b, c, d, x, α, β = symbols("a b c d x α β")
 
 # polynomial function f(x) = ax³ + bx² + cx + d
 f = a * x**3 + b * x**2 + c * x + d
-
 fp = f.diff(x)  # derivative f'(x)
 
 # evaluate both at x=0 and x=1
 f0, f1 = (f.subs(x, i) for i in range(2))
 fp0, fp1 = (fp.subs(x, i) for i in range(2))
 
-# we want a, b, c, d such that the following conditions hold:
-#
-#  f(0) = 0
-#  f(1) = 0
-#  f'(0) = α
-#  f'(1) = β
+# we want a, b, c, d such that:
+#   f(0) = 0
+#   f(1) = 0
+#   f'(0) = α
+#   f'(1) = β
 
 S = solve([f0, f1, fp0 - α, fp1 - β], [a, b, c, d])
 
