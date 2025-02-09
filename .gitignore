@@ -6,3 +6,5 @@ dist
 version.py
 .eggs
 results/
+site/
+.cache/

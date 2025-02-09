@@ -5,13 +5,11 @@ site_description: >-
 site_url: https://page-dewarp.readthedocs.io/
 repo_name: lmmx/page-dewarp
 repo_url: https://github.com/lmmx/page-dewarp
-strict: true
+strict: false # true
 watch: [src]
 
 extra_css:
   - stylesheets/extra.css
-
-copyright: Copyright &copy; 2021-present Louis Maddox
 
 theme:
   name: material
@@ -79,8 +77,7 @@ plugins:
             docstring_options:
               ignore_init_summary: true
             merge_init_into_class: true
-            line_length: 88 # default: 60
-            # show_if_no_docstring: true
+            line_length: 88
             show_root_full_path: false
             show_root_toc_entry: false
             show_source: true
@@ -90,15 +87,34 @@ plugins:
   - section-index
   - social:
       cards_layout_options:
-        color: #de0
+        color: "#de0"
 
 nav:
   - Home: index.md
-  - Getting Started:
-      - Welcome to Page Dewarp: get_started.md
+  - Getting Started: get_started.md
   - Usage:
-      - User guide: usage/index.md
+      - "User guide": usage/index.md
       - usage/page_dewarp.md
+  - Changelog: changelog.md
+  - Reference:
+      - reference/index.md
   - API Reference:
-      - APIs: api/index.md
-      - api/page_dewarp.md
+      - "check_version": api/check_version.md
+      - "cli": api/cli.md
+      - "colours": api/colours.md
+      - "contours": api/contours.md
+      - "core": api/core.md
+      - "dewarp": api/dewarp.md
+      - "image": api/image.md
+      - "k_opt": api/k_opt.md
+      - "keypoints": api/keypoints.md
+      - "mask": api/mask.md
+      - "normalisation": api/normalisation.md
+      - "optimise": api/optimise.md
+      - "pdf": api/pdf.md
+      - "projection": api/projection.md
+      - "simple_utils": api/simple_utils.md
+      - "snoopy": api/snoopy.md
+      - "solve": api/solve.md
+      - "spans": api/spans.md
+      - "viewer": api/viewer.md
