@@ -1,3 +1,10 @@
+"""Core configuration structures for page-dewarp.
+
+Defines:
+- A helper function (`desc`) that annotates msgspec.Struct fields with a description.
+- A global `Config` class specifying various parameters (camera, edge detection, etc.).
+"""
+
 from __future__ import annotations
 
 from typing import Annotated
@@ -8,11 +15,20 @@ __all__ = ["Config", "cfg"]
 
 
 def desc(typ, /, description: str):
-    """Annotate a `msgspec.Struct` field with a description"""
+    """Annotate a `msgspec.Struct` field with a description.
+
+    Returns an `Annotated[typ, Meta(description=...)]` for additional metadata.
+    """
     return Annotated[typ, Meta(description=description)]
 
 
 class Config(Struct):
+    """Global configuration for page-dewarp.
+
+    Holds parameters controlling camera focal length, contour detection,
+    output size, page margin, debug verbosity, etc.
+    """
+
     # [camera_opts]
     FOCAL_LENGTH: desc(float, "Normalized focal length of camera") = 1.2
     # [contour_opts]
