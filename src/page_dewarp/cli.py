@@ -1,3 +1,9 @@
+"""CLI parser for page_dewarp.
+
+This module defines a subclass of `argparse.ArgumentParser` to parse
+CLI arguments from the user and store them in the global config.
+"""
+
 import argparse
 from typing import Annotated, get_args, get_origin, get_type_hints
 
@@ -6,10 +12,12 @@ import msgspec
 from .options import Config, cfg
 from .snoopy import snoop
 
+
 __all__ = ["ArgParser"]
 
 
 def stringify_hint(type_hint) -> str:
+    """Convert a type hint to a user-readable string representation."""
     match type_hint:
         case type():
             hint = type_hint.__name__
@@ -19,6 +27,13 @@ def stringify_hint(type_hint) -> str:
 
 
 class ArgParser(argparse.ArgumentParser):
+    """Parser for command-line arguments using a global config.
+
+    This class extends `argparse.ArgumentParser` but hooks into the global
+    `Config` object (`cfg`), automatically populating arguments from defaults
+    and storing parsed values back into that config.
+    """
+
     config_map = msgspec.structs.asdict(cfg)
 
     def add_default_argument(
@@ -33,6 +48,18 @@ class ArgParser(argparse.ArgumentParser):
         metavar=None,
         required=None,
     ):
+        """Add an argument with defaults coming from the global config.
+
+        :param name_or_flags: Short or long flags (e.g. ["-d", "--debug-level"]).
+        :param arg_name: Name used as the config key.
+        :param action: An argparse action (store, store_true, etc.).
+        :param help: Help text for argparse.
+        :param const: A constant value for certain actions (store_const, etc.).
+        :param choices: Possible choices for this argument.
+        :param nargs: Number of args that this argument consumes.
+        :param metavar: The name to display in usage messages.
+        :param required: Whether the argument is required.
+        """
         kwargs = {
             "action": action,
             "nargs": nargs,
@@ -67,6 +94,11 @@ class ArgParser(argparse.ArgumentParser):
         )
 
     def get_description(self, field_name: str) -> str:
+        """Return a generated help string for a Config field.
+
+        We look up the annotated type metadata (if any) to build an
+        informative help string showing the type and default value.
+        """
         hints = get_type_hints(Config, include_extras=True)
         if field_name in Config.__struct_fields__:
             field_idx = Config.__struct_fields__.index(field_name)
@@ -85,15 +117,19 @@ class ArgParser(argparse.ArgumentParser):
 
     @classmethod
     def set_config_param(cls, param, value):
+        """Set a parameter in the global config map."""
         cls.config_map.update({param: value})
 
     @classmethod
     def get_config_param(cls, param):
+        """Retrieve a parameter value from the global config map."""
         return cls.config_map[param]
 
-    add_default_argument = add_default_argument  # overwrite
+    # Overwrite with the function from global of the same name
+    add_default_argument = add_default_argument
 
     def prepare_arguments(self):
+        """Define all the standard arguments available via the CLI."""
         self.add_argument(
             dest="input_images",
             metavar="IMAGE_FILE_OR_FILES",
@@ -108,7 +144,7 @@ class ArgParser(argparse.ArgumentParser):
         self.add_default_argument(
             ["-p", "--pdf"],
             "CONVERT_TO_PDF",
-            help="Merge dewarped images into a PDF",
+            help="Merge images into a PDF",
         )
         self.add_default_argument(["-vw", "--max-screen-width"], "SCREEN_MAX_W")
         self.add_default_argument(["-vh", "--max-screen-height"], "SCREEN_MAX_H")
@@ -135,6 +171,7 @@ class ArgParser(argparse.ArgumentParser):
         self.add_default_argument(["-s", "--shrink"], "REMAP_DECIMATE")
 
     def __init__(self):
+        """Initialize the ArgParser, then parse and store CLI parameters."""
         super().__init__()
         # The config was read in already (`cfg` in `options.py`, which was imported)
         self.prepare_arguments()  # First set up the parser to read runtime parameters
@@ -144,6 +181,7 @@ class ArgParser(argparse.ArgumentParser):
 
     @snoop()
     def store_parsed_config(self):
+        """Write any parsed CLI options back into the global config."""
         for opt in self.config_map:
             # Redundant but thorough: any unchanged defaults will be reassigned
             configured_opt = getattr(self.parsed, opt)

@@ -1,3 +1,13 @@
+"""CLI entry point for the page-dewarp package.
+
+When invoked via `python -m page_dewarp`, this module:
+- Enforces the minimum supported Python version.
+- Parses command-line arguments.
+- Loads configuration settings.
+- Processes input images (e.g., dewarping, thresholding).
+- Optionally merges output images into a PDF.
+"""
+
 import msgspec
 from cv2 import namedWindow
 
@@ -8,6 +18,7 @@ from .options import Config
 from .pdf import save_pdf
 from .snoopy import snoop
 
+
 # for some reason pylint complains about cv2 members being undefined :(
 # pylint: disable=E1101
 
@@ -16,8 +27,10 @@ enforce_version()
 
 @snoop()
 def main():
+    """Parse CLI arguments, dewarp images, and optionally merge them into a PDF."""
     parser = ArgParser()
     config = msgspec.convert(parser.config_map, Config)
+
     if config.DEBUG_LEVEL > 0 and config.DEBUG_OUTPUT != "file":
         namedWindow("Dewarp")
 

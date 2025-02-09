@@ -1,10 +1,22 @@
+"""Spanning and keypoint logic for page dewarping.
+
+This module handles:
+- Determining candidate edges between adjacent contours to form "spans."
+- Grouping individual contours into spans.
+- Sampling keypoint positions along spans.
+- Computing overall orientation from those keypoints (to find x/y directions).
+- Visualizing spans and their keypoints.
+"""
+
 import numpy as np
 from cv2 import LINE_AA, PCACompute, circle, convexHull, drawContours, line, polylines
 
+from .contours import ContourInfo
 from .debug_utils import cCOLOURS, debug_show
 from .normalisation import norm2pix, pix2norm
 from .options import cfg
 from .simple_utils import fltp
+
 
 __all__ = [
     "angle_dist",
@@ -17,7 +29,11 @@ __all__ = [
 ]
 
 
-def angle_dist(angle_b, angle_a):
+def angle_dist(angle_b: float, angle_a: float) -> float:
+    """Compute the signed angular distance between two angles.
+
+    The distance is corrected to lie within [-π, π].
+    """
     diff = angle_b - angle_a
     while diff > np.pi:
         diff -= 2 * np.pi
@@ -26,16 +42,21 @@ def angle_dist(angle_b, angle_a):
     return np.abs(diff)
 
 
-def generate_candidate_edge(cinfo_a, cinfo_b):
-    """
-    We want a left of b (so a's successor will be b and b's
-    predecessor will be a). Make sure right endpoint of b is to the
-    right of left endpoint of a (swap them if not the case).
+def generate_candidate_edge(
+    cinfo_a: ContourInfo,
+    cinfo_b: ContourInfo,
+) -> tuple[float, ContourInfo, ContourInfo] | None:
+    """Compute a left-to-right candidate edge between two contours.
+
+    We want `cinfo_a` (left) to come before `cinfo_b` (right), so `cinfo_a`’s successor
+    is `cinfo_b` and `cinfo_b`’s predecessor is `cinfo_a`. Specifically, the right
+    endpoint of `cinfo_b` should be to the right of the left endpoint of `cinfo_a`.  If
+    not, we swap them. Then we compute how far apart they are, how much they overlap,
+    and how different their orientations are. If these checks pass certain thresholds,
+    we return `(score, cinfo_a, cinfo_b)`, otherwise `None`.
     """
     if cinfo_a.point0[0] > cinfo_b.point1[0]:
-        tmp = cinfo_a
-        cinfo_a = cinfo_b
-        cinfo_b = tmp
+        cinfo_a, cinfo_b = cinfo_b, cinfo_a
     x_overlap_a = cinfo_a.local_overlap(cinfo_b)
     x_overlap_b = cinfo_b.local_overlap(cinfo_a)
     overall_tangent = cinfo_b.center - cinfo_a.center
@@ -48,7 +69,7 @@ def generate_candidate_edge(cinfo_a, cinfo_b):
         * 180,
         np.pi,
     )
-    # we want the largest overlap in x to be small
+    # We want the largest overlap in x to be small
     x_overlap = max(x_overlap_a, x_overlap_b)
     dist = np.linalg.norm(cinfo_b.point0 - cinfo_a.point1)
     if not (
@@ -58,10 +79,33 @@ def generate_candidate_edge(cinfo_a, cinfo_b):
     ):
         score = dist + delta_angle * cfg.EDGE_ANGLE_COST
         return (score, cinfo_a, cinfo_b)
-    # else return None
+    return None
 
 
-def assemble_spans(name, small, pagemask, cinfo_list):
+def assemble_spans(
+    name: str,
+    small: np.ndarray,
+    pagemask: np.ndarray,
+    cinfo_list: list[ContourInfo],
+) -> list[list[ContourInfo]]:
+    """Assemble spans of contours from a list of ContourInfo objects.
+
+    A 'span' is a left-to-right chain of contours. We generate candidate edges,
+    sort them by a "score," and build spans by linking successors/predecessors.
+    Spans are retained only if their total width exceeds `SPAN_MIN_WIDTH`.
+
+    If DEBUG_LEVEL >= 2, the resulting spans are visualized.
+
+    Args:
+        name: A string identifier used for debug display.
+        small: A downsampled image (for visualization).
+        pagemask: A mask for the page region.
+        cinfo_list: A list of ContourInfo objects to link into spans.
+
+    Returns:
+        A list of spans, where each span is a list of ContourInfo objects.
+
+    """
     cinfo_list = sorted(cinfo_list, key=lambda cinfo: cinfo.rect[1])
     candidate_edges = []
     for i, cinfo_i in enumerate(cinfo_list):
@@ -70,37 +114,70 @@ def assemble_spans(name, small, pagemask, cinfo_list):
             edge = generate_candidate_edge(cinfo_i, cinfo_list[j])
             if edge is not None:
                 candidate_edges.append(edge)
+
     # Sort candidate edges by score (lower is better)
     candidate_edges.sort(key=lambda e: e[0])
+
     # TODO: implement comparison operators on ContourInfo class to permit tie breaking,
     # see: https://github.com/lmmx/page-dewarp/pull/6/
-    for _, cinfo_a, cinfo_b in candidate_edges:  # for each candidate edge
-        # if left and right are unassigned, join them
+
+    # Link contours using successor/predecessor
+    for _, cinfo_a, cinfo_b in candidate_edges:
+        # If both left and right are unassigned, join them
         if cinfo_a.succ is None and cinfo_b.pred is None:
             cinfo_a.succ = cinfo_b
             cinfo_b.pred = cinfo_a
+
+    # Build spans by walking from each "head" to the end
     spans = []
     while cinfo_list:
-        cinfo = cinfo_list[0]  # get the first on the list
+        # get the first on the list
+        cinfo = cinfo_list[0]
         # keep following predecessors until none exists
         while cinfo.pred:
             cinfo = cinfo.pred
-        cur_span = []  # start a new span
+
+        # start a new span
+        cur_span = []
         width = 0.0
-        while cinfo:  # follow successors til end of span
+        # follow successors til end of span
+        while cinfo:
             # remove from list (sadly making this loop *also* O(n^2)
             cinfo_list.remove(cinfo)
-            cur_span.append(cinfo)  # add to span
+            # add to span
+            cur_span.append(cinfo)
             width += cinfo.local_xrng[1] - cinfo.local_xrng[0]
-            cinfo = cinfo.succ  # set successor
+            # set successor
+            cinfo = cinfo.succ
+
+        # add if long enough
         if width > cfg.SPAN_MIN_WIDTH:
-            spans.append(cur_span)  # add if long enough
+            spans.append(cur_span)
+
     if cfg.DEBUG_LEVEL >= 2:
         visualize_spans(name, small, pagemask, spans)
+
     return spans
 
 
-def sample_spans(shape, spans):
+def sample_spans(
+    shape: tuple[int, int],
+    spans: list[list[ContourInfo]],
+) -> list[np.ndarray]:
+    """Extract regularly spaced keypoints from each span.
+
+    Within each contour's bounding rectangle, we measure the vertical average
+    of pixels in the contour's mask at certain horizontal steps. We then convert
+    all points to normalized coordinates.
+
+    Args:
+        shape: The (height, width) of the downsampled image.
+        spans: A list of spans, where each span is a list of ContourInfo objects.
+
+    Returns:
+        A list of arrays, each array containing the sampled points (in normalized coords).
+
+    """
     span_points = []
     for span in spans:
         contour_points = []
@@ -120,7 +197,33 @@ def sample_spans(shape, spans):
     return span_points
 
 
-def keypoints_from_samples(name, small, pagemask, page_outline, span_points):
+def keypoints_from_samples(
+    name: str,
+    small: np.ndarray,
+    pagemask: np.ndarray,
+    page_outline: np.ndarray,
+    span_points: list[np.ndarray],
+) -> tuple[np.ndarray, np.ndarray, list[np.ndarray]]:
+    """Compute page corner keypoints and local x/y directions from span samples.
+
+    Performs a PCA on the combined sample points to estimate a horizontal axis (x_dir).
+    The vertical axis (y_dir) is orthogonal to x_dir. Then computes the page's four
+    corners by projecting the page outline onto x_dir and y_dir, and forms a convex hull.
+
+    Args:
+        name: A string identifier for debugging.
+        small: Downsampled image (for optional visualization).
+        pagemask: Mask of the page region (for dimension references).
+        page_outline: The polygon outlining the page boundary (numpy array).
+        span_points: List of arrays of normalized keypoints from each span.
+
+    Returns:
+        A tuple `(corners, ycoords, xcoords)` where:
+            - `corners` is an (4,1,2) array of the page corners in normalized coords.
+            - `ycoords` is a 1D array of the average y-locations of each span.
+            - `xcoords` is a list of x-locations of each span's sample points.
+
+    """
     all_evecs = np.array([[0.0, 0.0]])
     all_weights = 0
     for points in span_points:
@@ -133,10 +236,12 @@ def keypoints_from_samples(name, small, pagemask, page_outline, span_points):
     if x_dir[0] < 0:
         x_dir = -x_dir
     y_dir = np.array([-x_dir[1], x_dir[0]])
+
     pagecoords = convexHull(page_outline)
     pagecoords = pix2norm(pagemask.shape, pagecoords.reshape((-1, 1, 2))).reshape(
         (-1, 2),
     )
+
     px_coords = np.dot(pagecoords, x_dir)
     py_coords = np.dot(pagecoords, y_dir)
     px0, px1 = px_coords.min(), px_coords.max()
@@ -146,6 +251,7 @@ def keypoints_from_samples(name, small, pagemask, page_outline, span_points):
     # [py0,py0,py1,py1] for second bit of p00,p10,p11,p01
     y_dir_coeffs = np.repeat([py0, py1], 2).reshape(-1, 1)
     corners = np.expand_dims((x_dir_coeffs * x_dir) + (y_dir_coeffs * y_dir), 1)
+
     xcoords, ycoords = [], []
     for points in span_points:
         pts = points.reshape((-1, 2))
@@ -157,7 +263,17 @@ def keypoints_from_samples(name, small, pagemask, page_outline, span_points):
     return corners, np.array(ycoords), xcoords
 
 
-def visualize_spans(name, small, pagemask, spans):
+def visualize_spans(
+    name: str,
+    small: np.ndarray,
+    pagemask: np.ndarray,
+    spans: list[list[ContourInfo]],
+) -> None:
+    """Render spans as colored regions for debugging.
+
+    Each span is drawn as a set of filled contours. The final image dims outside
+    the page mask.
+    """
     regions = np.zeros_like(small)
     for i, span in enumerate(spans):
         contours = [cinfo.contour for cinfo in span]
@@ -169,7 +285,17 @@ def visualize_spans(name, small, pagemask, spans):
     debug_show(name, 2, "spans", display)
 
 
-def visualize_span_points(name, small, span_points, corners):
+def visualize_span_points(
+    name: str,
+    small: np.ndarray,
+    span_points: list[np.ndarray],
+    corners: np.ndarray,
+) -> None:
+    """Draw keypoints from the spans and highlight the page corners.
+
+    Performs a quick PCA per span to show each span's approximate orientation axis.
+    The final page corners are polylined in white.
+    """
     display = small.copy()
     for i, points in enumerate(span_points):
         points = norm2pix(small.shape, points, False)

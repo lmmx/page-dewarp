@@ -1,0 +1,125 @@
+site_name: Page Dewarp
+site_author: Louis Maddox
+site_description: >-
+  Document image dewarping library using a cubic sheet model
+site_url: https://page-dewarp.readthedocs.io/
+repo_name: lmmx/page-dewarp
+repo_url: https://github.com/lmmx/page-dewarp
+strict: true
+watch: [src]
+
+extra_css:
+  - stylesheets/extra.css
+
+theme:
+  name: material
+  custom_dir: docs/theme
+  palette:
+    - scheme: default
+      primary: white
+  icon:
+    repo: fontawesome/brands/github
+  features:
+    - announce.dismiss
+    - content.tabs.link
+    - content.code.annotate
+    - content.code.copy
+    - header.autohide
+    - navigation.indexes
+    - navigation.instant
+    - navigation.instant.progress
+    - navigation.prune
+    - navigation.tabs
+    - navigation.tabs.sticky
+    - navigation.sections
+    - search
+    - search.suggest
+  font:
+    text: Inter
+    code: Source Code Pro
+
+extra:
+  social:
+    - icon: fontawesome/brands/github
+      link: https://github.com/lmmx
+  generator: false
+
+markdown_extensions:
+  - admonition
+  - attr_list
+  - md_in_html
+  - pymdownx.blocks.definition
+  - pymdownx.details
+  - pymdownx.emoji:
+      emoji_index: !!python/name:material.extensions.emoji.twemoji
+      emoji_generator: !!python/name:material.extensions.emoji.to_svg
+  - pymdownx.highlight:
+      anchor_linenums: true
+      line_spans: __span
+      pygments_lang_class: true
+      noclasses: true
+      pygments_style: lovelace
+  - pymdownx.inlinehilite
+  - pymdownx.magiclink:
+      repo_url_shortener: true
+      normalize_issue_symbols: true
+  - pymdownx.snippets:
+      check_paths: true
+  - pymdownx.superfences
+  - pymdownx.tasklist:
+      custom_checkbox: true
+  - toc:
+      permalink: true
+
+plugins:
+  - autorefs
+  - extra-sass
+  - mkdocstrings:
+      default_handler: python
+      handlers:
+        python:
+          paths: [src/*/]
+          options:
+            members_order: source
+            separate_signature: true
+            filters: ["!^_"]
+            docstring_options:
+              ignore_init_summary: true
+            merge_init_into_class: true
+            line_length: 88
+            show_root_full_path: false
+            show_root_toc_entry: false
+            show_source: true
+            show_submodules: true
+            show_signature_annotations: true
+  - search
+  - section-index
+  - social:
+      cards_layout_options:
+        color: "#de0"
+
+nav:
+  - Home: index.md
+  - Getting Started: get_started.md
+  - Changelog: changelog.md
+  - API Reference:
+      - api/index.md
+      - "check_version": api/check_version.md
+      - "cli": api/cli.md
+      - "colours": api/colours.md
+      - "contours": api/contours.md
+      - "core": api/core.md
+      - "dewarp": api/dewarp.md
+      - "image": api/image.md
+      - "k_opt": api/k_opt.md
+      - "keypoints": api/keypoints.md
+      - "mask": api/mask.md
+      - "normalisation": api/normalisation.md
+      - "optimise": api/optimise.md
+      - "pdf": api/pdf.md
+      - "projection": api/projection.md
+      - "simple_utils": api/simple_utils.md
+      - "snoopy": api/snoopy.md
+      - "solve": api/solve.md
+      - "spans": api/spans.md
+      - "viewer": api/viewer.md

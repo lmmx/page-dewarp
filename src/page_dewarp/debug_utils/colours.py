@@ -1,4 +1,8 @@
-# nice color palette for visualizing contours, etc.
+"""Colour definitions for debugging overlays.
+
+Provides a palette of colours for contour and span visualisation.
+"""
+
 cCOLOURS = [
     (255, 0, 0),
     (255, 63, 0),

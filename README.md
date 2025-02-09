@@ -23,6 +23,14 @@ To install from PyPI, optionally using [uv](https://docs.astral.sh/uv/) (recomme
 
 Python 3.9+ and NumPy, SciPy, SymPy, Matplotlib, OpenCV, and msgspec are required to run `page-dewarp`.
 
+### Note
+
+- https://github.com/mkdocs/mkdocs/issues/2276
+- https://github.com/lmmx/page-dewarp/commit/19584f44717f815d64a2c3f162a7144f28760b22
+- https://github.com/lmmx/page-dewarp/pull/51
+- https://github.com/pola-rs/polars/issues/13233
+- https://github.com/pydantic/pydantic/discussions/9412
+
 ## Background
 
 This library was renovated from the [original (2016) Python 2 script](https://github.com/mzucker/page_dewarp/)
@@ -115,7 +123,8 @@ page-dewarp ../example_input/boston_cooking_a.jpg
 ## Explanation and extension to Gpufit
 
 A book on a flat surface can be said to be 'fixed to zero' at the endpoints of a curve, which
-you can model as a cubic (see [`derive_cubic.py`](derive_cubic.py))
+you can model as a cubic (see
+[`derive_cubic.py`](https://github.com/lmmx/page-dewarp/blob/master/derive_cubic.py))
 
 The "cubic Hermite spline" is one of the models supported by
 [Gpufit](https://github.com/gpufit/Gpufit/), a library for Levenberg Marquardt curve fitting in

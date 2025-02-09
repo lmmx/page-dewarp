@@ -1,4 +1,11 @@
+"""Python version enforcement for page_dewarp.
+
+This module checks the running Python version, and exits if it is below
+the minimum supported version (3.9).
+"""
+
 import sys
+
 
 __all__ = ("enforce_version",)
 
