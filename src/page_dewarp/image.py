@@ -9,6 +9,7 @@ This module includes:
 
 from __future__ import annotations
 
+from typing import List, Optional, Tuple, Union
 from pathlib import Path
 
 import numpy as np
@@ -24,17 +25,22 @@ from .options import Config
 from .projection import project_xy
 from .solve import get_default_params
 from .spans import assemble_spans, keypoints_from_samples, sample_spans
+from .contours import ContourInfo
 
 __all__ = ["imgsize", "get_page_dims", "WarpedImage"]
 
 
-def imgsize(img):
+def imgsize(img: np.ndarray) -> str:
     """Return a string formatted as 'widthxheight' for the given image array."""
     height, width = img.shape[:2]
     return f"{width}x{height}"
 
 
-def get_page_dims(corners, rough_dims, params):
+def get_page_dims(
+    corners: np.ndarray,
+    rough_dims: Union[np.ndarray, list],
+    params: np.ndarray,
+) -> np.ndarray:
     """Optimize final page dimensions using a cubic polynomial model.
 
     Args:
@@ -69,7 +75,7 @@ class WarpedImage:
     written = False  # Explicitly declare the file-write attribute
     config: Config
 
-    def __init__(self, imgfile: str | Path, config: Config = Config()):
+    def __init__(self, imgfile: Union[str, Path], config: Config = Config()) -> None:
         """Initialize the WarpedImage with a source file and configuration.
 
         Args:
@@ -129,7 +135,7 @@ class WarpedImage:
             self.threshold(page_dims, params)
             self.written = True
 
-    def threshold(self, page_dims, params):
+    def threshold(self, page_dims: np.ndarray, params: np.ndarray) -> None:
         """Construct a dewarped, thresholded image using the RemappedImage class.
 
         Args:
@@ -147,7 +153,7 @@ class WarpedImage:
         )
         self.outfile = remap.threshfile
 
-    def iteratively_assemble_spans(self):
+    def iteratively_assemble_spans(self) -> list:
         """Assemble spans from contours; fallback to line detection if too few are found.
 
         First tries text contours to assemble spans. If fewer than three spans are found,
@@ -162,7 +168,7 @@ class WarpedImage:
             spans = self.attempt_reassemble_spans(spans)
         return spans
 
-    def attempt_reassemble_spans(self, prev_spans):
+    def attempt_reassemble_spans(self, prev_spans: list) -> list:
         """Attempt line-based re-assembly of spans, returning whichever set is larger.
 
         Args:
@@ -181,16 +187,16 @@ class WarpedImage:
         return new_spans if len(new_spans) > len(prev_spans) else prev_spans
 
     @property
-    def basename(self):
+    def basename(self) -> str:
         """Return the filename (with extension) of the loaded image."""
         return self.file_path.name
 
     @property
-    def stem(self):
+    def stem(self) -> str:
         """Return the filename (without extension) of the loaded image."""
         return self.file_path.stem
 
-    def resize_to_screen(self, copy=False):
+    def resize_to_screen(self, copy: bool = False) -> np.ndarray:
         """Downsample the loaded image to fit within SCREEN_MAX_W/H if needed.
 
         Args:
@@ -215,7 +221,7 @@ class WarpedImage:
             img = self.cv2_img
         return img
 
-    def calculate_page_extents(self):
+    def calculate_page_extents(self) -> None:
         """Create a mask for the page region, ignoring margins around the edges."""
         height, width = self.small.shape[:2]
         xmin = self.config.PAGE_MARGIN_X
@@ -228,16 +234,16 @@ class WarpedImage:
         )
 
     @property
-    def size(self):
+    def size(self) -> str:
         """Return a formatted string 'widthxheight' for the original (full) image."""
         return imgsize(self.cv2_img)
 
     @property
-    def resized(self):
+    def resized(self) -> str:
         """Return a formatted string 'widthxheight' for the downsampled (small) image."""
         return imgsize(self.small)
 
-    def contour_info(self, text=True):
+    def contour_info(self, text: bool = True) -> List[ContourInfo]:
         """Compute contour information for either text or line detection.
 
         Args:

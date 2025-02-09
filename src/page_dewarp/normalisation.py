@@ -5,12 +5,14 @@ This module provides:
 - `norm2pix`: Convert normalized coordinates back into pixel coordinates.
 """
 
+from typing import Union, Tuple
+
 import numpy as np
 
 __all__ = ["pix2norm", "norm2pix"]
 
 
-def pix2norm(shape, pts):
+def pix2norm(shape: Tuple[int, int], pts: np.ndarray) -> np.ndarray:
     """Convert image-space coordinates to normalized coordinates.
 
     Args:
@@ -28,7 +30,7 @@ def pix2norm(shape, pts):
     return (pts - offset) * scl
 
 
-def norm2pix(shape, pts, as_integer):
+def norm2pix(shape: Tuple[int, int], pts: np.ndarray, as_integer: bool) -> np.ndarray:
     """Convert normalized coordinates to image-space pixel coordinates.
 
     Args:

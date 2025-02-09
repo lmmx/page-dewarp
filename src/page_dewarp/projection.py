@@ -5,6 +5,8 @@ This module provides a `project_xy` function, which:
 - Uses OpenCV's `projectPoints` to map the resulting 3D points into image coordinates.
 """
 
+from typing import Union
+
 import numpy as np
 from cv2 import projectPoints
 
@@ -14,7 +16,7 @@ from .options.k_opt import K
 __all__ = ["project_xy"]
 
 
-def project_xy(xy_coords, pvec):
+def project_xy(xy_coords: np.ndarray, pvec: np.ndarray) -> np.ndarray:
     """Get cubic polynomial coefficients for the specified boundary conditions.
 
     f(0) = 0, f'(0) = alpha

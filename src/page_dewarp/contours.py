@@ -1,14 +1,6 @@
-"""Contour detection and processing utilities for page-dewarp.
-
-This module provides:
-- A function to compute a blob's centroid and principal orientation
-  (`blob_mean_and_tangent`).
-- A helper to measure the overlap of intervals (`interval_measure_overlap`).
-- A `ContourInfo` class with properties for local coordinate geometry.
-- Several functions to build masks, gather and visualize contours.
-"""
-
 from __future__ import annotations
+
+from typing import List, Optional, Tuple
 
 import numpy as np
 from cv2 import (
@@ -40,7 +32,7 @@ __all__ = [
 
 
 @snoop()
-def blob_mean_and_tangent(contour) -> tuple[float, float] | None:
+def blob_mean_and_tangent(contour: np.ndarray) -> Optional[Tuple[np.ndarray, np.ndarray]]:
     """Compute the centroid and principal orientation of a contour.
 
     Constructs the blob image's covariance matrix from second-order central moments
@@ -80,7 +72,7 @@ def blob_mean_and_tangent(contour) -> tuple[float, float] | None:
         return None
 
 
-def interval_measure_overlap(int_a, int_b):
+def interval_measure_overlap(int_a: Tuple[float, float], int_b: Tuple[float, float]) -> float:
     """Return the overlap length of two 1D intervals.
 
     Each interval is given as (start, end). The overlap is computed as:
@@ -100,7 +92,13 @@ def interval_measure_overlap(int_a, int_b):
 class ContourInfo:
     """Holds geometric and orientation data about a single contour."""
 
-    def __init__(self, contour, moments, rect, mask):
+    def __init__(
+        self,
+        contour: np.ndarray,
+        moments: Tuple[np.ndarray, np.ndarray],
+        rect: Tuple[int, int, int, int],
+        mask: np.ndarray,
+    ) -> None:
         """Initialize a contour's geometry, orientation, bounding rect, and mask.
 
         Args:
@@ -132,14 +130,14 @@ class ContourInfo:
             f"center={self.center}, tangent={self.tangent}, angle={self.angle}"
         )
 
-    def proj_x(self, point):
+    def proj_x(self, point: np.ndarray) -> float:
         """Compute the scalar projection of a point onto this contour's tangent axis.
 
         The tangent axis is defined by `self.center` and `self.tangent`.
         """
         return np.dot(self.tangent, point.flatten() - self.center)
 
-    def local_overlap(self, other):
+    def local_overlap(self, other: ContourInfo) -> float:
         """Compute the overlap of this contour's local axis range with another contour's.
 
         Args:
@@ -154,7 +152,13 @@ class ContourInfo:
         return interval_measure_overlap(self.local_xrng, (xmin, xmax))
 
 
-def make_tight_mask(contour, xmin, ymin, width, height):
+def make_tight_mask(
+    contour: np.ndarray,
+    xmin: int,
+    ymin: int,
+    width: int,
+    height: int,
+) -> np.ndarray:
     """Create a minimal binary mask for a contour.
 
     The mask is cropped to the bounding rectangle `(xmin, ymin, width, height)`.
@@ -180,7 +184,7 @@ def make_tight_mask(contour, xmin, ymin, width, height):
     return tight_mask
 
 
-def get_contours(name, small, mask):
+def get_contours(name: str, small: np.ndarray, mask: np.ndarray) -> List[ContourInfo]:
     """Detect and filter contours in a binary mask, returning their ContourInfo objects.
 
     This function finds external contours, filters them by size/aspect,
@@ -219,7 +223,7 @@ def get_contours(name, small, mask):
     return contours_out
 
 
-def visualize_contours(name, small, cinfo_list):
+def visualize_contours(name: str, small: np.ndarray, cinfo_list: List[ContourInfo]) -> None:
     """Overlay colored contours on a copy of the image for debugging or inspection.
 
     Each contour is filled with a unique color. The center and principal axis are

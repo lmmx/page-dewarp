@@ -11,7 +11,7 @@ from .core import Config
 __all__ = ("K",)
 
 
-def K(cfg: Config):
+def K(cfg: Config) -> np.ndarray:
     """Return the default intrinsic parameter matrix, derived from `cfg.FOCAL_LENGTH`.
 
     Args:

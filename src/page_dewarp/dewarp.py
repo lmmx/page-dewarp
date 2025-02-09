@@ -6,6 +6,8 @@ This module provides:
   rectified, thresholded output using a cubic parameterization of the page.
 """
 
+from typing import Union
+
 import numpy as np
 from cv2 import (
     ADAPTIVE_THRESH_MEAN_C,
@@ -29,7 +31,7 @@ from .projection import project_xy
 __all__ = ["round_nearest_multiple", "RemappedImage"]
 
 
-def round_nearest_multiple(i, factor):
+def round_nearest_multiple(i: int, factor: int) -> int:
     """Round an integer `i` up to the nearest multiple of `factor`.
 
     If `i` is already a multiple of `factor`, it remains unchanged;
@@ -52,7 +54,15 @@ class RemappedImage:
 
     """
 
-    def __init__(self, name, img, small, page_dims, params, config: Config = Config()):
+    def __init__(
+        self,
+        name: str,
+        img: np.ndarray,
+        small: np.ndarray,
+        page_dims: Union[list, np.ndarray],
+        params: np.ndarray,
+        config: Config = Config(),
+    ) -> None:
         """Initialize the remapping process and save the thresholded image.
 
         Args:

@@ -3,10 +3,12 @@
 Currently provides a small helper (`fltp`) to flatten integer coordinates.
 """
 
+import numpy as np
+
 __all__ = ["fltp"]
 
 
-def fltp(point):
+def fltp(point: np.ndarray) -> tuple[int, int]:
     """Flatten and convert a NumPy coordinate to an (x, y) integer tuple.
 
     Args:

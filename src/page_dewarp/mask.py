@@ -7,6 +7,8 @@ This module provides:
 - An interface to retrieve the final contours from this mask.
 """
 
+from typing import List, Union
+
 import numpy as np
 from cv2 import (
     ADAPTIVE_THRESH_MEAN_C,
@@ -18,14 +20,14 @@ from cv2 import (
     erode,
 )
 
-from .contours import get_contours
+from .contours import ContourInfo, get_contours
 from .debug_utils import debug_show
 from .options import cfg
 
 __all__ = ["box", "Mask"]
 
 
-def box(width, height):
+def box(width: int, height: int) -> np.ndarray:
     """Return a structuring element of ones with shape (height, width).
 
     Used in morphological operations (e.g., dilate, erode).
@@ -40,7 +42,13 @@ class Mask:
     a given `pagemask` to produce the final mask used for contour extraction.
     """
 
-    def __init__(self, name, small, pagemask, text=True):
+    def __init__(
+        self,
+        name: str,
+        small: np.ndarray,
+        pagemask: np.ndarray,
+        text: Union[bool, str] = True,
+    ) -> None:
         """Initialize the Mask with the given image data and type.
 
         Args:
@@ -56,7 +64,7 @@ class Mask:
         self.text = text
         self.calculate()
 
-    def calculate(self):
+    def calculate(self) -> None:
         """Apply adaptive thresholding and morphological ops to create `self.value`.
 
         Steps:
@@ -90,7 +98,7 @@ class Mask:
 
         self.value = np.minimum(mask, self.pagemask)
 
-    def log(self, step, text, display):
+    def log(self, step: float, text: str, display: np.ndarray) -> None:
         """Optionally display or log the intermediate mask state at a given step.
 
         Args:
@@ -105,7 +113,7 @@ class Mask:
                 step += 0.3
             debug_show(self.name, step, text, display)
 
-    def contours(self):
+    def contours(self) -> List[ContourInfo]:
         """Extract the final contours from `self.value`.
 
         Calls `get_contours` to find external contours in the thresholded,

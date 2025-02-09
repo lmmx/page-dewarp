@@ -4,10 +4,12 @@ Currently, we only print instructions for using ImageMagick,
 as PDF merging is not yet fully implemented.
 """
 
+from typing import List
+
 __all__ = ["save_pdf"]
 
 
-def save_pdf(outfiles):
+def save_pdf(outfiles: List[str]) -> None:
     """Print a command-line hint for merging images into a PDF.
 
     Args:

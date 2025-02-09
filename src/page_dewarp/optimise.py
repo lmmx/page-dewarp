@@ -6,6 +6,8 @@ This module provides:
   to refine the parameter vector for page dewarping.
 """
 
+from typing import List
+
 from datetime import datetime as dt
 
 import numpy as np
@@ -20,7 +22,7 @@ from .simple_utils import fltp
 __all__ = ["draw_correspondences", "optimise_params"]
 
 
-def draw_correspondences(img, dstpoints, projpts):
+def draw_correspondences(img: np.ndarray, dstpoints: np.ndarray, projpts: np.ndarray) -> np.ndarray:
     """Draw matching points (projected vs. desired) on a copy of the image.
 
     Args:
@@ -43,7 +45,14 @@ def draw_correspondences(img, dstpoints, projpts):
     return display
 
 
-def optimise_params(name, small, dstpoints, span_counts, params, debug_lvl):
+def optimise_params(
+    name: str,
+    small: np.ndarray,
+    dstpoints: np.ndarray,
+    span_counts: List[int],
+    params: np.ndarray,
+    debug_lvl: int,
+) -> np.ndarray:
     """Refine the parameter vector (params) for page dewarping via optimization.
 
     Uses scipy's Powell method to minimize the squared distance between
@@ -63,7 +72,7 @@ def optimise_params(name, small, dstpoints, span_counts, params, debug_lvl):
     """
     keypoint_index = make_keypoint_index(span_counts)
 
-    def objective(pvec):
+    def objective(pvec: np.ndarray) -> float:
         ppts = project_keypoints(pvec, keypoint_index)
         return np.sum((dstpoints - ppts) ** 2)
 

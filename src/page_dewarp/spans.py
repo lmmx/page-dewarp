@@ -8,9 +8,12 @@ This module handles:
 - Visualizing spans and their keypoints.
 """
 
+from typing import List, Tuple
+
 import numpy as np
 from cv2 import LINE_AA, PCACompute, circle, convexHull, drawContours, line, polylines
 
+from .contours import ContourInfo
 from .debug_utils import cCOLOURS, debug_show
 from .normalisation import norm2pix, pix2norm
 from .options import cfg
@@ -27,7 +30,7 @@ __all__ = [
 ]
 
 
-def angle_dist(angle_b, angle_a):
+def angle_dist(angle_b: float, angle_a: float) -> float:
     """Compute the signed angular distance between two angles.
 
     The distance is corrected to lie within [-π, π].
@@ -40,7 +43,9 @@ def angle_dist(angle_b, angle_a):
     return np.abs(diff)
 
 
-def generate_candidate_edge(cinfo_a, cinfo_b):
+def generate_candidate_edge(
+    cinfo_a: ContourInfo, cinfo_b: ContourInfo
+) -> Tuple[float, ContourInfo, ContourInfo] | None:
     """Compute a left-to-right candidate edge between two contours.
 
     We want `cinfo_a` (left) to come before `cinfo_b` (right), so `cinfo_a`’s successor
@@ -77,7 +82,12 @@ def generate_candidate_edge(cinfo_a, cinfo_b):
     return None
 
 
-def assemble_spans(name, small, pagemask, cinfo_list):
+def assemble_spans(
+    name: str,
+    small: np.ndarray,
+    pagemask: np.ndarray,
+    cinfo_list: List[ContourInfo],
+) -> List[List[ContourInfo]]:
     """Assemble spans of contours from a list of ContourInfo objects.
 
     A 'span' is a left-to-right chain of contours. We generate candidate edges,
@@ -150,7 +160,9 @@ def assemble_spans(name, small, pagemask, cinfo_list):
     return spans
 
 
-def sample_spans(shape, spans):
+def sample_spans(
+    shape: Tuple[int, int], spans: List[List[ContourInfo]]
+) -> List[np.ndarray]:
     """Extract regularly spaced keypoints from each span.
 
     Within each contour's bounding rectangle, we measure the vertical average
@@ -184,7 +196,13 @@ def sample_spans(shape, spans):
     return span_points
 
 
-def keypoints_from_samples(name, small, pagemask, page_outline, span_points):
+def keypoints_from_samples(
+    name: str,
+    small: np.ndarray,
+    pagemask: np.ndarray,
+    page_outline: np.ndarray,
+    span_points: List[np.ndarray],
+) -> Tuple[np.ndarray, np.ndarray, List[np.ndarray]]:
     """Compute page corner keypoints and local x/y directions from span samples.
 
     Performs a PCA on the combined sample points to estimate a horizontal axis (x_dir).
@@ -244,7 +262,12 @@ def keypoints_from_samples(name, small, pagemask, page_outline, span_points):
     return corners, np.array(ycoords), xcoords
 
 
-def visualize_spans(name, small, pagemask, spans):
+def visualize_spans(
+    name: str,
+    small: np.ndarray,
+    pagemask: np.ndarray,
+    spans: List[List[ContourInfo]],
+) -> None:
     """Render spans as colored regions for debugging.
 
     Each span is drawn as a set of filled contours. The final image dims outside
@@ -261,7 +284,12 @@ def visualize_spans(name, small, pagemask, spans):
     debug_show(name, 2, "spans", display)
 
 
-def visualize_span_points(name, small, span_points, corners):
+def visualize_span_points(
+    name: str,
+    small: np.ndarray,
+    span_points: List[np.ndarray],
+    corners: np.ndarray,
+) -> None:
     """Draw keypoints from the spans and highlight the page corners.
 
     Performs a quick PCA per span to show each span's approximate orientation axis.
