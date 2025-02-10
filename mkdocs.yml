@@ -101,7 +101,7 @@ plugins:
 nav:
   - Home: index.md
   - Getting Started: get_started.md
-  - Changelog: changelog.md
+  # - Changelog: changelog.md
   - API Reference:
       - api/index.md
       - "check_version": api/check_version.md
