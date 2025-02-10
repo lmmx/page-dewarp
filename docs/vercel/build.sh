@@ -1,5 +1,5 @@
 #!/bin/bash
-set -e
+set -ex
 
 # 1) Reactivate the same uv-managed venv.
 #    (On Vercel, your workspace is ephemeral between these steps,
@@ -10,4 +10,4 @@ source .venv/bin/activate
 python --version
 
 # 3) Build the docs site with MkDocs:
-uv run mkdocs build
+mkdocs build

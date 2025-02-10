@@ -1,5 +1,5 @@
 #!/bin/bash
-set -e
+set -ex
 
 # 1) Ensure wget is available (Vercel's Amazon Linux images may not include it by default).
 yum install -y wget
