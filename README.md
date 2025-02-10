@@ -4,6 +4,7 @@
 [![pdm-managed](https://img.shields.io/badge/pdm-managed-blueviolet)](https://pdm.fming.dev)
 [![PyPI](https://img.shields.io/pypi/v/page-dewarp.svg)](https://pypi.org/projects/page-dewarp)
 [![Supported Python versions](https://img.shields.io/pypi/pyversions/page-dewarp.svg)](https://pypi.org/project/page-dewarp)
+[![downloads](https://static.pepy.tech/badge/page-dewarp/month)](https://pepy.tech/project/page-dewarp)
 [![License](https://img.shields.io/pypi/l/page-dewarp.svg)](https://pypi.python.org/pypi/page-dewarp)
 [![pre-commit.ci status](https://results.pre-commit.ci/badge/github/lmmx/page-dewarp/master.svg)](https://results.pre-commit.ci/latest/github/lmmx/page-dewarp/master)
 
@@ -16,20 +17,16 @@ Python 3 library for page dewarping and thresholding,
 
 To install from PyPI, optionally using [uv](https://docs.astral.sh/uv/) (recommended), run:
 
-- `uv pip install page-dewarp` (recommended)
-- or `pip install page-dewarp`
+- `pip install page-dewarp`
+- or `uv pip install page-dewarp` (recommended)
 
 ## Dependencies
 
 Python 3.9+ and NumPy, SciPy, SymPy, Matplotlib, OpenCV, and msgspec are required to run `page-dewarp`.
 
-### Note
+## Help
 
-- https://github.com/mkdocs/mkdocs/issues/2276
-- https://github.com/lmmx/page-dewarp/commit/19584f44717f815d64a2c3f162a7144f28760b22
-- https://github.com/lmmx/page-dewarp/pull/51
-- https://github.com/pola-rs/polars/issues/13233
-- https://github.com/pydantic/pydantic/discussions/9412
+See [documentation](https://page-dewarp.vercel.app) for more details.
 
 ## Background
 
