@@ -40,7 +40,7 @@ license = {text = "MIT"}
 name = "page-dewarp"
 readme = "README.md"
 requires-python = ">=3.9"
-version = "0.1.6"
+version = "0.1.7"
 
 [project.optional-dependencies]
 dev = [
@@ -77,7 +77,7 @@ Repository = "https://github.com/lmmx/page-dewarp.git"
 known_first_party = ["page_dewarp"]
 
 [tool.pdm]
-package-type = "application"
+distribution = false
 
 [tool.pdm.dev-dependencies]
 test = [
@@ -92,9 +92,6 @@ version = "bash news/scripts/get_version.sh"
 write-all-news = "bash news/scripts/version_based_changelog.sh all"
 write-news = "bash news/scripts/version_based_changelog.sh next"
 
-# ------------------------------------------------------------------------------
-# Ruff config moved under [tool.ruff.lint] to avoid deprecation warnings
-# ------------------------------------------------------------------------------
 [tool.ruff]
 
 [tool.ruff.lint]
@@ -172,3 +169,7 @@ showcontent = true
 directory = "misc"
 name = "Miscellany"
 showcontent = true
+
+# ------------------------------------------------------------------------------
+# Ruff config moved under [tool.ruff.lint] to avoid deprecation warnings
+# ------------------------------------------------------------------------------
