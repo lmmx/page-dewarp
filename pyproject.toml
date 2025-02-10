@@ -77,7 +77,7 @@ Repository = "https://github.com/lmmx/page-dewarp.git"
 known_first_party = ["page_dewarp"]
 
 [tool.pdm]
-distribution = false
+distribution = true
 
 [tool.pdm.dev-dependencies]
 test = [
