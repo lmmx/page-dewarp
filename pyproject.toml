@@ -66,9 +66,9 @@ docs = [
 page-dewarp = "page_dewarp.__main__:main"
 
 [project.urls]
+Documentation = "https://page-dewarp.vercel.app/"
 Homepage = "https://github.com/lmmx/page-dewarp"
 Repository = "https://github.com/lmmx/page-dewarp.git"
-Documentation = "https://page-dewarp.vercel.app/"
 
 # ------------------------------------------------------------------------------
 # If you still use isort as a standalone (outside Ruff), keep [tool.isort].
