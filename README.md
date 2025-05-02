@@ -22,7 +22,7 @@ To install from PyPI, optionally using [uv](https://docs.astral.sh/uv/) (recomme
 
 ## Dependencies
 
-Python 3.9+ and NumPy, SciPy, SymPy, Matplotlib, OpenCV, and msgspec are required to run `page-dewarp`.
+Python 3.10+ and NumPy, SciPy, SymPy, Matplotlib, OpenCV, and msgspec are required to run `page-dewarp`.
 
 ## Help
 
