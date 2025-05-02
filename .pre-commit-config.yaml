@@ -7,6 +7,11 @@ default_install_hook_types:
   - commit-msg
 
 repos:
+  - repo: https://github.com/lmmx/just-pre-commit
+    rev: v0.5.3
+    hooks:
+      - id: run-just-rust
+        args: ['precommit']
   - repo: https://github.com/compilerla/conventional-pre-commit
     rev: v4.0.0
     hooks:
@@ -16,21 +21,8 @@ repos:
   - repo: https://github.com/pre-commit/pre-commit-hooks
     rev: v5.0.0
     hooks:
-      - id: check-toml
-      - id: check-yaml
-        exclude: ^mkdocs.yml
       - id: debug-statements
-      - id: end-of-file-fixer
       - id: name-tests-test
-      - id: trailing-whitespace
-  - repo: https://github.com/pappasam/toml-sort
-    rev: v0.24.2
-    hooks:
-      - id: toml-sort-fix
-  - repo: https://github.com/asottile/add-trailing-comma
-    rev: v3.1.0
-    hooks:
-      - id: add-trailing-comma
   - repo: https://github.com/asottile/pyupgrade
     rev: v3.19.1
     hooks:

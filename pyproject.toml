@@ -3,40 +3,38 @@ build-backend = "pdm.backend"
 requires = ["pdm-backend"]
 
 [project]
-authors = [
-    {email = "louismmx@gmail.com", name = "Louis Maddox"},
-]
+authors = [{ email = "louismmx@gmail.com", name = "Louis Maddox" }]
 classifiers = [
-    "Development Status :: 6 - Mature",
-    "License :: OSI Approved :: MIT License",
-    "Operating System :: OS Independent",
-    "Programming Language :: Python :: 3.10",
-    "Programming Language :: Python :: 3.11",
-    "Programming Language :: Python :: 3.12",
-    "Programming Language :: Python :: 3.13",
-    "Programming Language :: Python :: 3.9",
-    "Topic :: Multimedia :: Graphics :: Graphics Conversion",
-    "Topic :: Scientific/Engineering :: Image Processing",
+  "Development Status :: 6 - Mature",
+  "License :: OSI Approved :: MIT License",
+  "Operating System :: OS Independent",
+  "Programming Language :: Python :: 3.10",
+  "Programming Language :: Python :: 3.11",
+  "Programming Language :: Python :: 3.12",
+  "Programming Language :: Python :: 3.13",
+  "Programming Language :: Python :: 3.9",
+  "Topic :: Multimedia :: Graphics :: Graphics Conversion",
+  "Topic :: Scientific/Engineering :: Image Processing",
 ]
 dependencies = [
-    # NumPy 1.25+ requires Python >= 3.9
-    "matplotlib",
-    "msgspec>=0.18.6",
-    "numpy>1.25",
-    "opencv-python",
-    "scipy",
-    "sympy",
+  # NumPy 1.25+ requires Python >= 3.9
+  "matplotlib",
+  "msgspec>=0.18.6",
+  "numpy>1.25",
+  "opencv-python",
+  "scipy",
+  "sympy",
 ]
 description = "Page dewarping and thresholding using a cubic sheet model."
 keywords = [
-    "computer vision",
-    "cubic spline",
-    "dewarping",
-    "document scanning",
-    "image correction",
-    "image processing",
+  "computer vision",
+  "cubic spline",
+  "dewarping",
+  "document scanning",
+  "image correction",
+  "image processing",
 ]
-license = {text = "MIT"}
+license = { text = "MIT" }
 name = "page-dewarp"
 readme = "README.md"
 requires-python = ">=3.9"
@@ -44,22 +42,22 @@ version = "0.1.9"
 
 [project.optional-dependencies]
 dev = [
-    "pdm-bump>=0.9.10",
-    "pdm>=2.22.3",
-    "pre-commit>=4.1.0",
-    "pysnooper>=1.2.0",
-    "pytest>=8.3.2",
-    "towncrier>=24.8.0",
+  "pdm-bump>=0.9.10",
+  "pdm>=2.22.3",
+  "pre-commit>=4.1.0",
+  "pysnooper>=1.2.0",
+  "pytest>=8.3.2",
+  "towncrier>=24.8.0",
 ]
 docs = [
-    "livereload>=2.7.1",
-    "mkdocs-extra-sass-mathshim>=0.1.0",
-    "mkdocs-material[recommended,imaging]>=9.5.2",
-    "mkdocs-section-index>=0.3.8",
-    "mkdocs>=1.5.3",
-    "mkdocstrings[python]>=0.24.0",
-    "ruff>=0.9.5",
-    "urllib3<2",
+  "livereload>=2.7.1",
+  "mkdocs-extra-sass-mathshim>=0.1.0",
+  "mkdocs-material[recommended,imaging]>=9.5.2",
+  "mkdocs-section-index>=0.3.8",
+  "mkdocs>=1.5.3",
+  "mkdocstrings[python]>=0.24.0",
+  "ruff>=0.9.5",
+  "urllib3<2",
 ]
 
 [project.scripts]
@@ -81,9 +79,7 @@ known_first_party = ["page_dewarp"]
 distribution = true
 
 [tool.pdm.dev-dependencies]
-test = [
-    "pytest>=7.4.0",
-]
+test = ["pytest>=7.4.0"]
 
 [tool.pdm.scripts]
 build-news = "bash news/scripts/build_changelog.sh"
@@ -96,7 +92,7 @@ write-news = "bash news/scripts/version_based_changelog.sh next"
 [tool.ruff]
 
 [tool.ruff.lint]
-ignore = ["C408", "C901", "E501", "E722", "E741"]
+ignore = ["C408", "C901", "D203", "D213", "E501", "E722", "E741"]
 # Removed deprecated `ignore-init-module-imports`.
 select = ["C", "D", "E", "F", "I", "UP", "W"]
 
