@@ -46,8 +46,8 @@ def generate_candidate_edge(cinfo_a, cinfo_b):
     # else return None
 ```
 
-- `cinfo_a.point0[0]` refers to the x coordinate of the leftmost point of the contour `cinfo_a`
-- `cinfo_b.point1[0]` refers to the x coordinate of the rightmost point of the contour `cinfo_b`
+- `cinfo_a.point0[0]` is the $x$ coord of the leftmost point of the contour `cinfo_a`
+- `cinfo_b.point1[0]` is the $x$ coord of the rightmost point of the contour `cinfo_b`
 - The first manoeuvre involving `tmp` simply swaps `cinfo_a` and `cinfo_b` so that
   `cinfo_a` is on the left of `cinfo_b`
 
@@ -55,9 +55,9 @@ The `local_overlap` method takes the inner (dot) product of a point relative to 
 centre-point of the blob it's called from (giving a number).
 
 The `overall_tangent` is the relative position of the righter-most blob (`cinfo_b`)
-from the lefter-most blob (`cinfo_a`), then atan2 gives the corresponding `overall_angle`.
+from the lefter-most blob (`cinfo_a`), then $atan2$ gives the corresponding `overall_angle`.
 
-The blobs themselves have an `angle` attribute, calculated again with atan2, but
+The blobs themselves have an `angle` attribute, calculated again with $atan2$, but
 from the tangent of the contour [around the text in the blob].
 
 The `delta_angle` indicates the difference in the angle of the blob (either blob, whichever
@@ -66,22 +66,21 @@ angle. This is a way of measuring how aligned the two blobs are (so collinear te
 will align and have a small `delta_angle` while comparing blobs on separate lines
 will have a much higher angle difference between the blob tangent angle and inter-blob angle).
 
-- Note that the angle is multiplied by 180 and divided by pi, which is equivalent to
-  multiplying by 360/2pi, i.e. the `delta_angle` becomes stated in degrees whereas
-  all the other angles are in radians. (This is so that the default for `EDGE_MAX_ANGLE`
-  can be provided in 'human-readable' degrees I think)
+- Note that the angle is multiplied by $180$ and divided by $\pi$, which is equivalent to
+  multiplying by $360/2\pi$, i.e. the `delta_angle` becomes stated in degrees whereas
+  all the other angles are in radians.
+  - This is so the default for `EDGE_MAX_ANGLE` can be in 'human-readable' degrees.
 
 The exception to this would be if the two blobs were on different lines but far apart horizontally,
 which would 'smooth out' the angle difference. To account for this, the score that is
 calculated for the pair of contours [a candidate edge] also takes into account the distance between
 the left contour's rightmost point and the right contour's leftmost point.
 
-Next there comes a filtering step to skip any potential edges whose distance between
-these points is greater than `EDGE_MAX_LENGTH`, or overlap between the contours is
-greater than `EDGE_MAX_OVERLAP`, or `delta_angle` is greater than `EDGE_MAX_ANGLE`.
+Next there comes a filtering step to skip any potential edges whose:
 
-- By default these are 100px inter-point distance, 1px horizontal contour overlap,
-  and 7.5 degrees
+- distance between these points is greater than `EDGE_MAX_LENGTH` (default: 100px), or
+- overlap between the contours is greater than `EDGE_MAX_OVERLAP` (default: 1px), or
+- `delta_angle` is greater than `EDGE_MAX_ANGLE` (default: $7.5\degree$)
 
 If none of these conditions are met, the edge is not skipped, and
 the distance and the scaled `delta_angle` are simply added up
@@ -89,7 +88,7 @@ the distance and the scaled `delta_angle` are simply added up
 
 ---
 
-This is all to lead up to a sort of the candidate edges by their score,
+This is all in preparation to sort the candidate edges by their score,
 then stepping through them to assign preceding and successive contours
 stored on the `ContourInfo` objects themselves within the `candidate_edges`
 list, then once this is done building these into spans given sufficient width.

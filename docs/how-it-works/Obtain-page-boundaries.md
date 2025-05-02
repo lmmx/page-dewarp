@@ -43,10 +43,10 @@ def resize_to_screen(self, copy=False):
 The page boundaries are obtained by the call to `calculate_page_extents`, where the height of the
 shrunk page (to fit a HD screen) is offset by an x and y margin (each on both sides).
 
-- An all-zero page mask [8-bit integer numpy array, i.e. 0-255] is created
+- An all-zero page mask is created (8-bit integer numpy array, i.e. $[0,255]$)
   - (i.e. to initialise the mask as "non-page" or "off" but as a colour: black),
 - a rectangle is overlaid (in-place) onto the pagemask according to the margin size,
-  with colour `255` (i.e. white), with a negative value for `thickness` which is a
+  with colour $255$ (i.e. white), with a negative value for `thickness` which is a
   sentinel value meaning 'filled' rather than outline of a rectangle
 
 ```py

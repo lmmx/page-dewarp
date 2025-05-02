@@ -56,6 +56,7 @@ docs = [
   "mkdocstrings[python]>=0.24.0",
   "ruff>=0.9.5",
   "urllib3<2",
+  "mdx-truly-sane-lists",
 ]
 
 [project.scripts]
@@ -165,6 +166,5 @@ directory = "misc"
 name = "Miscellany"
 showcontent = true
 
-# ------------------------------------------------------------------------------
-# Ruff config moved under [tool.ruff.lint] to avoid deprecation warnings
-# ------------------------------------------------------------------------------
+[tool.uv.sources]
+mdx-truly-sane-lists = { git = "https://github.com/radude/mdx_truly_sane_lists.git" }

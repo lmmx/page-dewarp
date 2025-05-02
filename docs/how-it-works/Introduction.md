@@ -8,13 +8,13 @@ is properly known as the homography matrix
 
 The homography matrix uses homogeneous coordinates, indicated by a tilde over the letters.
 
-Homogeneous coordinates are a column vector of the form [**x̃ʹ**,**ỹʹ**,**w̃ʹ**] where the **w̃ʹ**
+Homogeneous coordinates are a column vector of the form $[\tilde{x}', \tilde{y}', \tilde{w}']$ where the $\tilde{w}'$
 can be considered the 'weights' that you divide by to obtain the inhomogeneous coordinates
-**x̃** and **ỹ** from **x̃ʹ** and **ỹʹ**.
+$\tilde{x}$ and $\tilde{y}$ from $\tilde{x}'$ and $\tilde{y}'$.
 
 ## A guide to homogeneous coordinates by Matt Zucker
 
-[![](https://raw.githubusercontent.com/lmmx/shots/master/2021/Apr/zucker-homogeneous-coords.png)](https://mzucker.github.io/2016/10/11/unprojecting-text-with-ellipses.html)
+> [![](https://raw.githubusercontent.com/lmmx/shots/master/2021/Apr/zucker-homogeneous-coords.png)](https://mzucker.github.io/2016/10/11/unprojecting-text-with-ellipses.html)
 
 - See also Matt's lecture whiteboard notes:
   - [Projective algebra fundamentals](https://mzucker.github.io/swarthmore/e27_s2021/notes/e27-2021-04-13.pdf)

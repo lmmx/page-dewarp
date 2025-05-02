@@ -21,7 +21,7 @@ ci: precommit prepush docs
 
 ruff-check:
     ruff check \
-      --exclude ".git/|.venv/|target/|.json$|.lock$" \
+      --exclude ".git/|.venv/|site/|.pdm-build|target/|.json$|.lock$" \
       .
 
 test *args:
@@ -42,7 +42,7 @@ fix-eof-ws mode="":
     whitespace-format --add-new-line-marker-at-end-of-file \
           --new-line-marker=linux \
           --normalize-new-line-markers \
-          --exclude ".git/|.ruff_cache/|.venv/|target/|.json$|.lock|.sw[op]|.png|.jpg$" \
+          --exclude ".git/|.*cache/|.venv/|site/|.pdm-build/|.json$|.lock|.sw[op]|.png|.jpg$" \
           $ARGS \
           .
 
