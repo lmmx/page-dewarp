@@ -29,4 +29,4 @@ The important point here is that the inverse of a homography will undo it.
 
 Additionally, I put together some further background notes:
 
-- [Background on image moments][Background-on-image-moments]
+- [Background on image moments](Background-on-image-moments.md)
