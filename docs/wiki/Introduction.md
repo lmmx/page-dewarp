@@ -12,7 +12,7 @@ Homogeneous coordinates are a column vector of the form [**x̃ʹ**,**ỹʹ**,**w
 can be considered the 'weights' that you divide by to obtain the inhomogeneous coordinates
 **x̃** and **ỹ** from **x̃ʹ** and **ỹʹ**.
 
-## A concise explainer on homogeneous coordinates by Matt Zucker & links
+## A guide to homogeneous coordinates by Matt Zucker
 
 [![](https://raw.githubusercontent.com/lmmx/shots/master/2021/Apr/zucker-homogeneous-coords.png)](https://mzucker.github.io/2016/10/11/unprojecting-text-with-ellipses.html)
 
