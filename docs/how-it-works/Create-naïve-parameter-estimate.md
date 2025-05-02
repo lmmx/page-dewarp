@@ -44,7 +44,7 @@ where:
 
 - `rvec` and `tvec` are an estimate of rotation and translation from four 2D-to-3D point
   correspondences
-- `cubic_slopes` is just an initial guess of `[0.0, 0.0]` (no slope)
+- `cubic_slopes` is just an initial guess of $[0, 0]$ (no slope)
 
 It is here that the spline model is implemented: the 3D height is modelled as uniformly flat
 (the corners are listed in 3D anti-clockwise from bottom left)

@@ -25,6 +25,7 @@ theme:
     - content.code.annotate
     - content.code.copy
     - header.autohide
+    - navigation.footer
     - navigation.indexes
     - navigation.instant
     - navigation.instant.progress
@@ -48,6 +49,8 @@ markdown_extensions:
   - admonition
   - attr_list
   - md_in_html
+  - pymdownx.arithmatex:
+      generic: true
   - pymdownx.blocks.definition
   - pymdownx.details
   - pymdownx.emoji:
@@ -69,8 +72,19 @@ markdown_extensions:
   - pymdownx.tasklist:
       custom_checkbox: true
   - sane_lists
+  - mdx_truly_sane_lists:
+      nested_indent: 2
+      truly_sane: true
   - toc:
       permalink: true
+
+extra_javascript:
+  - theme/js/katex.js
+  - https://unpkg.com/katex@0/dist/katex.min.js
+  - https://unpkg.com/katex@0/dist/contrib/auto-render.min.js
+
+extra_css:
+  - https://unpkg.com/katex@0/dist/katex.min.css
 
 plugins:
   - autorefs
@@ -102,17 +116,16 @@ plugins:
 nav:
   - Home: index.md
   - Getting Started: get_started.md
-  - Understanding Page Dewarp:
+  - How It Works:
       - Introduction: how-it-works/Introduction.md
-      - Procedure Overview: how-it-works/Procedure.md
-      - Page Boundaries: how-it-works/Obtain-page-boundaries.md
-      - Text Contours: how-it-works/Detect-text-contours.md
-      - Image Moments: how-it-works/Background-on-image-moments.md
-      - Text Spans: how-it-works/Assemble-text-into-spans.md
-      - Sampling Spans: how-it-works/Sample-spans.md
-      - Parameter Estimation: how-it-works/Create-naïve-parameter-estimate.md
-      - Optimization: how-it-works/Optimise-to-minimise-reprojection-error.md
-      - Image Remapping: how-it-works/Remap-image-and-threshold.md
+      - 1) Page Boundaries: how-it-works/Obtain-page-boundaries.md
+      - 2) Text Contours: how-it-works/Detect-text-contours.md
+      - 3) Image Moments: how-it-works/Background-on-image-moments.md
+      - 4) Text Spans: how-it-works/Assemble-text-into-spans.md
+      - 5) Sampling Spans: how-it-works/Sample-spans.md
+      - 6) Parameter Estimation: how-it-works/Create-naïve-parameter-estimate.md
+      - 7) Optimisation: how-it-works/Optimise-to-minimise-reprojection-error.md
+      - 8) Image Remapping: how-it-works/Remap-image-and-threshold.md
   # - Changelog: changelog.md
   - API Reference:
       - api/index.md

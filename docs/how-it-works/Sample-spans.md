@@ -1,5 +1,5 @@
 Once the spans are assembled, they are sampled to give discrete keypoints
-(representative points on each span), by default at one per 20 pixels of each
+(representative points on each span), by default at one per $20$ pixels of each
 text contour (`SPAN_PX_PER_STEP`) in `spans.py`:
 
 ```py
@@ -72,13 +72,13 @@ means = np.divide(totals, cinfo.mask.sum(axis=0))
 
 `cinfo.mask.shape` is (height, width), which is also given from
 `cinfo.rect` (from `cv2.boundingRect(contour)`), so the first line
-creates a numpy range from 0 to the height [in pixels] of the contour
+creates a numpy range from $0$ to the height [in pixels] of the contour
 [within the current span] and then reshapes that range array
 in what PyTorch calls "unsqueezing" or equivalently to calling
 `np.expand_dims` on the range array with `axis=1`.
 
-- In other words, each entry in the array becomes a singleton sub-array,
-  `[1, 2, 3, ...]` becomes `[[1], [2], [3], ...]`
+- Each entry in the array becomes a singleton sub-array,
+  $[1, 2, 3, ...] \rightarrow [[1], [2], [3], ...]$
 
 When this is multiplied by the mask itself, note that it's only composable
 if it's a row vector (not a column vector), resulting in a row vector `totals`
@@ -86,14 +86,14 @@ with the same number of columns as the mask.
 
 The multiplication of `yvals` (the range array indicating a row index) with
 the binary `cinfo.mask` gives a mask whose entries are scaled to be the row
-index, which has a side effect of turning any 1s in the top row into 0s
-(and thus indistinguishable from the original 0s in the mask), but this has no
+index, which has a side effect of turning any $1$s in the top row into $0$s
+(and thus indistinguishable from the original $0$s in the mask), but this has no
 effect on the mean (as the denominator comes from the mask itself which preserves
-the 1s in this top row).
+the $1$s in this top row).
 
 Once this row vector is formed, it is divided by the column-wise sum of the
 mask, i.e. it is scaled down as the mean row index of the rows of that column
-that are active (i.e. 1) in the mask.
+that are active (i.e. $1$) in the mask.
 
 The sampling begins at a `start` point:
 
@@ -103,7 +103,7 @@ start = np.floor_divide((np.mod((len(means) - 1), step)), 2)
 
 This takes the floor of the remainder of one less than the length of the
 column-wise `means` [i.e. one less than the width of the contour mask]
-modulo the span sampling step size [default 20 pixels] divided by 2.
+modulo the span sampling step size [default $20$ pixels] divided by $2$.
 
 - Note that the sampling is not "every 20px along" but only where there is a
   contour. So if the line (i.e. the span) has some text on the left and some in
@@ -111,19 +111,19 @@ modulo the span sampling step size [default 20 pixels] divided by 2.
   _not_ be sampled, no points will 'cover' the gap.
 
 To take the first contour in the _Boston Cooking_ example image,
-`len(means) - 1` is 23 (because `cinfo.mask.shape` is (9,24) i.e.
-the mask has 24 columns), and the remainder of 23 mod 20 is 3,
-so the floor of 3 divided by 2 is 1, which is the value of `start`.
-This means that the x coordinate is +1 pixel relative to the `xmin`
+`len(means) - 1` is $23$ (because `cinfo.mask.shape` is $(9,24)$ i.e.
+the mask has $24$ columns), and the remainder of $23$ $mod$ $20$ is $3$,
+so $floor(3/2)$ is $1$, which is the value of `start`.
+This means that the x coordinate is $+1$ pixel relative to `xmin`
 (which comes from the contour's bounding box).
 
-- The significance of the floor division by 2 is roughly to place the
+- The significance of the floor division by $2$ is roughly to place the
   sampling points equidistant from either end of the contour, with the
   first and last points with about the same number of pixels' gap.
 
 After this the individual tuples of the points get unsqueezed again,
-from `[[1,2], [3,4], [5,6]]` to `[[[1,2]], [[3,4]], [[5,6]]]` i.e.
-each point becomes the singleton entry in the only column of the row,
+from $[[1,2], [3,4], [5,6]] \rightarrow [[[1,2]], [[3,4]], [[5,6]]]$
+i.e.  each point becomes the singleton entry in the only column of the row,
 i.e. the array is created with the points as rows and then unsqueezed
 (or reshaped) so that the row entries become nested as a single entry.
 
@@ -141,9 +141,9 @@ def pix2norm(shape, pts):
 The `shape` here was `WarpedImage.small.shape` in `image.py` (upon initialisation,
 as mentioned above), and the general idea of `pix2norm` is to scale the absolute
 pixel values through a homothetic transformation to leave it in relative coordinates
-in the range [-1,+1].
+in range $[-1,+1]$.
 
-The first step is to multiply by 2 and divide by the maximum of the height or width.
+The first step is to multiply by $2$ and divide by the maximum of the height or width.
 The second step is to calculate an offset: the width and height as an array,
 again unsqueezing it so that it has a single row of a single column with the height and width,
 then halving it.
@@ -153,7 +153,7 @@ along the final axis (point-wise), so half the image dimensions is subtracted
 from the coordinates, making the coordinates relative to the centre of the image.
 
 Upon returning, these relative coordinates are scaled by `scl`, becoming
-expressed in relative terms (in the range `[-1,1]`) from the centre of the image
+expressed in relative terms (in the range $[-1,1]$) from the centre of the image
 rather than absolute.
 
 ---
@@ -236,17 +236,18 @@ If the `x_dir` is negative then I presume this means the span was somehow backwa
 The code simply flips it around (put another way, the x direction is defined by convention
 as positive).
 
-The `y_dir` is defined as `[-x_dir[1], x_dir[0]])`, which is a vector
+The `y_dir` is defined as $[-x\_dir[1], x\_dir[0]]$, which is a vector
 of equal magnitude to the `x_dir` vector but perpendicular (dot product 0).
-The inner product of `x_dir` and `y_dir` = `(-x_dir[1]*x_dir[0]) + (x_dir[0]*x_dir[1])`
+
+The `x_dir` and `y_dir` inner product = $(-x\_dir[1] \cdot x\_dir[0]) + (x\_dir[0] \cdot x\_dir[1])$
 which clearly cancels to 0.
 
-- If the x direction is a vector `(10,2)`, the y direction is defined as
-  `(-2, 10)`.
-  - Taking the inner product of `x_dir` and `y_dir` gives `(-2*10) + (2*10)` = 0
+- If the x direction is a vector $(10,2)$, the y direction is defined as
+  $(-2, 10)$.
+  - Taking the inner product of `x_dir` and `y_dir` gives $(-2 \cdot 10) + (10 \cdot 2) = -20 + 20 = 0$
 
-Next, the convex hull is taken of the `self.page_outline` which came from the first step
-([[Obtain page boundaries]] in the call to `calculate_page_extents`):
+Next, the convex hull is taken of the `self.page_outline` which came from the first step,
+[Page Boundaries](Obtain-page-boundaries.md) in the call to `calculate_page_extents`:
 
 > where the height of the shrunk page (to fit a HD screen) is
 > offset by an x and y margin (each on both sides)
@@ -338,8 +339,8 @@ y_dir_coeffs = np.repeat([py0, py1], 2).reshape(-1, 1)
 ```
 
 The min and max of the px and py coords variables gets turned into x and
-y dir coefficients as the comments say: p00,p10,p11,p01 (anti-clockwise
-from bottom-left).
+y dir coefficients as the comments say: $p_{00}, p_{10}, p_{11}, p_{01}$
+(anti-clockwise from bottom-left).
 
 Then something strange happens:
 
@@ -354,11 +355,13 @@ and into the basis of the page itself...
 So that is the "reprojection of the bounding box of the reprojection of the page"...
 in fact it doesn't entirely undo the bending achieved by the previous projection,
 it's hard to say exactly what it is doing in all honesty. The box made by
-`corners` isn't rectangular
+`corners` isn't rectangular.
+
+> Answers on a postcard if you read this far!
 
 After `corners` is made, the `xcoords` and `ycoords` lists are created
 from the span points, projected onto the page direction (`[x_dir,y_dir]`)
-and stored relative to the bottom left corner `(px0,py0)`:
+and stored relative to the bottom left corner $(p_{x0}, p_{y0})$:
 
 ```py
 px_coords, py_coords = np.dot(pts, np.transpose([x_dir, y_dir])).T

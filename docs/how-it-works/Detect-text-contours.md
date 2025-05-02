@@ -19,7 +19,7 @@ It makes a `Mask` and then calls the `contours` method on that `Mask`.
 
 The component steps are:
 
-# a) Adaptive threshold
+## Adaptive threshold
 
 - The shrunk image is converted to a grayscale copy, `sgray`, by mixing the RGB channels
   into a single channel (reducing the final dimension of the image from 3 to 1)
@@ -42,7 +42,7 @@ mask = adaptiveThreshold(
 )
 ```
 
-## b) Dilation and erosion
+## Dilation and erosion
 
 
 (These steps are applied in reverse order for the table borders)
@@ -56,7 +56,7 @@ The pagemask is then 'applied' to the dilated/eroded mask by choosing the minimu
 pixels in the mask will be the minimum even if a text contour was detected there, so will be
 'switched off' or ignored in the mask.
 
-## pre-c) filtering step to eliminate blobs
+## Filtering step to eliminate blobs
 
 > "which are too tall (compared to their width) or too thick to be text"
 
@@ -88,10 +88,11 @@ def get_contours(name, small, mask):
 ```
 
 This procedure checks if any of the following conditions are met:
+
 - the width of the bounding box of each [text] contour (i.e. the outline of some text) is 
   below the `TEXT_MIN_WIDTH` (default: 15px)
-- ...its height is below `TEXT_MIN_HEIGHT` (default: 2px)
-- ...its aspect ratio is below `TEXT_MIN_ASPECT` (default: 1.5 i.e. width:height 3:2),
+- its height is below `TEXT_MIN_HEIGHT` (default: 2px)
+- its aspect ratio is below `TEXT_MIN_ASPECT` (default: 1.5 i.e. width:height 3:2),
   i.e. it should be significantly wider than it is tall
 
 ```py
@@ -144,7 +145,7 @@ self.contour_list = self.contour_info(text=True)
 - As mentioned above, this gets re-run with `text=False` to do table borders but we'll omit that as
   it's very similar to this part.
 
-## c) Connected component analysis
+## Connected component analysis
 
 Next in the `WarpedImage` initialisation comes `iteratively_assemble_spans`, whose docstring says:
 
@@ -321,7 +322,7 @@ min(int_a[1], int_b[1]) - max(int_a[0], int_b[0])
 
 i.e. it's using its own projection of the other blob's leftmost and rightmost points
 
-## d) Text contours are approximated by their best fitting line segment using PCA
+## Text contours are approximated by their best fitting line segment using PCA
 
 This is just reuse of the aforementioned SVD PCA tangent-relative leftmost and
 rightmost points, joined by a line in the `visualize_contours` function (with
