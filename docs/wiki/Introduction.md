@@ -12,15 +12,9 @@ Homogeneous coordinates are a column vector of the form [**x̃ʹ**,**ỹʹ**,**w
 can be considered the 'weights' that you divide by to obtain the inhomogeneous coordinates
 **x̃** and **ỹ** from **x̃ʹ** and **ỹʹ**.
 
-<details><summary>Click for a concise explainer on homogeneous coordinates by Matt Zucker & links</summary>
-
-<p>
+## A concise explainer on homogeneous coordinates by Matt Zucker & links
 
 [![](https://raw.githubusercontent.com/lmmx/shots/master/2021/Apr/zucker-homogeneous-coords.png)](https://mzucker.github.io/2016/10/11/unprojecting-text-with-ellipses.html)
-
-</p>
-
-</summary>
 
 - See also Matt's lecture whiteboard notes:
   - [Projective algebra fundamentals](https://mzucker.github.io/swarthmore/e27_s2021/notes/e27-2021-04-13.pdf)
@@ -35,4 +29,4 @@ The important point here is that the inverse of a homography will undo it.
 
 Additionally, I put together some further background notes:
 
-- [[Background on image moments]]
+- [Background on image moments][Background-on-image-moments]
