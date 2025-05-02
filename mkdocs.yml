@@ -102,6 +102,17 @@ plugins:
 nav:
   - Home: index.md
   - Getting Started: get_started.md
+  - Understanding Page Dewarp:
+      - Introduction: wiki/Introduction.md
+      - Procedure Overview: wiki/Procedure.md
+      - Page Boundaries: wiki/Obtain-page-boundaries.md
+      - Text Contours: wiki/Detect-text-contours.md
+      - Image Moments: wiki/Background-on-image-moments.md
+      - Text Spans: wiki/Assemble-text-into-spans.md
+      - Sampling Spans: wiki/Sample-spans.md
+      - Parameter Estimation: wiki/Create-naïve-parameter-estimate.md
+      - Optimization: wiki/Optimise-to-minimise-reprojection-error.md
+      - Image Remapping: wiki/Remap-image-and-threshold.md
   # - Changelog: changelog.md
   - API Reference:
       - api/index.md
