@@ -28,6 +28,8 @@ Python 3.10+ and NumPy, SciPy, SymPy, Matplotlib, OpenCV, and msgspec are requir
 
 See [documentation](https://page-dewarp.vercel.app) for more details.
 
+- **Update!**: the docs now have a [How It Works](https://page-dewarp.vercel.app/how-it-works/Introduction/) section
+
 ## Background
 
 This library was renovated from the [original (2016) Python 2 script](https://github.com/mzucker/page_dewarp/)

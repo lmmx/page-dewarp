@@ -103,16 +103,16 @@ nav:
   - Home: index.md
   - Getting Started: get_started.md
   - Understanding Page Dewarp:
-      - Introduction: wiki/Introduction.md
-      - Procedure Overview: wiki/Procedure.md
-      - Page Boundaries: wiki/Obtain-page-boundaries.md
-      - Text Contours: wiki/Detect-text-contours.md
-      - Image Moments: wiki/Background-on-image-moments.md
-      - Text Spans: wiki/Assemble-text-into-spans.md
-      - Sampling Spans: wiki/Sample-spans.md
-      - Parameter Estimation: wiki/Create-naïve-parameter-estimate.md
-      - Optimization: wiki/Optimise-to-minimise-reprojection-error.md
-      - Image Remapping: wiki/Remap-image-and-threshold.md
+      - Introduction: how-it-works/Introduction.md
+      - Procedure Overview: how-it-works/Procedure.md
+      - Page Boundaries: how-it-works/Obtain-page-boundaries.md
+      - Text Contours: how-it-works/Detect-text-contours.md
+      - Image Moments: how-it-works/Background-on-image-moments.md
+      - Text Spans: how-it-works/Assemble-text-into-spans.md
+      - Sampling Spans: how-it-works/Sample-spans.md
+      - Parameter Estimation: how-it-works/Create-naïve-parameter-estimate.md
+      - Optimization: how-it-works/Optimise-to-minimise-reprojection-error.md
+      - Image Remapping: how-it-works/Remap-image-and-threshold.md
   # - Changelog: changelog.md
   - API Reference:
       - api/index.md
