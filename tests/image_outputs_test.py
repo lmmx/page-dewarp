@@ -31,6 +31,6 @@ def test_page_dewarp_output(temp_dir):
     subprocess.run(["page-dewarp", str(input_file)], cwd=temp_dir, check=True)
 
     assert output_file.exists(), "Output file was not created"
-    assert filecmp.cmp(
-        output_file, expected_output
-    ), "Output file does not match expected output"
+    assert filecmp.cmp(output_file, expected_output), (
+        "Output file does not match expected output"
+    )
