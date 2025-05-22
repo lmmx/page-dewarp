@@ -9,12 +9,13 @@ This module provides:
 from datetime import datetime as dt
 
 import numpy as np
-from cv2 import LINE_AA, circle, line
+from cv2 import LINE_AA, Rodrigues, circle, line
 from scipy.optimize import minimize
 
 from .debug_utils import debug_show
 from .keypoints import make_keypoint_index, project_keypoints
 from .normalisation import norm2pix
+from .options import cfg
 from .simple_utils import fltp
 
 
@@ -97,5 +98,20 @@ def optimise_params(
         projpts = project_keypoints(params, keypoint_index)
         display = draw_correspondences(small, dstpoints, projpts)
         debug_show(name, 5, "keypoints after", display)
+
+        print("  === Parameter Diagnostics ===")
+        rvec = params[slice(*cfg.RVEC_IDX)]
+        tvec = params[slice(*cfg.TVEC_IDX)]
+        alpha, beta = params[slice(*cfg.CUBIC_IDX)]
+
+        print(f"  Rotation vector: {rvec}")
+        print(f"  Rotation angles (degrees): {np.degrees(rvec)}")
+        print(f"  Translation vector: {tvec}")
+        print(f"  Cubic params - alpha: {alpha}, beta: {beta}")
+
+        # Check rotation matrix conditioning
+        R, _ = Rodrigues(rvec)
+        print(f"  Rotation matrix determinant: {np.linalg.det(R)}")
+        print(f"  Rotation matrix condition number: {np.linalg.cond(R)}")
 
     return params
