@@ -33,6 +33,13 @@ def project_xy(xy_coords: np.ndarray, pvec: np.ndarray) -> np.ndarray:
 
     """
     alpha, beta = tuple(pvec[slice(*cfg.CUBIC_IDX)])
+
+    # Clamp the cubic‐warp coefficients to a safe range.
+    # Prevents runaway horizontal stretching, see:
+    # https://github.com/lmmx/page-dewarp/issues/17
+    alpha = np.clip(alpha, -0.5, 0.5)
+    beta = np.clip(beta, -0.5, 0.5)
+
     poly = np.array([alpha + beta, -2 * alpha - beta, alpha, 0])
 
     xy_coords = xy_coords.reshape((-1, 2))
