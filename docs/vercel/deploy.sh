@@ -30,4 +30,4 @@ uv pip install .[docs]
 # 8) Optionally run mkdocs here if you need it immediately in “deploy”
 #    (e.g., if your older script used ‘pdm run mkdocs’ at this point).
 #    Otherwise, you can defer building to build.sh. For parity with your old deploy script:
-uv run mkdocs
+uv run mkdocs && echo $?
