@@ -25,7 +25,7 @@ ruff-check:
       .
 
 test *args:
-    pytest {{args}} < /dev/null
+    pytest {{args}}
 
 test-ci *args:
     #!/usr/bin/env -S bash -euo pipefail

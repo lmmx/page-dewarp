@@ -12,6 +12,7 @@ classifiers = [
   "Programming Language :: Python :: 3.11",
   "Programming Language :: Python :: 3.12",
   "Programming Language :: Python :: 3.13",
+  "Programming Language :: Python :: 3.14",
   "Topic :: Multimedia :: Graphics :: Graphics Conversion",
   "Topic :: Scientific/Engineering :: Image Processing",
 ]
@@ -38,8 +39,10 @@ readme = "README.md"
 requires-python = ">=3.10"
 version = "0.2.0"
 
-[project.optional-dependencies]
+[dependency-groups]
+build = ["maturin>=1.9.3", "patchelf>=0.17.2.4"]
 dev = [
+  "pdbpp>=0.11.7",
   "pdm-bump>=0.9.10",
   "pdm>=2.22.3",
   "pre-commit>=4.1.0",
@@ -58,6 +61,7 @@ docs = [
   "urllib3<2",
   "mdx-truly-sane-lists",
 ]
+test = ["czkawka>=0.1.1", "inline-snapshot>=0.30.1", "pytest>=7.4.0"]
 
 [project.scripts]
 page-dewarp = "page_dewarp.__main__:main"
@@ -77,9 +81,6 @@ known_first_party = ["page_dewarp"]
 [tool.pdm]
 distribution = true
 
-[tool.pdm.dev-dependencies]
-test = ["pytest>=7.4.0"]
-
 [tool.pdm.scripts]
 build-news = "bash news/scripts/build_changelog.sh"
 erase-news = "rm -rf news/fragments"
@@ -87,8 +88,6 @@ refresh-changelog = "echo 'pdm run erase-news && pdm run write-news && pdm run b
 version = "bash news/scripts/get_version.sh"
 write-all-news = "bash news/scripts/version_based_changelog.sh all"
 write-news = "bash news/scripts/version_based_changelog.sh next"
-
-[tool.ruff]
 
 [tool.ruff.lint]
 ignore = ["C408", "C901", "D203", "D213", "E501", "E722", "E741"]
@@ -101,16 +100,6 @@ lines-after-imports = 2
 
 [tool.ruff.lint.per-file-ignores]
 "__init__.py" = ["E401", "F401"]
-
-# ----------------------------------------------------------------------
-# Tomlsort config (optional)
-# ----------------------------------------------------------------------
-[tool.tomlsort]
-all = true
-in_place = true
-spaces_before_inline_comment = 2
-spaces_indent_inline_array = 4
-trailing_comma_inline_array = true
 
 # ----------------------------------------------------------------------
 # Towncrier config
@@ -165,6 +154,9 @@ showcontent = true
 directory = "misc"
 name = "Miscellany"
 showcontent = true
+
+[tool.uv]
+default-groups = ["build", "dev", "test"]
 
 [tool.uv.sources]
 mdx-truly-sane-lists = { git = "https://github.com/radude/mdx_truly_sane_lists.git" }
