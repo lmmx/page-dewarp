@@ -12,6 +12,7 @@ classifiers = [
   "Programming Language :: Python :: 3.11",
   "Programming Language :: Python :: 3.12",
   "Programming Language :: Python :: 3.13",
+  "Programming Language :: Python :: 3.14",
   "Topic :: Multimedia :: Graphics :: Graphics Conversion",
   "Topic :: Scientific/Engineering :: Image Processing",
 ]
@@ -41,6 +42,7 @@ version = "0.2.0"
 [dependency-groups]
 build = ["maturin>=1.9.3", "patchelf>=0.17.2.4"]
 dev = [
+  "pdbpp>=0.11.7",
   "pdm-bump>=0.9.10",
   "pdm>=2.22.3",
   "pre-commit>=4.1.0",
@@ -59,10 +61,7 @@ docs = [
   "urllib3<2",
   "mdx-truly-sane-lists",
 ]
-test = [
-    "czkawka>=0.0.7",
-    "pytest>=7.4.0",
-]
+test = ["czkawka>=0.1.1", "inline-snapshot>=0.30.1", "pytest>=7.4.0"]
 
 [project.scripts]
 page-dewarp = "page_dewarp.__main__:main"
