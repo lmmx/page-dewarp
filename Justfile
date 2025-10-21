@@ -5,8 +5,11 @@
 # but they require bash.
 #
 # The non`-ci` variants can be run locally without having bash installed.
+import ".just/commit.just"
+import ".just/ship.just"
 
-set dotenv-load
+pc-fix:
+  prek run --all-files
 
 default: precommit prepush
 

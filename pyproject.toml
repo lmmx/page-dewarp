@@ -61,7 +61,7 @@ docs = [
   "urllib3<2",
   "mdx-truly-sane-lists",
 ]
-test = ["czkawka>=0.1.1", "inline-snapshot>=0.30.1", "pytest>=7.4.0"]
+test = ["czkawka>=0.1.2", "inline-snapshot>=0.30.1", "pytest>=7.4.0"]
 
 [project.scripts]
 page-dewarp = "page_dewarp.__main__:main"
