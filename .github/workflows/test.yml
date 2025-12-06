@@ -75,6 +75,10 @@ jobs:
         with:
           python-version: ${{ matrix.python-version }}
 
+      - name: Install Pillow build dependencies (Python 3.15+)
+        if: startsWith(matrix.python-version, '3.15')
+        run: sudo apt-get update && sudo apt-get install -y libjpeg-dev zlib1g-dev libtiff-dev libfreetype6-dev
+
       - name: Install dependencies
         run: uv sync --frozen --group test
 
