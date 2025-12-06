@@ -1,0 +1,36 @@
+name: Deploy Release
+
+on:
+  workflow_dispatch:
+
+jobs:
+  deploy-release:
+    name: Run just release
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          persist-credentials: true
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v7
+
+      - name: Install just
+        uses: taiki-e/install-action@64adfd9e935fa438859b9e080fd026720b2ba070 # tag=just
+        with:
+          tool: just@1.38.0,echo-comment@0.2.0
+
+      - name: Configure git identity
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+      # Bump version, commit changes, tag as the version, and push both
+      # commit and tag (pushing the latter triggers package release)
+      - name: Run just release
+        run: just release

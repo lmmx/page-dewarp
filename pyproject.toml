@@ -2,6 +2,30 @@
 build-backend = "pdm.backend"
 requires = ["pdm-backend"]
 
+[dependency-groups]
+build = ["maturin>=1.9.3", "patchelf>=0.17.2.4"]
+dev = [
+  "pdbpp>=0.11.7",
+  "pdm-bump>=0.9.10",
+  "pdm>=2.22.3",
+  "pre-commit>=4.1.0",
+  "pysnooper>=1.2.0",
+  "pytest>=8.3.2",
+  "towncrier>=24.8.0",
+]
+docs = [
+  "livereload>=2.7.1",
+  "mkdocs-extra-sass-mathshim>=0.1.0",
+  "mkdocs-material[recommended,imaging]>=9.5.2",
+  "mkdocs-section-index>=0.3.8",
+  "mkdocs>=1.5.3",
+  "mkdocstrings[python]>=0.24.0",
+  "ruff>=0.9.5",
+  "urllib3<2",
+  "mdx-truly-sane-lists",
+]
+test = ["czkawka>=0.1.2", "inline-snapshot>=0.30.1", "pytest>=7.4.0"]
+
 [project]
 authors = [{ email = "louismmx@gmail.com", name = "Louis Maddox" }]
 classifiers = [
@@ -39,30 +63,6 @@ readme = "README.md"
 requires-python = ">=3.10"
 version = "0.2.0"
 
-[dependency-groups]
-build = ["maturin>=1.9.3", "patchelf>=0.17.2.4"]
-dev = [
-  "pdbpp>=0.11.7",
-  "pdm-bump>=0.9.10",
-  "pdm>=2.22.3",
-  "pre-commit>=4.1.0",
-  "pysnooper>=1.2.0",
-  "pytest>=8.3.2",
-  "towncrier>=24.8.0",
-]
-docs = [
-  "livereload>=2.7.1",
-  "mkdocs-extra-sass-mathshim>=0.1.0",
-  "mkdocs-material[recommended,imaging]>=9.5.2",
-  "mkdocs-section-index>=0.3.8",
-  "mkdocs>=1.5.3",
-  "mkdocstrings[python]>=0.24.0",
-  "ruff>=0.9.5",
-  "urllib3<2",
-  "mdx-truly-sane-lists",
-]
-test = ["czkawka>=0.1.2", "inline-snapshot>=0.30.1", "pytest>=7.4.0"]
-
 [project.scripts]
 page-dewarp = "page_dewarp.__main__:main"
 
@@ -88,6 +88,8 @@ refresh-changelog = "echo 'pdm run erase-news && pdm run write-news && pdm run b
 version = "bash news/scripts/get_version.sh"
 write-all-news = "bash news/scripts/version_based_changelog.sh all"
 write-news = "bash news/scripts/version_based_changelog.sh next"
+
+[tool.ruff]
 
 [tool.ruff.lint]
 ignore = ["C408", "C901", "D203", "D213", "E501", "E722", "E741"]
