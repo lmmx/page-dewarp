@@ -17,7 +17,7 @@ def sample_spans(shape, spans):
             contour_points.extend([
                 (x + xmin, means[x] + ymin)
                 for x in range(start, len(means), step)
-            ])  
+            ])
         contour_points = np.array(contour_points, dtype=np.float32).reshape((-1, 1, 2))
         contour_points = pix2norm(shape, contour_points)
         span_points.append(contour_points)
@@ -321,7 +321,7 @@ to the text.
 - Geometrically, the result is to slightly rotate the rectangle made by the corners
 
 It would be reasonable to presume the purpose of doing so is to then un-project both the
-changed-basis corners and the spans inside them back to the rectangular coordinates... 
+changed-basis corners and the spans inside them back to the rectangular coordinates...
 
 > recall: eigenvectors from PCA calculated on the `span_points` which came from `contour_points`
 > after `pix2norm` normalising against the `shape` from the shrunk image, which made
@@ -365,6 +365,6 @@ and stored relative to the bottom left corner $(p_{x0}, p_{y0})$:
 
 ```py
 px_coords, py_coords = np.dot(pts, np.transpose([x_dir, y_dir])).T
-xcoords.append(px_coords - px0) 
+xcoords.append(px_coords - px0)
 ycoords.append(py_coords.mean() - py0)
 ```

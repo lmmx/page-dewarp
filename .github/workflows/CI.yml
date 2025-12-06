@@ -1,0 +1,81 @@
+name: CI
+
+on:
+  push:
+    branches:
+      - main
+      - master
+    tags:
+      - "*"
+  pull_request:
+  workflow_dispatch:
+  workflow_run:
+    workflows: ["Deploy Release"]
+    types:
+      - completed
+
+permissions:
+  contents: read
+
+jobs:
+  check-commit:
+    runs-on: ubuntu-latest
+    if: >
+      (
+        (
+          (github.event_name == 'push')
+          || (github.event_name == 'pull_request' && github.event.pull_request.user.login == 'lmmx')
+        )
+        &&
+        (
+          startsWith(github.event.head_commit.message, 'chore(release)') ||
+          contains(github.event.head_commit.message, 'cibuildwheel')
+        )
+      )
+      || (github.event_name == 'workflow_dispatch')
+      || (github.event_name == 'workflow_run')
+    steps:
+      - name: Confirm commit message matched
+        run: echo "Commit message matched the condition."
+
+  build:
+    needs: [check-commit]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v7
+
+      - name: Build package
+        run: uv build
+
+      - name: Upload wheels
+        uses: actions/upload-artifact@v4
+        with:
+          name: wheels-sdist
+          path: dist
+
+  release:
+    name: Release
+    environment: pypi
+    runs-on: ubuntu-latest
+    if: ${{ startsWith(github.ref, 'refs/tags/') || github.event_name == 'workflow_dispatch' || github.event_name == 'workflow_run' }}
+    needs: [build]
+    permissions:
+      id-token: write
+      contents: write
+      attestations: write
+    steps:
+      - uses: actions/download-artifact@v4
+
+      - name: Generate artifact attestation
+        uses: actions/attest-build-provenance@v1
+        with:
+          subject-path: "wheels-*/*"
+
+      - name: Publish to PyPI
+        if: ${{ startsWith(github.ref, 'refs/tags/') || github.event_name == 'workflow_run' }}
+        uses: pypa/gh-action-pypi-publish@release/v1
+        with:
+          packages-dir: wheels-sdist/

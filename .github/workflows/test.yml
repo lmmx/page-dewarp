@@ -1,0 +1,82 @@
+name: Test
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+  workflow_dispatch:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref_name }}-${{ github.event.pull_request.number || github.sha }}
+  cancel-in-progress: true
+
+jobs:
+  get-python-versions:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    outputs:
+      python-versions: ${{ steps.get-versions.outputs.python-versions }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v7
+
+      - name: Get Python versions from pyproject.toml
+        id: get-versions
+        run: |
+          set -euo pipefail
+          MIN_VERSION=$(uvx --from=toml-cli toml get --toml-path=pyproject.toml project.requires-python | sed 's/>=//;s/"//g')
+
+          LIST=$(uv python list --all-versions --output-format json)
+
+          CPYTHON_VERSIONS=$(echo "$LIST" | jq -c --arg min "$MIN_VERSION" '
+            ($min | split(".") | {major: .[0]|tonumber, minor: .[1]|tonumber}) as $minv |
+            [.[] | {v:.version_parts, t:.variant, impl:.implementation}]
+            | unique_by([.v.minor,.t])
+            | map(select(
+                (.impl == "cpython") and
+                (.v.major == 3) and
+                (.v.minor >= $minv.minor)
+              ))
+            | map(select(.t != "freethreaded")) # Delete this line to include FT variants
+            | map("\(.v.major).\(.v.minor)\(if .t=="freethreaded" then "t" else "" end)")')
+
+          # PYPY_VERSIONS=$(echo "$LIST" | jq -c --arg min "$MIN_VERSION" '
+          #   ($min | split(".") | {major: .[0]|tonumber, minor: .[1]|tonumber}) as $minv |
+          #   [.[] | {v:.version_parts, t:.variant, impl:.implementation}]
+          #   | unique_by([.v.minor,.impl])
+          #   | map(select(
+          #       (.impl == "pypy") and
+          #       (.v.major == 3) and
+          #       (.v.minor >= $minv.minor)
+          #     ))
+          #   | map("pypy-\(.v.major).\(.v.minor)")')
+
+          # versions=$(jq -nc --argjson a "$CPYTHON_VERSIONS" --argjson b "$PYPY_VERSIONS" '$a + $b')
+          versions=$(jq -nc --argjson a "$CPYTHON_VERSIONS" '$a')
+
+          echo "python-versions=$versions" >> $GITHUB_OUTPUT
+
+  test:
+    needs: get-python-versions
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ${{ fromJson(needs.get-python-versions.outputs.python-versions) }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v7
+        with:
+          python-version: ${{ matrix.python-version }}
+
+      - name: Install dependencies
+        run: uv sync --group test
+
+      - name: Run tests
+        run: $(uv python find) -m pytest
