@@ -39,9 +39,9 @@ see the [API Reference](api/index.md).
 ## 3. Local Development
 
 - **Set up dev environment**:
-  1. Clone the repo: `git clone https://github.com/lmmx/page-dewarp.git`
-  2. Install dev dependencies (e.g. via `requirements-dev.txt` or PDM).
-  3. Optionally run `pre-commit install` to enable lint checks before every commit.
+    1. Clone the repo: `git clone https://github.com/lmmx/page-dewarp.git`
+    2. Install dev dependencies (e.g. via `requirements-dev.txt` or PDM).
+    3. Optionally run `pre-commit install` to enable lint checks before every commit.
 
 - **Test**:
   Run `pytest` (or `pdm run pytest`) to confirm everything works.

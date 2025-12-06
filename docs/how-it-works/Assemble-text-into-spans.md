@@ -69,7 +69,7 @@ will have a much higher angle difference between the blob tangent angle and inte
 - Note that the angle is multiplied by $180$ and divided by $\pi$, which is equivalent to
   multiplying by $360/2\pi$, i.e. the `delta_angle` becomes stated in degrees whereas
   all the other angles are in radians.
-  - This is so the default for `EDGE_MAX_ANGLE` can be in 'human-readable' degrees.
+    - This is so the default for `EDGE_MAX_ANGLE` can be in 'human-readable' degrees.
 
 The exception to this would be if the two blobs were on different lines but far apart horizontally,
 which would 'smooth out' the angle difference. To account for this, the score that is

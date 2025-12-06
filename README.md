@@ -142,9 +142,9 @@ Improvements on the original include:
 
 - [x] Banished Python 2
 - [x] Command line interface
-  - [x] Alterable config options
+    - [x] Alterable config options
 - [x] Repackage for pip installation
 - [x] Refactor with modules and classes
 - [ ] Speed up the optimisation
-  - [ ] Multiprocessing on CPU
-  - [ ] Optional interface to use Gpufit on GPU (or Deep Declarative Networks?)
+    - [ ] Multiprocessing on CPU
+    - [ ] Optional interface to use Gpufit on GPU (or Deep Declarative Networks?)

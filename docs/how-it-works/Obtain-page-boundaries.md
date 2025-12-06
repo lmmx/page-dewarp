@@ -35,16 +35,16 @@ def resize_to_screen(self, copy=False):
 
 - The `SCREEN_MAX_W` and `SCREEN_MAX_H` parameters are configured through the global
   `cfg` object. They assume a roughly HD screen size for viewing intermediate results (1280x700)
-  - `cfg` is constructed by loading defaults from a TOML config file which ships with the package
-    (see [`options.py`](https://github.com/lmmx/page-dewarp/blob/master/src/page_dewarp/options.py))
-    but all of these settings can be modified using command line flags
-    (see [`cli.py`](https://github.com/lmmx/page-dewarp/blob/master/src/page_dewarp/cli.py))
+    - `cfg` is constructed by loading defaults from a TOML config file which ships with the package
+      (see [`options.py`](https://github.com/lmmx/page-dewarp/blob/master/src/page_dewarp/options.py))
+      but all of these settings can be modified using command line flags
+      (see [`cli.py`](https://github.com/lmmx/page-dewarp/blob/master/src/page_dewarp/cli.py))
 
 The page boundaries are obtained by the call to `calculate_page_extents`, where the height of the
 shrunk page (to fit a HD screen) is offset by an x and y margin (each on both sides).
 
 - An all-zero page mask is created (8-bit integer numpy array, i.e. $[0,255]$)
-  - (i.e. to initialise the mask as "non-page" or "off" but as a colour: black),
+    - (i.e. to initialise the mask as "non-page" or "off" but as a colour: black),
 - a rectangle is overlaid (in-place) onto the pagemask according to the margin size,
   with colour $255$ (i.e. white), with a negative value for `thickness` which is a
   sentinel value meaning 'filled' rather than outline of a rectangle
