@@ -12,7 +12,7 @@ A moment of order $p + q$ is defined for a 2D continuous function on a region as
 
 $$M_{pq} = \iint x^p y^q f(x,y) \, dxdy$$
 
-So if we talk about "first order moments" then we mean $M_{01}$, $M_{10}$, 
+So if we talk about "first order moments" then we mean $M_{01}$, $M_{10}$,
 
 - $M_{01} = \iint y \, f(x,y) \, dxdy$
 - $M_{10} = \iint x \, f(x,y) \, dxdy$
@@ -54,7 +54,7 @@ There are others: scale invariant moments and rotation invariant moments
 
 The covariance matrix of an image can be obtained from second order central moments as below:
 
-Information about image orientation can be derived by first using the second 
+Information about image orientation can be derived by first using the second
 order central moments to construct a covariance matrix.
 
 - $\mu'_{20} = \mu_{20}/\mu_{00} = M_{20}/M_{00} - \bar{x}^2$
@@ -65,9 +65,9 @@ The covariance matrix of the image $I(x,y)$ is now
 
 $$\text{cov}[I(x,y)] = \begin{bmatrix} \mu'_{20} & \mu'_{11} \\ \mu'_{11} & \mu'_{02} \end{bmatrix}.$$
 
-The eigenvectors of this matrix correspond to the major and minor axes of the 
-image intensity, so the orientation can thus be extracted from the angle of the 
-eigenvector associated with the largest eigenvalue towards the axis closest to this 
+The eigenvectors of this matrix correspond to the major and minor axes of the
+image intensity, so the orientation can thus be extracted from the angle of the
+eigenvector associated with the largest eigenvalue towards the axis closest to this
 eigenvector.
 
 It can be shown that this angle $\Theta$ is given by the formula:

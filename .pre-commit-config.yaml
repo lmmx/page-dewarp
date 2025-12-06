@@ -8,7 +8,7 @@ default_install_hook_types:
 
 repos:
   - repo: https://github.com/lmmx/just-pre-commit
-    rev: v0.6.2
+    rev: v0.6.3
     hooks:
       - id: run-just-rust
         args: ['precommit']
@@ -21,8 +21,22 @@ repos:
   - repo: https://github.com/pre-commit/pre-commit-hooks
     rev: v6.0.0
     hooks:
+      - id: check-toml
+      - id: check-yaml
+        exclude: ^mkdocs.yml
       - id: debug-statements
+      - id: end-of-file-fixer
       - id: name-tests-test
+      - id: trailing-whitespace
+  - repo: https://github.com/asottile/add-trailing-comma
+    rev: v4.0.0
+    hooks:
+      - id: add-trailing-comma
+  - repo: https://github.com/asottile/pyupgrade
+    rev: v3.21.2
+    hooks:
+      - id: pyupgrade
+        args: [--py310-plus]
   - repo: https://github.com/astral-sh/ruff-pre-commit
     rev: v0.14.7
     hooks:

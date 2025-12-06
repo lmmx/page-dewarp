@@ -2,10 +2,10 @@ Text contours are detected when `image.py`'s `WarpedImage` initialisation method
 calls `self.contour_list = self.contour_info(text=True)`.
 
 ```py
-def contour_info(self, text=True): 
-    c_type = "text" if text else "line" 
-    mask = Mask(self.stem, self.small, self.pagemask, c_type) 
-    return mask.contours() 
+def contour_info(self, text=True):
+    c_type = "text" if text else "line"
+    mask = Mask(self.stem, self.small, self.pagemask, c_type)
+    return mask.contours()
 ```
 
 The `contour_info` method is just a gate to detect either text contours
@@ -89,7 +89,7 @@ def get_contours(name, small, mask):
 
 This procedure checks if any of the following conditions are met:
 
-- the width of the bounding box of each [text] contour (i.e. the outline of some text) is 
+- the width of the bounding box of each [text] contour (i.e. the outline of some text) is
   below the `TEXT_MIN_WIDTH` (default: 15px)
 - its height is below `TEXT_MIN_HEIGHT` (default: 2px)
 - its aspect ratio is below `TEXT_MIN_ASPECT` (default: 1.5 i.e. width:height 3:2),
