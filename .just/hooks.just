@@ -32,7 +32,7 @@ fix-eof-ws mode="":
     whitespace-format --add-new-line-marker-at-end-of-file \
           --new-line-marker=linux \
           --normalize-new-line-markers \
-          --exclude ".git/|target/|tests/fixtures/|snapshots/|dist/|\.diff|\.png$|\.jpg$|\.sw[op]$|\.so$|.json$|.lock$|.snap$|.parquet$|.venv/|.stubs/|\..*cache/" \
+          --exclude ".git/|target/|site/|tests/fixtures/|snapshots/|dist/|\.diff|\.png$|\.jpg$|\.sw[op]$|\.so$|.json$|.lock$|.snap$|.parquet$|.venv/|.stubs/|\..*cache/" \
           $ARGS \
           .
 
