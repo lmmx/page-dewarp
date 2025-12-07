@@ -1,6 +1,7 @@
 """Mask creation and manipulation for page regions and text/line detection.
 
 This module provides:
+
 - A helper function (`box`) to generate structuring elements for morphological ops.
 - A `Mask` class, which thresholds the page image, applies morphological operations,
   and blends the resulting mask with a page mask.
@@ -67,6 +68,7 @@ class Mask:
         """Apply adaptive thresholding and morphological ops to create `self.value`.
 
         Steps:
+
         1. Convert `self.small` to grayscale.
         2. Use an adaptive threshold (binary inverse).
         3. Depending on `self.text`, either dilate or erode the result, log intermediate steps.

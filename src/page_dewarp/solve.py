@@ -1,6 +1,7 @@
 """Parameter initialization and solve routines for page flattening.
 
 This module contains a function (`get_default_params`) that:
+
 - Uses four corner correspondences to estimate rotation/translation (solvePnP).
 - Includes default cubic slopes and any y/x coordinates from sampled spans.
 """

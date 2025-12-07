@@ -1,6 +1,7 @@
 """Keypoint indexing and projection utilities.
 
 This module provides helper functions to:
+
 - Generate a "keypoint index" array from span counts (for referencing parameters).
 - Project keypoints (in a parameter vector) into 2D coordinates using a cubic model.
 """

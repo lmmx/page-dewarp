@@ -1,6 +1,7 @@
 """Project 3D points into image space using a cubic warp model.
 
 This module provides a `project_xy` function, which:
+
 - Constructs a cubic polynomial from alpha/beta slopes.
 - Uses OpenCV's `projectPoints` to map the resulting 3D points into image coordinates.
 """

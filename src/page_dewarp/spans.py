@@ -1,6 +1,7 @@
 """Spanning and keypoint logic for page dewarping.
 
 This module handles:
+
 - Determining candidate edges between adjacent contours to form "spans."
 - Grouping individual contours into spans.
 - Sampling keypoint positions along spans.
