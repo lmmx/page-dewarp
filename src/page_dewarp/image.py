@@ -1,6 +1,7 @@
 """Utilities for loading, resizing, and dewarping page images.
 
 This module includes:
+
 - A simple helper function (`imgsize`) to format an image's width/height into a string.
 - A function (`get_page_dims`) to optimize final page dimensions via the cubic model.
 - A class (`WarpedImage`) that loads an image, resizes it, finds page boundaries,

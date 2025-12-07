@@ -1,6 +1,7 @@
 """Remapping and thresholding logic for page dewarping.
 
 This module provides:
+
 - A helper function, `round_nearest_multiple`, to round integers up to the nearest multiple.
 - A `RemappedImage` class that transforms (remaps) an input image to a
   rectified, thresholded output using a cubic parameterization of the page.

@@ -1,6 +1,7 @@
 """Pixel-to-normalized (and vice versa) coordinate transformations.
 
 This module provides:
+
 - `pix2norm`: Convert pixel coordinates in an image to normalized coordinates.
 - `norm2pix`: Convert normalized coordinates back into pixel coordinates.
 """

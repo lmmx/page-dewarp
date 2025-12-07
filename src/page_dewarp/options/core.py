@@ -1,6 +1,7 @@
 """Core configuration structures for page-dewarp.
 
 Defines:
+
 - A helper function (`desc`) that annotates msgspec.Struct fields with a description.
 - A global `Config` class specifying various parameters (camera, edge detection, etc.).
 """

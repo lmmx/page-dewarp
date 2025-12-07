@@ -1,6 +1,7 @@
 """Parameter optimization routines for page dewarping.
 
 This module provides:
+
 - A function (`draw_correspondences`) to visualize matched points (dstpoints/projpts).
 - A function (`optimise_params`) that uses an objective function and scipy's `minimize`
   to refine the parameter vector for page dewarping.

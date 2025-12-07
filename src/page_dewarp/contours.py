@@ -1,6 +1,7 @@
 """Utilities for detecting, filtering, and analyzing contours within images.
 
 This module provides functions to:
+
 - Find external contours in a binary mask,
 - Calculate centroid and orientation for each contour (via SVD on central moments),
 - Filter contours by size and shape,
@@ -55,8 +56,10 @@ def blob_mean_and_tangent(contour: np.ndarray) -> tuple[np.ndarray, np.ndarray] 
 
     Returns:
         A tuple `(center, tangent)` where:
+
             - `center` is (x, y) for the contour's centroid,
             - `tangent` is the principal orientation as a unit vector.
+
         Returns `None` if the contour area is zero.
 
     """

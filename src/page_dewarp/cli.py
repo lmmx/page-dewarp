@@ -50,15 +50,17 @@ class ArgParser(argparse.ArgumentParser):
     ):
         """Add an argument with defaults coming from the global config.
 
-        :param name_or_flags: Short or long flags (e.g. ["-d", "--debug-level"]).
-        :param arg_name: Name used as the config key.
-        :param action: An argparse action (store, store_true, etc.).
-        :param help: Help text for argparse.
-        :param const: A constant value for certain actions (store_const, etc.).
-        :param choices: Possible choices for this argument.
-        :param nargs: Number of args that this argument consumes.
-        :param metavar: The name to display in usage messages.
-        :param required: Whether the argument is required.
+        Args:
+            name_or_flags (list[str]): Short or long flags, e.g. `["-d", "--debug-level"]`.
+            arg_name (str): Name used as the config key.
+            action (str): Argparse action (`store`, `store_true`, etc.).
+            help (str): Help text for argparse.
+            const (Any): Constant value for actions such as `store_const`.
+            choices (list | tuple): Allowed values for this argument.
+            nargs (int | str): Number of arguments consumed.
+            metavar (str): Display name in usage messages.
+            required (bool): Whether the argument is required.
+
         """
         kwargs = {
             "action": action,
