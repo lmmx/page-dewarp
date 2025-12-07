@@ -87,9 +87,10 @@ def optimise_params(
         display = draw_correspondences(small, dstpoints, projpts)
         debug_show(name, 4, "keypoints before", display)
 
-    print("  optimizing", len(params), "parameters...")
+    min_opts = {"maxiter": cfg.OPT_MAX_ITER}
+    print(f"  optimizing {len(params)} parameters (max. {cfg.OPT_MAX_ITER}x)...")
     start = dt.now()
-    res = minimize(objective, params, method="Powell")
+    res = minimize(objective, params, method="Powell", options=min_opts)
     end = dt.now()
     print(f"  optimization took {round((end - start).total_seconds(), 2)} sec.")
     print(f"  final objective is {res.fun}")

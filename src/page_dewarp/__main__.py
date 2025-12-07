@@ -14,7 +14,7 @@ from cv2 import namedWindow
 from .check_version import enforce_version
 from .cli import ArgParser
 from .image import WarpedImage
-from .options import Config
+from .options import Config, cfg
 from .pdf import save_pdf
 from .snoopy import snoop
 
@@ -29,7 +29,7 @@ enforce_version()
 def main():
     """Parse CLI arguments, dewarp images, and optionally merge them into a PDF."""
     parser = ArgParser()
-    config = msgspec.convert(parser.config_map, Config)
+    config = msgspec.convert(msgspec.structs.asdict(cfg), Config)
 
     if config.DEBUG_LEVEL > 0 and config.DEBUG_OUTPUT != "file":
         namedWindow("Dewarp")

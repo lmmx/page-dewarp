@@ -7,8 +7,6 @@ CLI arguments from the user and store them in the global config.
 import argparse
 from typing import Annotated, get_args, get_origin, get_type_hints
 
-import msgspec
-
 from .options import Config, cfg
 from .snoopy import snoop
 
@@ -33,8 +31,6 @@ class ArgParser(argparse.ArgumentParser):
     `Config` object (`cfg`), automatically populating arguments from defaults
     and storing parsed values back into that config.
     """
-
-    config_map = msgspec.structs.asdict(cfg)
 
     def add_default_argument(
         self,
@@ -120,12 +116,12 @@ class ArgParser(argparse.ArgumentParser):
     @classmethod
     def set_config_param(cls, param, value):
         """Set a parameter in the global config map."""
-        cls.config_map.update({param: value})
+        setattr(cfg, param, value)
 
     @classmethod
     def get_config_param(cls, param):
         """Retrieve a parameter value from the global config map."""
-        return cls.config_map[param]
+        return getattr(cfg, param)
 
     # Overwrite with the function from global of the same name
     add_default_argument = add_default_argument
@@ -148,6 +144,7 @@ class ArgParser(argparse.ArgumentParser):
             "CONVERT_TO_PDF",
             help="Merge images into a PDF",
         )
+        self.add_default_argument(["-it", "--max-iter"], "OPT_MAX_ITER")
         self.add_default_argument(["-vw", "--max-screen-width"], "SCREEN_MAX_W")
         self.add_default_argument(["-vh", "--max-screen-height"], "SCREEN_MAX_H")
         self.add_default_argument(["-x", "--x-margin"], "PAGE_MARGIN_X")
@@ -184,8 +181,7 @@ class ArgParser(argparse.ArgumentParser):
     @snoop()
     def store_parsed_config(self):
         """Write any parsed CLI options back into the global config."""
-        for opt in self.config_map:
-            # Redundant but thorough: any unchanged defaults will be reassigned
-            configured_opt = getattr(self.parsed, opt)
-            if configured_opt is not None:
-                self.set_config_param(opt, configured_opt)
+        for opt in Config.__struct_fields__:
+            value = getattr(self.parsed, opt)
+            if value is not None:
+                setattr(cfg, opt, value)
