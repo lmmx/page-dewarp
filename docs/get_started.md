@@ -60,5 +60,8 @@ see the [API Reference](api/index.md).
 ## 5. Configuration
 
 `page-dewarp` uses a global config object (`cfg` in `options/core.py`) for parameters like
-`DEBUG_LEVEL`, `FOCAL_LENGTH`, or `REMAP_DECIMATE`. You can override them via CLI flags or by
-editing `cfg`. See [CLI Usage](index.md) for argument specifics.
+`DEBUG_LEVEL`, `FOCAL_LENGTH`, or `REMAP_DECIMATE`.
+
+You can override them via CLI flags or by editing `cfg`.
+
+See [CLI Usage](api/options.md) for argument specifics.

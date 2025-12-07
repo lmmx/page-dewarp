@@ -141,6 +141,10 @@ nav:
       - "mask": api/mask.md
       - "normalisation": api/normalisation.md
       - "optimise": api/optimise.md
+      - "options":
+        - api/options.md
+        - "core": api/options/core.md
+        - "k_opt": api/options/k_opt.md
       - "pdf": api/pdf.md
       - "projection": api/projection.md
       - "simple_utils": api/simple_utils.md
