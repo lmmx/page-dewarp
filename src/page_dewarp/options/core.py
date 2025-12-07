@@ -31,6 +31,7 @@ class Config(Struct):
     output size, page margin, debug verbosity, etc.
 
     Attributes:
+        OPT_MAX_ITER (int): Maximum Powell's method optimisation iterations.
         FOCAL_LENGTH (float): Normalized focal length of camera.
         TEXT_MIN_WIDTH (int): Minimum reduced pixel width of detected text contour.
         TEXT_MIN_HEIGHT (int): Minimum reduced pixel height of detected text contour.
@@ -64,29 +65,67 @@ class Config(Struct):
     """
     Maximum Powell's method optimisation iterations.
 
-    Note:
-        For a fast optimisation (to see a quick 'draft'), set it to a low value like 1.
+    Tip:
+       For a fast 'draft' preview, set this to a low value like 1 with `-it 1`.
 
-    This value is passed as `maxiter` to
-    [scipy.optimize.minimize](https://docs.scipy.org/doc/scipy/reference/optimize.minimize-powell.html),
-    which defaults to `N*1000` where N is the number of parameter variables (in our
-    case, 600).
+    Note:
+       This value is passed as `maxiter` to
+       [scipy.optimize.minimize](https://docs.scipy.org/doc/scipy/reference/optimize.minimize-powell.html),
+       which defaults to `N*1000` where N is the number of parameter variables (in our case, 600).
+
+       Powell's method is slower than methods like L-BFGS-B, but it avoids local minima
+       better in high-dimensional parameter spaces.
     """
     # [camera_opts]
     FOCAL_LENGTH: desc(float, "Normalized focal length of camera") = 1.2
     """Normalized focal length of camera."""
     # [contour_opts]
     TEXT_MIN_WIDTH: desc(int, "Min reduced px width of detected text contour") = 15
-    """Min reduced px width of detected text contour."""
+    """Min reduced px width of detected text contour.
+
+    Contours narrower than this are filtered out.
+
+    Tip:
+       Decrease for small text, increase to filter out noise.
+
+    Question:
+       [#78](https://github.com/lmmx/page-dewarp/issues/78) - Discussion of text detection robustness
+    """
     TEXT_MIN_HEIGHT: desc(int, "Min reduced px height of detected text contour") = 2
-    """Min reduced px height of detected text contour."""
+    """Min reduced px height of detected text contour.
+
+    Contours shorter than this are filtered out.
+
+    Question:
+       [#78](https://github.com/lmmx/page-dewarp/issues/78) - Discussion of text detection robustness
+    """
     TEXT_MIN_ASPECT: desc(float, "Filter out text contours below this w/h ratio") = 1.5
-    """Filter out text contours below this w/h ratio."""
+    """Filter out text contours below this w/h ratio.
+
+    Note:
+       Text is typically wider than tall, so this filters vertical artifacts.
+       Decrease for languages with tall characters or rotated text.
+
+    Question:
+       [#78](https://github.com/lmmx/page-dewarp/issues/78) - Discussion of text detection robustness
+    """
     TEXT_MAX_THICKNESS: desc(
         int,
         "Max reduced px thickness of detected text contour",
     ) = 10
-    """Max reduced px thickness of detected text contour."""
+    """Max reduced px thickness of detected text contour.
+
+    Contours thicker than this are filtered out (likely not text).
+
+    Tip:
+       For bold letters or close-up photos where letters are large, the morphological
+       smearing may not connect letters into word blobs effectively. Consider
+       adjusting this alongside `TEXT_MIN_WIDTH`.
+
+    Question:
+       [#78](https://github.com/lmmx/page-dewarp/issues/78) - Discussion of text detection limitations
+       with close-up photos.
+    """
     # [debug_lvl_opt]
     DEBUG_LEVEL: int = 0
     # [debug_out_opt]
@@ -114,12 +153,39 @@ class Config(Struct):
     SCREEN_MAX_H: desc(int, "Viewing screen max height (for resizing to screen)") = 700
     """Viewing screen max height (for resizing to screen)."""
     PAGE_MARGIN_X: desc(int, "Reduced px to ignore near L/R edge") = 50
-    """Reduced px to ignore near L/R edge."""
+    """Reduced px to ignore near L/R edge.
+
+    Tip:
+       Set to `0` when text extends to the page edges and you don't want
+       content cropped from the sides at all.
+
+    Question:
+       [#83](https://github.com/lmmx/page-dewarp/issues/83): Dewarp failure example
+       using `-x 0 -y 0`
+    """
     PAGE_MARGIN_Y: desc(int, "Reduced px to ignore near T/B edge") = 20
-    """Reduced px to ignore near T/B edge."""
+    """Reduced px to ignore near T/B edge.
+
+    Tip:
+       Set to `0` when text extends to the top/bottom of the frame and you don't want
+       content cropped from either end.
+
+    Question:
+       [#83](https://github.com/lmmx/page-dewarp/issues/83): Dewarp failure example
+       using `-x 0 -y 0`.
+   """
     # [mask_opts]
     ADAPTIVE_WINSZ: desc(int, "Window size for adaptive threshold in reduced px") = 55
-    """Window size for adaptive threshold in reduced px."""
+    """Window size for adaptive threshold in reduced px.
+
+    Warning:
+       Must be an **odd number**.
+
+    Tip:
+       Increase this value when dealing with varying text sizes or when the default
+       threshold produces poor results. For example, `-wz 105` resolved issues with
+       mixed text sizes in [#48](https://github.com/lmmx/page-dewarp/issues/48).
+    """
     # [output_opts]
     OUTPUT_ZOOM: desc(float, "How much to zoom output relative to *original* image") = (
         1.0
@@ -158,7 +224,15 @@ class Config(Struct):
         tuple[int, int],
         "Index of cubic slopes in params vector (slice: pair of values)",
     ) = (6, 8)
-    """Index of cubic slopes in params vector (slice: pair of values)."""
+    """Index of cubic slopes in params vector (slice: pair of values).
+
+    Note:
+       These parameters control the cubic spline dewarping model. The cubic slopes
+       determine how the page curvature is estimated.
+
+    Todo:
+       Document cubic param clamp control ([#67](https://github.com/lmmx/page-dewarp/issues/67))
+    """
     # [span_opts]
     SPAN_MIN_WIDTH: desc(int, "Minimum reduced px width for span") = 30
     """Minimum reduced px width for span."""
