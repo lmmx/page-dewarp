@@ -244,7 +244,7 @@ which clearly cancels to 0.
 
 - If the x direction is a vector $(10,2)$, the y direction is defined as
   $(-2, 10)$.
-  - Taking the inner product of `x_dir` and `y_dir` gives $(-2 \cdot 10) + (10 \cdot 2) = -20 + 20 = 0$
+    - Taking the inner product of `x_dir` and `y_dir` gives $(-2 \cdot 10) + (10 \cdot 2) = -20 + 20 = 0$
 
 Next, the convex hull is taken of the `self.page_outline` which came from the first step,
 [Page Boundaries](Obtain-page-boundaries.md) in the call to `calculate_page_extents`:

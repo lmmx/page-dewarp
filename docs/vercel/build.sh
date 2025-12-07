@@ -10,4 +10,4 @@ source .venv/bin/activate
 python --version
 
 # 3) Build the docs site with MkDocs:
-mkdocs build
+zensical build

@@ -26,19 +26,32 @@ jobs:
       - name: Get Python versions from pyproject.toml
         id: get-versions
         run: |
-          set -euo pipefail
+          set -xeuo pipefail
           MIN_VERSION=$(uvx --from=toml-cli toml get --toml-path=pyproject.toml project.requires-python | sed 's/>=//;s/"//g')
+
+          PYO3_FFI_VERSION=$(curl -sL "https://raw.githubusercontent.com/lmmx/czkawka/refs/heads/master/Cargo.lock" | awk '/name = "pyo3-ffi"/ {getline; gsub(/"/,"",$3); print $3}')
 
           LIST=$(uv python list --all-versions --output-format json)
 
-          CPYTHON_VERSIONS=$(echo "$LIST" | jq -c --arg min "$MIN_VERSION" '
+          # Download the crate once and reuse the Cargo.toml extraction to avoid repeated curl calls
+          TMP_CRATE=$(mktemp)
+          curl -sL "https://static.crates.io/crates/pyo3-ffi/pyo3-ffi-$PYO3_FFI_VERSION.crate" -o "$TMP_CRATE"
+          # extract Cargo.toml content from the downloaded crate
+          CARGO_TOML_CONTENT=$(tar -xzO -f "$TMP_CRATE" "pyo3-ffi-$PYO3_FFI_VERSION/Cargo.toml" 2>/dev/null || true)
+          # CARGO_TOML_CONTENT=$(gzip -dc "$TMP_CRATE" | tar -xO --wildcards '*/Cargo.toml')
+          # get the supported CPython max version from the pyo3-ffi crate (from the extracted Cargo.toml)
+          MAX_VERSION=$(echo "$CARGO_TOML_CONTENT" | uvx --from=toml-cli toml get --toml-path=/dev/stdin package.metadata.cpython.max-version | tr -d '"')
+
+          CPYTHON_VERSIONS=$(echo "$LIST" | jq -c --arg min "$MIN_VERSION" --arg max "$MAX_VERSION" '
             ($min | split(".") | {major: .[0]|tonumber, minor: .[1]|tonumber}) as $minv |
+            ($max | split(".") | {major: .[0]|tonumber, minor: .[1]|tonumber}) as $maxv |
             [.[] | {v:.version_parts, t:.variant, impl:.implementation}]
             | unique_by([.v.minor,.t])
             | map(select(
                 (.impl == "cpython") and
                 (.v.major == 3) and
-                (.v.minor >= $minv.minor)
+                ((.v.major > $minv.major or (.v.major == $minv.major and .v.minor >= $minv.minor)) and
+                 (.v.major < $maxv.major or (.v.major == $maxv.major and .v.minor <= $maxv.minor)))
               ))
             | map(select(.t != "freethreaded")) # Delete this line to include FT variants
             | map("\(.v.major).\(.v.minor)\(if .t=="freethreaded" then "t" else "" end)")')

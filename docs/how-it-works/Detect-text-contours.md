@@ -25,10 +25,10 @@ The component steps are:
   into a single channel (reducing the final dimension of the image from 3 to 1)
 - The grayscale image is binarised from 8-bit (the output is also 8-bit but only contains
   the values 0 or 255)
-  - The threshold type is either binary (black stays black, white stays white) or inverse binary
-    (white becomes black and vice versa, so black text pixels with low grayscale value near 0 become
-    high values when binarised, near 255). We use the inverse binary so text becomes high valued
-    and logically means "True" or "on" (as masks are used for logic operations).
+    - The threshold type is either binary (black stays black, white stays white) or inverse binary
+      (white becomes black and vice versa, so black text pixels with low grayscale value near 0 become
+      high values when binarised, near 255). We use the inverse binary so text becomes high valued
+      and logically means "True" or "on" (as masks are used for logic operations).
 
 ```py
 sgray = cvtColor(self.small, COLOR_RGB2GRAY)
@@ -105,11 +105,11 @@ checks if the maximum of the column-wise (`axis=0`) totals is below the pre-set
 
 - In other words, if any column in a detected piece of text has more than 10 pixels,
   the entire block will be discarded as "too thick"
-  - You might imagine something like a shaded rectangle or ellipse in a diagram matching these
-    criteria. Note that there are no other checks in place to prevent overly large objects
-    being detected as 'text', so the 'thickness' check is a way of preventing large and
-    'blocky' or 'chunky' marks from being registered as text. It probably wouldn't permit
-    text drawn with a thick marker pen for example.
+    - You might imagine something like a shaded rectangle or ellipse in a diagram matching these
+      criteria. Note that there are no other checks in place to prevent overly large objects
+      being detected as 'text', so the 'thickness' check is a way of preventing large and
+      'blocky' or 'chunky' marks from being registered as text. It probably wouldn't permit
+      text drawn with a thick marker pen for example.
 
 ```py
 tight_mask = np.zeros((height, width), dtype=np.uint8)
@@ -123,14 +123,14 @@ return tight_mask
 - The `tight_contour` is formed by subtracting the contour's bottom left coordinate,
   "image"-wide (i.e. reshaped to match the dimension of the image: shape `1,1,2` to the image's
   `{number_of_contour_points},1,2`)
-  - I would describe this as having an effect of making the coordinates of the contour relative
-    to its bottom-left corner
+    - I would describe this as having an effect of making the coordinates of the contour relative
+      to its bottom-left corner
 - The contour is drawn by connecting the points on the mask (similar to the `cv2.rectangle`
   earlier), with `cv2.drawContours` (but passing a list of a single contour at a time)
-  - Here the fill colour is 1 (so that the column total is a count of filled pixels)
-  - Again, the thickness of `-1` means "filled" rather than outline
-  - The `contourIdx` argument "indicates a contour to draw": so the 0 indicates the first item in
-    the singleton list (the only item)
+    - Here the fill colour is 1 (so that the column total is a count of filled pixels)
+    - Again, the thickness of `-1` means "filled" rather than outline
+    - The `contourIdx` argument "indicates a contour to draw": so the 0 indicates the first item in
+      the singleton list (the only item)
 
 ...and that's the end of the sequence of events that happened when `Mask.contours()` was called
 within the `contour_info` method during initialisation of the `WarpedImage` class, to populate its
@@ -156,7 +156,7 @@ This is referred to as "connected component analysis" (i.e. going from pixels to
 grouping or 'labeling' them according to some connectivity requirement, either 4- or 8-connected).
 
 - See: [Connected-component labeling](https://en.wikipedia.org/wiki/Connected-component_labeling)
-  - e.g. [`skimage.measure.label`](https://scikit-image.org/docs/dev/api/skimage.measure.html#skimage.measure.label)
+    - e.g. [`skimage.measure.label`](https://scikit-image.org/docs/dev/api/skimage.measure.html#skimage.measure.label)
 
 Here, we go from the pixel lines (contours) to symbols called 'spans'. The default variables in the
 config for this section are `SPAN_MIN_WIDTH` of 30px and `SPAN_PX_PER_STEP` of 20px ("reduced
@@ -182,9 +182,9 @@ def assemble_spans(name, small, pagemask, cinfo_list):
 
 - First the contours are sorted by the 2nd element of the `rect` (its `y` value), so
   contours are ordered from bottom-most to upper-most last
-  - Note that they're not sorted by x value, just y value
-  - Recall: the `rect` attribute was the `boundingRect` of the contour, whose elements are
-    `x,y,w,h`
+    - Note that they're not sorted by x value, just y value
+    - Recall: the `rect` attribute was the `boundingRect` of the contour, whose elements are
+      `x,y,w,h`
 - The y-sorted contour list is iterated through (i.e. iterating "upwards") and `generate_candidate_edge`
   is called on all possible pairs of that contour and _every_ previous one in the list (i.e. every
   one with a bounding rectangle base below the current contour's bounding rectangle base)
