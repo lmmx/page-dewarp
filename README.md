@@ -135,6 +135,7 @@ options:
                         default: 16)
 ```
 
+- See [config docs](https://page-dewarp.vercel.app/api/options) for a table of options
 - PDF conversion not yet implemented
 
 To try out an example image, run

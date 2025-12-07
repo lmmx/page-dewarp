@@ -29,6 +29,36 @@ class Config(Struct):
 
     Holds parameters controlling camera focal length, contour detection,
     output size, page margin, debug verbosity, etc.
+
+    Attributes:
+        OPT_MAX_ITER (int): Maximum Powell's method optimisation iterations.
+        FOCAL_LENGTH (float): Normalized focal length of camera.
+        TEXT_MIN_WIDTH (int): Minimum reduced pixel width of detected text contour.
+        TEXT_MIN_HEIGHT (int): Minimum reduced pixel height of detected text contour.
+        TEXT_MIN_ASPECT (float): Filter out text contours below this width/height ratio.
+        TEXT_MAX_THICKNESS (int): Maximum reduced pixel thickness of detected text contour.
+        DEBUG_LEVEL (int): Debug verbosity level (0 = none).
+        DEBUG_OUTPUT (str): Output mode for debug information ('file' by default).
+        EDGE_MAX_OVERLAP (float): Maximum horizontal overlap of contours in a span.
+        EDGE_MAX_LENGTH (float): Maximum length of edges connecting contours.
+        EDGE_ANGLE_COST (float): Cost of angles in edges (tradeoff vs length).
+        EDGE_MAX_ANGLE (float): Maximum allowed change in angle between contours.
+        SCREEN_MAX_W (int): Viewing screen maximum width (for resizing to screen).
+        SCREEN_MAX_H (int): Viewing screen maximum height (for resizing to screen).
+        PAGE_MARGIN_X (int): Pixels to ignore near left/right edge.
+        PAGE_MARGIN_Y (int): Pixels to ignore near top/bottom edge.
+        ADAPTIVE_WINSZ (int): Window size for adaptive thresholding.
+        OUTPUT_ZOOM (float): Zoom factor for output relative to original image.
+        OUTPUT_DPI (int): Stated DPI of output PNG (does not affect appearance).
+        REMAP_DECIMATE (int): Downscaling factor for remapping images.
+        NO_BINARY (int): Disable output conversion to binary thresholded image.
+        CONVERT_TO_PDF (bool): Merge dewarped images into a PDF.
+        RVEC_IDX (tuple[int, int]): Index slice of rotation vector in parameter vector.
+        TVEC_IDX (tuple[int, int]): Index slice of translation vector in parameter vector.
+        CUBIC_IDX (tuple[int, int]): Index slice of cubic slopes in parameter vector.
+        SPAN_MIN_WIDTH (int): Minimum width of a span in reduced pixels.
+        SPAN_PX_PER_STEP (int): Pixel spacing for sampling along spans.
+
     """
 
     OPT_MAX_ITER: desc(int, "Maximum Powell's method optimisation iterations") = 600_000
