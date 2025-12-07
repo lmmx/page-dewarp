@@ -13,9 +13,9 @@ from __future__ import annotations
 from pathlib import Path
 
 import numpy as np
+import powell_opt as po
 from cv2 import INTER_AREA, imread, rectangle
 from cv2 import resize as cv2_resize
-from scipy.optimize import minimize
 
 from .contours import ContourInfo
 from .debug_utils import debug_show
@@ -57,11 +57,12 @@ def get_page_dims(
     dims = np.array(rough_dims)
 
     def objective(dims_local):
+        dims_local = np.asarray(dims_local)
         proj_br = project_xy(dims_local, params)
         return np.sum((dst_br - proj_br.flatten()) ** 2)
 
-    res = minimize(objective, dims, method="Powell")
-    dims = res.x
+    res = po.minimize(objective, dims.tolist())
+    dims = np.array(res.x)
     print("  got page dims", dims[0], "x", dims[1])
     return dims
 

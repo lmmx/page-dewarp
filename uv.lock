@@ -1495,6 +1495,7 @@ dependencies = [
     { name = "numpy", version = "2.2.6", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version < '3.11'" },
     { name = "numpy", version = "2.3.5", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version >= '3.11'" },
     { name = "opencv-python" },
+    { name = "powell-opt" },
     { name = "scipy", version = "1.15.3", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version < '3.11'" },
     { name = "scipy", version = "1.16.3", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version >= '3.11'" },
     { name = "sympy" },
@@ -1531,6 +1532,7 @@ requires-dist = [
     { name = "msgspec", specifier = ">=0.18.6" },
     { name = "numpy", specifier = ">1.25" },
     { name = "opencv-python" },
+    { name = "powell-opt", specifier = ">=0.1.0" },
     { name = "scipy" },
     { name = "sympy" },
 ]
@@ -1784,6 +1786,26 @@ source = { registry = "https://pypi.org/simple" }
 sdist = { url = "https://files.pythonhosted.org/packages/f9/e2/3e91f31a7d2b083fe6ef3fa267035b518369d9511ffab804f839851d2779/pluggy-1.6.0.tar.gz", hash = "sha256:7dcc130b76258d33b90f61b658791dede3486c3e6bfb003ee5c9bfb396dd22f3", size = 69412, upload-time = "2025-05-15T12:30:07.975Z" }
 wheels = [
     { url = "https://files.pythonhosted.org/packages/54/20/4d324d65cc6d9205fabedc306948156824eb9f0ee1633355a8f7ec5c66bf/pluggy-1.6.0-py3-none-any.whl", hash = "sha256:e920276dd6813095e9377c0bc5566d94c932c33b27a3e3945d8389c374dd4746", size = 20538, upload-time = "2025-05-15T12:30:06.134Z" },
+]
+
+[[package]]
+name = "powell-opt"
+version = "0.1.0"
+source = { registry = "https://pypi.org/simple" }
+sdist = { url = "https://files.pythonhosted.org/packages/1a/2e/0c9dbfad0002a704ba1645697d23e3b423a8edddb6b1d4615050784f1170/powell_opt-0.1.0.tar.gz", hash = "sha256:9177dc23c5fdbc5acd2af6990651981349ca05f3fa46d8d08261b414d336617c", size = 72015, upload-time = "2025-05-04T00:22:47.487Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/93/23/3d41970c8242866da53cdd53a57d4e7af91fe4869c41e0b5110d2c93cea1/powell_opt-0.1.0-cp310-cp310-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:7ff69cc3de0b86e667c2337a276c10f7a9c31c2b70bfa987ebb5cd4ffd222b47", size = 221901, upload-time = "2025-05-04T00:22:38.814Z" },
+    { url = "https://files.pythonhosted.org/packages/d7/fd/f11dfe10e2e784bbe4da281fd997467af9ead50d658143832f180ba8410a/powell_opt-0.1.0-cp311-cp311-macosx_10_12_x86_64.whl", hash = "sha256:336a7c114e667c3b8cf86e930863557c6950c290f6c31c13b3ef5de3fd0df152", size = 199781, upload-time = "2025-05-04T00:22:26.35Z" },
+    { url = "https://files.pythonhosted.org/packages/f2/12/7312a6fba19b040fcd3183cec96ca1189db706a221c97a7294d65497d8ed/powell_opt-0.1.0-cp311-cp311-macosx_11_0_arm64.whl", hash = "sha256:5b0d0b38c6164f644ab09a43669858992e4a6e082e89ca253f93f4c242d1564b", size = 188986, upload-time = "2025-05-04T00:22:30.487Z" },
+    { url = "https://files.pythonhosted.org/packages/bf/82/1adf98c7a1ee94771f71c358b8b216d09c71a984ffebe770b826ed99b8d0/powell_opt-0.1.0-cp311-cp311-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:7245ee7ff883f74a588ba547b97320b45df0c6549e259cd29afaa311f03dcc4d", size = 221860, upload-time = "2025-05-04T00:22:28.671Z" },
+    { url = "https://files.pythonhosted.org/packages/a3/e6/fbeab3fc5fcfa4ee821827d1a8f9668ea471ab5514adb1248d77e26bae6c/powell_opt-0.1.0-cp312-cp312-macosx_10_12_x86_64.whl", hash = "sha256:9acbd1ee76daf03419bb54617a937ff662e340f30a0259e07c2ca6901bc87a7e", size = 197447, upload-time = "2025-05-04T00:22:43.241Z" },
+    { url = "https://files.pythonhosted.org/packages/2d/1a/50ce2661f5d0ce4c8f51e01dd5db3a37cd5336fbab09bc87d1716607cedc/powell_opt-0.1.0-cp312-cp312-macosx_11_0_arm64.whl", hash = "sha256:fcfbb331523e4ab1bde9a322cf338c025417896f8e2dbd05402fc3a78c13edc4", size = 187321, upload-time = "2025-05-04T00:22:33.493Z" },
+    { url = "https://files.pythonhosted.org/packages/a5/81/44021e82efa7a28f56e12d234194f49c1f6a8b47076e92f0dcfa08e04aa5/powell_opt-0.1.0-cp312-cp312-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:b84d2b9bd60c93b9142cbe92bd8ef78da0ef7b3d0155d6c25b824b738511a688", size = 220737, upload-time = "2025-05-04T00:22:40.624Z" },
+    { url = "https://files.pythonhosted.org/packages/91/f4/a1e6b13bb928fe8694703eecc5a4839f2f0a02450002444385d86c301f97/powell_opt-0.1.0-cp313-cp313-macosx_10_12_x86_64.whl", hash = "sha256:9dd1483b4737cb83ae1dba494c0c8a55fd3eb447804f3c4b12f858235adb0c4c", size = 197239, upload-time = "2025-05-04T00:22:41.903Z" },
+    { url = "https://files.pythonhosted.org/packages/18/2d/756b2d3fc9f26400c653b530fca30d9102e3343a8a6431273af4579d081d/powell_opt-0.1.0-cp313-cp313-macosx_11_0_arm64.whl", hash = "sha256:dc95d1b0623d0818fe66b436d16b25c6a04d5311cc9c323730092f397a0b05d6", size = 187210, upload-time = "2025-05-04T00:22:31.806Z" },
+    { url = "https://files.pythonhosted.org/packages/c7/ce/6c7557e607db1adf6fba217c9acf3cb91ac3dd3711ab400278fdd6332aef/powell_opt-0.1.0-cp313-cp313-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:d6f14aa7e6a0735cc618afc47034387270ca5a7e1e2b67cd1da830f8e7918e99", size = 220443, upload-time = "2025-05-04T00:22:35.297Z" },
+    { url = "https://files.pythonhosted.org/packages/2f/44/a0dcad560e8030334426a51ef3b75137b0f58a827e7055d8a2fec8cc4eb3/powell_opt-0.1.0-pp310-pypy310_pp73-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:cc513a75362ce4cbbb6cab9b848832061cb8149a28bc94ff276a318291ae3f73", size = 222492, upload-time = "2025-05-04T00:22:37.185Z" },
+    { url = "https://files.pythonhosted.org/packages/af/fb/9beb92a4a21aa50db5a683ba55d83a541814ac7a2020a96ba8c7ecace283/powell_opt-0.1.0-pp311-pypy311_pp73-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:e708dcdfd8e040d8340d96f8e370a35a8eeacb978fcc85de6ef176e1104962cf", size = 222524, upload-time = "2025-05-04T00:22:46.303Z" },
 ]
 
 [[package]]
