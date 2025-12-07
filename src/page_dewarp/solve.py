@@ -3,12 +3,14 @@
 This module contains a function (`get_default_params`) that:
 
 - Uses four corner correspondences to estimate rotation/translation (solvePnP).
+- Optionally uses Toeplitz-based curl estimation for initial cubic slopes.
 - Includes default cubic slopes and any y/x coordinates from sampled spans.
 """
 
 import numpy as np
 from cv2 import solvePnP
 
+from .curl_estimation import estimate_cubic_params_from_spans
 from .options import cfg
 from .options.k_opt import K
 
@@ -20,6 +22,7 @@ def get_default_params(
     corners: np.ndarray,
     ycoords: np.ndarray,
     xcoords: list[np.ndarray],
+    span_points: list[np.ndarray] | None = None,
 ) -> tuple[tuple[float, float], list[int], np.ndarray]:
     """Assemble an initial parameter vector for page flattening.
 
@@ -27,6 +30,8 @@ def get_default_params(
         corners: A (4,1,2) array of corner points in image coords.
         ycoords: A 1D array of average vertical positions (per span).
         xcoords: A list of x-coordinates arrays for each span.
+        span_points: Optional list of span point arrays for Toeplitz-based
+            curl estimation. If None, defaults to zero slopes.
 
     Returns:
         A tuple of:
@@ -36,7 +41,19 @@ def get_default_params(
 
     """
     page_width, page_height = (np.linalg.norm(corners[i] - corners[0]) for i in (1, -1))
-    cubic_slopes = [0.0, 0.0]  # initial guess for the cubic has no slope
+
+    # Estimate cubic slopes using Toeplitz analysis if span data available
+    if span_points is not None and len(span_points) > 0:
+        alpha, beta = estimate_cubic_params_from_spans(
+            span_points,
+            ycoords,
+            page_width,
+        )
+        cubic_slopes = [alpha, beta]
+        if cfg.DEBUG_LEVEL >= 1:
+            print(f"  Toeplitz curl estimate: α={alpha:.4f}, β={beta:.4f}")
+    else:
+        cubic_slopes = [0.0, 0.0]  # Fallback to flat page assumption
 
     # Object points of a flat page in 3D coordinates
     corners_object3d = np.array(

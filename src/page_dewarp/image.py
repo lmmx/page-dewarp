@@ -118,6 +118,7 @@ class WarpedImage:
                 corners,
                 ycoords,
                 xcoords,
+                span_points=span_points,
             )
             dstpoints = np.vstack((corners[0].reshape((1, 1, 2)),) + tuple(span_points))
             params = optimise_params(
