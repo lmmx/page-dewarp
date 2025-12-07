@@ -31,6 +31,7 @@ class Config(Struct):
     output size, page margin, debug verbosity, etc.
     """
 
+    OPT_MAX_ITER: desc(int, "Maximum Powell's method optimisation iterations") = 600_000
     # [camera_opts]
     FOCAL_LENGTH: desc(float, "Normalized focal length of camera") = 1.2
     # [contour_opts]
