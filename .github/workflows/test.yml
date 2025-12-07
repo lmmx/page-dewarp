@@ -26,8 +26,10 @@ jobs:
       - name: Get Python versions from pyproject.toml
         id: get-versions
         run: |
-          set -euo pipefail
+          set -xeuo pipefail
           MIN_VERSION=$(uvx --from=toml-cli toml get --toml-path=pyproject.toml project.requires-python | sed 's/>=//;s/"//g')
+
+          PYO3_FFI_VERSION=$(curl -sL "https://raw.githubusercontent.com/lmmx/czkawka/refs/heads/master/Cargo.lock" | awk '/name = "pyo3-ffi"/ {getline; gsub(/"/,"",$3); print $3}')
 
           LIST=$(uv python list --all-versions --output-format json)
 
@@ -36,6 +38,7 @@ jobs:
           curl -sL "https://static.crates.io/crates/pyo3-ffi/pyo3-ffi-$PYO3_FFI_VERSION.crate" -o "$TMP_CRATE"
           # extract Cargo.toml content from the downloaded crate
           CARGO_TOML_CONTENT=$(tar -xzO -f "$TMP_CRATE" "pyo3-ffi-$PYO3_FFI_VERSION/Cargo.toml" 2>/dev/null || true)
+          # CARGO_TOML_CONTENT=$(gzip -dc "$TMP_CRATE" | tar -xO --wildcards '*/Cargo.toml')
           # get the supported CPython max version from the pyo3-ffi crate (from the extracted Cargo.toml)
           MAX_VERSION=$(echo "$CARGO_TOML_CONTENT" | uvx --from=toml-cli toml get --toml-path=/dev/stdin package.metadata.cpython.max-version | tr -d '"')
 
