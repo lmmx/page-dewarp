@@ -37,6 +37,8 @@ by Matt Zucker, as Python 2 is now long since decommissioned.
 
 ## Usage
 
+- See [config docs](https://page-dewarp.vercel.app/api/options) for a table of options
+
 ```
 usage: page-dewarp [-h] [-d {0,1,2,3}] [-o {file,screen,both}] [-p]
                    [-it OPT_MAX_ITER] [-vw SCREEN_MAX_W] [-vh SCREEN_MAX_H]
@@ -134,9 +136,6 @@ options:
                         Downscaling factor for remapping image (type: int,
                         default: 16)
 ```
-
-- See [config docs](https://page-dewarp.vercel.app/api/options) for a table of options
-- PDF conversion not yet implemented
 
 To try out an example image, run
 
