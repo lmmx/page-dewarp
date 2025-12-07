@@ -89,7 +89,7 @@ def optimise_params(
 
     print("  optimizing", len(params), "parameters...")
     start = dt.now()
-    res = minimize(objective, params, method="Powell")
+    res = minimize(objective, params, method="L-BFGS-B")
     end = dt.now()
     print(f"  optimization took {round((end - start).total_seconds(), 2)} sec.")
     print(f"  final objective is {res.fun}")
