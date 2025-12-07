@@ -39,8 +39,8 @@ by Matt Zucker, as Python 2 is now long since decommissioned.
 
 ```
 usage: page-dewarp [-h] [-d {0,1,2,3}] [-o {file,screen,both}] [-p]
-                   [-vw SCREEN_MAX_W] [-vh SCREEN_MAX_H] [-x PAGE_MARGIN_X]
-                   [-y PAGE_MARGIN_Y] [-tw TEXT_MIN_WIDTH]
+                   [-it OPT_MAX_ITER] [-vw SCREEN_MAX_W] [-vh SCREEN_MAX_H]
+                   [-x PAGE_MARGIN_X] [-y PAGE_MARGIN_Y] [-tw TEXT_MIN_WIDTH]
                    [-th TEXT_MIN_HEIGHT] [-ta TEXT_MIN_ASPECT]
                    [-tk TEXT_MAX_THICKNESS] [-wz ADAPTIVE_WINSZ]
                    [-ri RVEC_IDX] [-ti TVEC_IDX] [-ci CUBIC_IDX]
@@ -54,58 +54,85 @@ usage: page-dewarp [-h] [-d {0,1,2,3}] [-o {file,screen,both}] [-p]
 positional arguments:
   IMAGE_FILE_OR_FILES   One or more images to process
 
-optional arguments:
+options:
   -h, --help            show this help message and exit
-  -d {0,1,2,3}, --debug-level {0,1,2,3}
-  -o {file,screen,both}, --debug-output {file,screen,both}
-  -p, --pdf             Merge dewarped images into a PDF
-  -vw SCREEN_MAX_W, --max-screen-width SCREEN_MAX_W
+  -d, --debug-level {0,1,2,3}
+                        (type: int, default: 0)
+  -o, --debug-output {file,screen,both}
+                        (type: str, default: file)
+  -p, --pdf             Merge images into a PDF
+  -it, --max-iter OPT_MAX_ITER
+                        Maximum Powell's method optimisation iterations (type:
+                        int, default: 600000)
+  -vw, --max-screen-width SCREEN_MAX_W
                         Viewing screen max width (for resizing to screen)
-  -vh SCREEN_MAX_H, --max-screen-height SCREEN_MAX_H
+                        (type: int, default: 1280)
+  -vh, --max-screen-height SCREEN_MAX_H
                         Viewing screen max height (for resizing to screen)
-  -x PAGE_MARGIN_X, --x-margin PAGE_MARGIN_X
-                        Reduced px to ignore near L/R edge
-  -y PAGE_MARGIN_Y, --y-margin PAGE_MARGIN_Y
-                        Reduced px to ignore near T/B edge
-  -tw TEXT_MIN_WIDTH, --min-text-width TEXT_MIN_WIDTH
-                        Min reduced px width of detected text contour
-  -th TEXT_MIN_HEIGHT, --min-text-height TEXT_MIN_HEIGHT
-                        Min reduced px height of detected text contour
-  -ta TEXT_MIN_ASPECT, --min-text-aspect TEXT_MIN_ASPECT
-                        Filter out text contours below this w/h ratio
-  -tk TEXT_MAX_THICKNESS, --max-text-thickness TEXT_MAX_THICKNESS
+                        (type: int, default: 700)
+  -x, --x-margin PAGE_MARGIN_X
+                        Reduced px to ignore near L/R edge (type: int,
+                        default: 50)
+  -y, --y-margin PAGE_MARGIN_Y
+                        Reduced px to ignore near T/B edge (type: int,
+                        default: 20)
+  -tw, --min-text-width TEXT_MIN_WIDTH
+                        Min reduced px width of detected text contour (type:
+                        int, default: 15)
+  -th, --min-text-height TEXT_MIN_HEIGHT
+                        Min reduced px height of detected text contour (type:
+                        int, default: 2)
+  -ta, --min-text-aspect TEXT_MIN_ASPECT
+                        Filter out text contours below this w/h ratio (type:
+                        float, default: 1.5)
+  -tk, --max-text-thickness TEXT_MAX_THICKNESS
                         Max reduced px thickness of detected text contour
-  -wz ADAPTIVE_WINSZ, --adaptive-winsz ADAPTIVE_WINSZ
+                        (type: int, default: 10)
+  -wz, --adaptive-winsz ADAPTIVE_WINSZ
                         Window size for adaptive threshold in reduced px
-  -ri RVEC_IDX, --rotation-vec-param-idx RVEC_IDX
+                        (type: int, default: 55)
+  -ri, --rotation-vec-param-idx RVEC_IDX
                         Index of rvec in params vector (slice: pair of values)
-  -ti TVEC_IDX, --translation-vec-param-idx TVEC_IDX
+                        (type: tuple[int, int], default: (0, 3))
+  -ti, --translation-vec-param-idx TVEC_IDX
                         Index of tvec in params vector (slice: pair of values)
-  -ci CUBIC_IDX, --cubic-slope-param-idx CUBIC_IDX
+                        (type: tuple[int, int], default: (3, 6))
+  -ci, --cubic-slope-param-idx CUBIC_IDX
                         Index of cubic slopes in params vector (slice: pair of
-                        values)
-  -sw SPAN_MIN_WIDTH, --min-span-width SPAN_MIN_WIDTH
-                        Minimum reduced px width for span
-  -sp SPAN_PX_PER_STEP, --span-spacing SPAN_PX_PER_STEP
-                        Reduced px spacing for sampling along spans
-  -eo EDGE_MAX_OVERLAP, --max-edge-overlap EDGE_MAX_OVERLAP
+                        values) (type: tuple[int, int], default: (6, 8))
+  -sw, --min-span-width SPAN_MIN_WIDTH
+                        Minimum reduced px width for span (type: int, default:
+                        30)
+  -sp, --span-spacing SPAN_PX_PER_STEP
+                        Reduced px spacing for sampling along spans (type:
+                        int, default: 20)
+  -eo, --max-edge-overlap EDGE_MAX_OVERLAP
                         Max reduced px horiz. overlap of contours in span
-  -el EDGE_MAX_LENGTH, --max-edge-length EDGE_MAX_LENGTH
+                        (type: float, default: 1.0)
+  -el, --max-edge-length EDGE_MAX_LENGTH
                         Max reduced px length of edge connecting contours
-  -ec EDGE_ANGLE_COST, --edge-angle-cost EDGE_ANGLE_COST
-                        Cost of angles in edges (tradeoff vs. length)
-  -ea EDGE_MAX_ANGLE, --max-edge-angle EDGE_MAX_ANGLE
+                        (type: float, default: 100.0)
+  -ec, --edge-angle-cost EDGE_ANGLE_COST
+                        Cost of angles in edges (tradeoff vs. length) (type:
+                        float, default: 10.0)
+  -ea, --max-edge-angle EDGE_MAX_ANGLE
                         Maximum change in angle allowed between contours
-  -f FOCAL_LENGTH, --focal-length FOCAL_LENGTH
-                        Normalized focal length of camera
-  -z OUTPUT_ZOOM, --output-zoom OUTPUT_ZOOM
+                        (type: float, default: 7.5)
+  -f, --focal-length FOCAL_LENGTH
+                        Normalized focal length of camera (type: float,
+                        default: 1.2)
+  -z, --output-zoom OUTPUT_ZOOM
                         How much to zoom output relative to *original* image
-  -dpi OUTPUT_DPI, --output-dpi OUTPUT_DPI
-                        Just affects stated DPI of PNG, not appearance
-  -nb NO_BINARY, --no-binary NO_BINARY
+                        (type: float, default: 1.0)
+  -dpi, --output-dpi OUTPUT_DPI
+                        Just affects stated DPI of PNG, not appearance (type:
+                        int, default: 300)
+  -nb, --no-binary NO_BINARY
                         Disable output conversion to binary thresholded image
-  -s REMAP_DECIMATE, --shrink REMAP_DECIMATE
-                        Downscaling factor for remapping image
+                        (type: int, default: 0)
+  -s, --shrink REMAP_DECIMATE
+                        Downscaling factor for remapping image (type: int,
+                        default: 16)
 ```
 
 - PDF conversion not yet implemented
@@ -146,5 +173,6 @@ Improvements on the original include:
 - [x] Repackage for pip installation
 - [x] Refactor with modules and classes
 - [ ] Speed up the optimisation
+    - [x] Limit optimisation iterations (via `-it` flag)
     - [ ] Multiprocessing on CPU
     - [ ] Optional interface to use Gpufit on GPU (or Deep Declarative Networks?)
