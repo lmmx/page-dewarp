@@ -18,13 +18,9 @@ References and further reading:
 
 Package exports:
 - `main` (from `. __main__`): The CLI entry point for dewarping images.
-- `enforce_version` (from `.check_version`): Checks Python version >= 3.9 and exits otherwise.
 """
 
 from .__main__ import main
-from .check_version import enforce_version
 
 
 __all__ = ("main",)
-
-enforce_version()
