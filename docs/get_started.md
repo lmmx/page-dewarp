@@ -54,8 +54,6 @@ see the [API Reference](api/index.md).
 1. Place one or more `.jpg` or `.png` files in a directory.
 2. Run `page-dewarp myscan.jpg`.
 3. A `_thresh.png` file is generated with the warped page corrected.
-4. If you want a PDF, try `page-dewarp -p *.jpg`, though it currently prints instructions for
-   ImageMagick conversion.
 
 ## 5. Configuration
 

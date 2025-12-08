@@ -5,7 +5,6 @@ When invoked via `python -m page_dewarp`, this module:
 - Parses command-line arguments.
 - Loads configuration settings.
 - Processes input images (e.g., dewarping, thresholding).
-- Optionally merges output images into a PDF.
 """
 
 import msgspec
@@ -14,7 +13,6 @@ from cv2 import namedWindow
 from .cli import ArgParser
 from .image import WarpedImage
 from .options import Config, cfg
-from .pdf import save_pdf
 from .snoopy import snoop
 
 
@@ -24,7 +22,7 @@ from .snoopy import snoop
 
 @snoop()
 def main():
-    """Parse CLI arguments, dewarp images, and optionally merge them into a PDF."""
+    """Parse CLI arguments and dewarp images."""
     parser = ArgParser()
     config = msgspec.convert(msgspec.structs.asdict(cfg), Config)
 
@@ -39,9 +37,6 @@ def main():
         if processed_img.written:
             outfiles.append(processed_img.outfile)
             print(f"  wrote {processed_img.outfile}", end="\n\n")
-
-    if config.CONVERT_TO_PDF:
-        save_pdf(outfiles)
 
 
 if __name__ == "__main__":

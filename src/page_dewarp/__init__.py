@@ -3,7 +3,6 @@
 This package offers functionality for:
 - Dewarping scanned pages (using a cubic sheet model).
 - Thresholding to produce clear, high-contrast page images.
-- Optional PDF merging and other image manipulation features.
 
 It is a refactored version of Matt Zucker's original (2016) Python 2 script,
 updated for Python 3.9+ and packaged for easy installation from PyPI.

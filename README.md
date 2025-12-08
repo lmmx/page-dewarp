@@ -62,7 +62,6 @@ options:
                         (type: int, default: 0)
   -o, --debug-output {file,screen,both}
                         (type: str, default: file)
-  -p, --pdf             Merge images into a PDF
   -it, --max-iter OPT_MAX_ITER
                         Maximum Powell's method optimisation iterations (type:
                         int, default: 600000)
