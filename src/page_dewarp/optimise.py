@@ -79,7 +79,13 @@ def optimise_params(
 
     def objective(pvec: np.ndarray) -> float:
         ppts = project_keypoints(pvec, keypoint_index)
-        return np.sum((dstpoints - ppts) ** 2)
+        error = np.sum((dstpoints - ppts) ** 2)
+
+        # Penalize X-rotation (shear) heavily
+        rvec = pvec[slice(*cfg.RVEC_IDX)]
+        rotation_penalty = 10.0 * rvec[0] ** 2  # Penalize X-rotation specifically
+
+        return error + rotation_penalty
 
     print("  initial objective is", objective(params))
     if debug_lvl >= 1:
