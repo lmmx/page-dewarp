@@ -90,7 +90,7 @@ def optimise_params(
     min_opts = {"maxiter": cfg.OPT_MAX_ITER}
     print(f"  optimizing {len(params)} parameters (max. {cfg.OPT_MAX_ITER}x)...")
     start = dt.now()
-    res = minimize(objective, params, method="Powell", options=min_opts)
+    res = minimize(objective, params, method=cfg.OPT_METHOD, options=min_opts)
     end = dt.now()
     print(f"  optimization took {round((end - start).total_seconds(), 2)} sec.")
     print(f"  final objective is {res.fun}")

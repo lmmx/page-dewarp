@@ -32,6 +32,7 @@ class Config(Struct):
 
     Attributes:
         OPT_MAX_ITER (int): Maximum Powell's method optimisation iterations.
+        OPT_METHOD (str): Name of the SciPy optimisation method to use.
         FOCAL_LENGTH (float): Normalized focal length of camera.
         TEXT_MIN_WIDTH (int): Minimum reduced pixel width of detected text contour.
         TEXT_MIN_HEIGHT (int): Minimum reduced pixel height of detected text contour.
@@ -75,6 +76,33 @@ class Config(Struct):
 
        Powell's method is slower than methods like L-BFGS-B, but it avoids local minima
        better in high-dimensional parameter spaces.
+    """
+    OPT_METHOD: desc(str, "Name of the SciPy optimisation method to use.") = "Powell"
+    """
+    Name of the SciPy optimisation method to use.
+
+    Note:
+       This name is passed as `method` to
+       [scipy.optimize.minimize](https://docs.scipy.org/doc/scipy/reference/optimize.minimize.html),
+       and defaults to `"Powell"` if unset.
+
+       All options:
+
+       - Nelder-Mead
+       - Powell
+       - CG
+       - BFGS
+       - Newton-CG
+       - L-BFGS-B
+       - TNC
+       - COBYLA
+       - COBYQA
+       - SLSQP
+       - trust-const
+       - dogleg
+       - trust-ncg
+       - trust-exact
+       - trust-krylov
     """
     # [camera_opts]
     FOCAL_LENGTH: desc(float, "Normalized focal length of camera") = 1.2
