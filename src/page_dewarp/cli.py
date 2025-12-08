@@ -140,6 +140,7 @@ class ArgParser(argparse.ArgumentParser):
             choices=["file", "screen", "both"],
         )
         self.add_default_argument(["-it", "--max-iter"], "OPT_MAX_ITER")
+        self.add_default_argument(["-m", "--method"], "OPT_METHOD")
         self.add_default_argument(["-vw", "--max-screen-width"], "SCREEN_MAX_W")
         self.add_default_argument(["-vh", "--max-screen-height"], "SCREEN_MAX_H")
         self.add_default_argument(["-x", "--x-margin"], "PAGE_MARGIN_X")
