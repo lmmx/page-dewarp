@@ -52,7 +52,6 @@ class Config(Struct):
         OUTPUT_DPI (int): Stated DPI of output PNG (does not affect appearance).
         REMAP_DECIMATE (int): Downscaling factor for remapping images.
         NO_BINARY (int): Disable output conversion to binary thresholded image.
-        CONVERT_TO_PDF (bool): Merge dewarped images into a PDF.
         RVEC_IDX (tuple[int, int]): Index slice of rotation vector in parameter vector.
         TVEC_IDX (tuple[int, int]): Index slice of translation vector in parameter vector.
         CUBIC_IDX (tuple[int, int]): Index slice of cubic slopes in parameter vector.
@@ -206,9 +205,6 @@ class Config(Struct):
     """Downscaling factor for remapping image."""
     NO_BINARY: desc(int, "Disable output conversion to binary thresholded image") = 0
     """Disable output conversion to binary thresholded image."""
-    # [pdf_opts]
-    CONVERT_TO_PDF: desc(bool, "Merge dewarped images into a PDF") = False
-    """Merge dewarped images into a PDF."""
     # [proj_opts]
     RVEC_IDX: desc(
         tuple[int, int],

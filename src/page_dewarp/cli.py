@@ -139,11 +139,6 @@ class ArgParser(argparse.ArgumentParser):
             ["-o", "--debug-output"],
             choices=["file", "screen", "both"],
         )
-        self.add_default_argument(
-            ["-p", "--pdf"],
-            "CONVERT_TO_PDF",
-            help="Merge images into a PDF",
-        )
         self.add_default_argument(["-it", "--max-iter"], "OPT_MAX_ITER")
         self.add_default_argument(["-vw", "--max-screen-width"], "SCREEN_MAX_W")
         self.add_default_argument(["-vh", "--max-screen-height"], "SCREEN_MAX_H")
