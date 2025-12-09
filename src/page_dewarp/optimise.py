@@ -15,7 +15,7 @@ import numpy as np
 from cv2 import LINE_AA, Rodrigues, circle, line
 from scipy.optimize import minimize
 
-from .backends import HAS_JAX
+from .backends import HAS_JAX, get_default_method
 from .debug_utils import debug_show
 from .keypoints import make_keypoint_index, project_keypoints
 from .normalisation import norm2pix
@@ -231,6 +231,8 @@ def optimise_params(
     print(f"  optimizing {len(params)} parameters...")
 
     method = cfg.OPT_METHOD
+    if method == "auto":
+        method = get_default_method()
 
     jax_supported_method = method == "L-BFGS-B"  # Currently just 1 method
     use_jax = HAS_JAX and jax_supported_method

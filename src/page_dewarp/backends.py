@@ -1,7 +1,6 @@
-# src/page_dewarp/backends.py
 """Backend availability detection."""
 
-__all__ = ["HAS_JAX", "HAS_SCIPY"]
+__all__ = ["HAS_JAX", "HAS_SCIPY", "get_default_method"]
 
 HAS_JAX = False
 try:
@@ -24,3 +23,11 @@ if not HAS_JAX and not HAS_SCIPY:
         "page-dewarp requires at least one optimization backend. "
         "Install scipy (required) or jax (optional, faster).",
     )
+
+
+def get_default_method() -> str:
+    """Return the default optimization method based on available backend."""
+    if HAS_JAX:
+        return "L-BFGS-B"
+    else:
+        return "Powell"

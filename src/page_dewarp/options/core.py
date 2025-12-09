@@ -74,14 +74,12 @@ class Config(Struct):
        [scipy.optimize.minimize](https://docs.scipy.org/doc/scipy/reference/optimize.minimize-powell.html),
        which defaults to `N*1000` where N is the number of parameter variables (in our case, 600).
     """
-    OPT_METHOD: desc(str, "Name of the JAX/SciPy optimisation method to use.") = (
-        "L-BFGS-B"
-    )
+    OPT_METHOD: desc(str, "Name of the JAX/SciPy optimisation method to use.") = "auto"
     """
     Name of the JAX/SciPy optimisation method to use.
 
-    JAX supports L-BFGS-B only (the default). It is typically several times faster than
-    SciPy Powell, and more accurate than SciPy L-BFGS-B.
+    JAX supports L-BFGS-B only (its default). It is typically several times faster than
+    Powell's method (SciPy's default), and more accurate than SciPy's L-BFGS-B.
 
     Tip:
        Install the `jax` Python package to use JAX reverse-mode autodifferentiation to
