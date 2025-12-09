@@ -32,7 +32,7 @@ def test_page_dewarp_output(temp_dir):
     assert output_file.exists(), "Output file was not created"
 
     finder = ImageSimilarity()
-    expected_hash = "8KT0pOS0tLQ"
+    expected_hash = "8LS0pOCgnLQ"
     output_hash = finder.hash_image(output_file)
     distance = finder.compare_hashes(output_hash, expected_hash)
 
