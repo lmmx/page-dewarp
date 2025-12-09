@@ -80,6 +80,64 @@ jobs:
       fail-fast: false
       matrix:
         python-version: ${{ fromJson(needs.get-python-versions.outputs.python-versions) }}
+    outputs:
+      failed-versions: ${{ steps.collect-failures.outputs.failed }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v7
+        with:
+          python-version: ${{ matrix.python-version }}
+
+      - name: Install dependencies (with JAX)
+        run: uv sync --frozen --group test --group jax
+
+      - name: Run tests
+        id: test
+        continue-on-error: true
+        run: uv run --frozen pytest -s -v
+
+      - name: Record result
+        id: collect-failures
+        if: steps.test.outcome == 'failure'
+        run: echo "failed=${{ matrix.python-version }}" >> $GITHUB_OUTPUT
+
+  aggregate-failures:
+    needs: [get-python-versions, test-jax]
+    if: always()
+    runs-on: ubuntu-latest
+    outputs:
+      failed-matrix: ${{ steps.build-matrix.outputs.matrix }}
+      has-failures: ${{ steps.build-matrix.outputs.has-failures }}
+    steps:
+      - name: Build retry matrix
+        id: build-matrix
+        run: |
+          # Collect all failed versions from matrix outputs
+          failed='${{ toJson(needs.test-jax.outputs) }}'
+          echo "Raw outputs: $failed"
+
+          # Extract non-empty failed versions
+          versions=$(echo '${{ toJson(needs.test-jax.outputs) }}' | jq -c '[.[] | select(. != "")] | unique')
+
+          if [ "$versions" = "[]" ] || [ -z "$versions" ]; then
+            echo "has-failures=false" >> $GITHUB_OUTPUT
+            echo "matrix=[]" >> $GITHUB_OUTPUT
+          else
+            echo "has-failures=true" >> $GITHUB_OUTPUT
+            echo "matrix=$versions" >> $GITHUB_OUTPUT
+          fi
+
+  test-jax-retry:
+    needs: [aggregate-failures]
+    if: needs.aggregate-failures.outputs.has-failures == 'true'
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ${{ fromJson(needs.aggregate-failures.outputs.failed-matrix) }}
     steps:
       - uses: actions/checkout@v4
 
@@ -93,29 +151,6 @@ jobs:
 
       - name: Run tests
         run: uv run --frozen pytest -s -v
-
-  test-jax-retry:
-    needs: [get-python-versions, test-jax]
-    if: failure()
-    runs-on: ubuntu-latest
-    timeout-minutes: 5
-    strategy:
-      fail-fast: false
-      matrix:
-        python-version: ${{ fromJson(needs.get-python-versions.outputs.python-versions) }}
-    steps:
-      - uses: actions/checkout@v4
-
-      - name: Install uv
-        uses: astral-sh/setup-uv@v7
-        with:
-          python-version: ${{ matrix.python-version }}
-
-      - name: Install dependencies (with JAX)
-        run: uv sync --frozen --group test --group jax
-
-      - name: Run tests
-        run: uv run --frozen pytest -s
 
   test-scipy:
     needs: get-python-versions
