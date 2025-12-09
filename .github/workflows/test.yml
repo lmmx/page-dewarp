@@ -117,6 +117,7 @@ jobs:
     runs-on: ubuntu-latest
     outputs:
       failed-matrix: ${{ steps.build-matrix.outputs.matrix }}
+      has-failures: ${{ steps.build-matrix.outputs.has-failures }}
     steps:
       - name: Download failure artifacts
         uses: actions/download-artifact@v4
@@ -131,18 +132,19 @@ jobs:
 
           mkdir -p failures || true
 
-          # collect all unique failure versions
           versions=$(grep -h -v '^[[:space:]]*$' failures/* 2>/dev/null | sort -u | jq -R -s -c 'split("\n")[:-1]')
 
-          # default to empty array
           if [ -z "$versions" ] || [ "$versions" = "[]" ]; then
-            versions='["dummy"]'  # dummy element to keep matrix job alive
+            echo "has-failures=false" >> $GITHUB_OUTPUT
+            echo "matrix=[]" >> $GITHUB_OUTPUT
+          else
+            echo "has-failures=true" >> $GITHUB_OUTPUT
+            echo "matrix=$versions" >> $GITHUB_OUTPUT
           fi
-
-          echo "matrix=$versions" >> $GITHUB_OUTPUT
 
   test-jax-retry:
     needs: aggregate-failures
+    if: needs.aggregate-failures.outputs.has-failures == 'true'
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
@@ -151,22 +153,15 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Skip dummy
-        if: matrix.python-version == 'dummy'
-        run: echo "No failures to retry; skipping."
-
       - name: Install uv
-        if: matrix.python-version != 'dummy'
         uses: astral-sh/setup-uv@v7
         with:
           python-version: ${{ matrix.python-version }}
 
       - name: Install dependencies (with JAX)
-        if: matrix.python-version != 'dummy'
         run: uv sync --frozen --group test --group jax
 
       - name: Run tests
-        if: matrix.python-version != 'dummy'
         run: uv run --frozen pytest -s -v
 
   test-scipy:
