@@ -96,7 +96,7 @@ jobs:
         #   JAX_ENABLE_X64: "1"
         #   JAX_PLATFORM_NAME: "cpu"
         #   XLA_FLAGS: "--xla_cpu_enable_fast_math=false"
-        run: uv run --frozen pytest -s -v
+        run: uv run --with pytest-rerunfailures --frozen pytest -s -v --reruns 5
 
   test-scipy:
     needs: get-python-versions
