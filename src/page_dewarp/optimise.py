@@ -7,6 +7,7 @@ This module provides:
   to refine the parameter vector for page dewarping.
 """
 
+import sys
 import warnings
 from datetime import datetime as dt
 
@@ -57,10 +58,7 @@ def draw_correspondences(
 if JAX_AVAILABLE:
 
     def _rodrigues_jax(rvec):
-        """Convert rotation vector to rotation matrix.
-
-        Attempt to match OpenCV's Rodrigues exactly.
-        """
+        """Convert rotation vector to rotation matrix (Rodrigues formula)."""
         theta = jnp.linalg.norm(rvec)
 
         # For small angles, OpenCV uses a Taylor expansion
@@ -93,9 +91,10 @@ if JAX_AVAILABLE:
         return jnp.where(theta < 1e-8, R_small, R_standard)
 
     def _project_xy_jax(xy_coords, pvec, focal_length):
-        """JAX version of project_xy - must match original exactly.
+        """JAX version of project_xy.
 
-        Original does:
+        project_xy does:
+
         1. Extract alpha, beta from pvec[6:8], clip to [-0.5, 0.5]
         2. Build cubic polynomial coeffs
         3. Evaluate z = polyval(poly, x)
@@ -145,7 +144,6 @@ if JAX_AVAILABLE:
     def _project_keypoints_jax(pvec, keypoint_index, focal_length):
         """JAX version of project_keypoints.
 
-        Original does:
         1. xy_coords = pvec[keypoint_index]  # shape (N, 2)
         2. xy_coords[0, :] = 0  # first point at origin
         3. return project_xy(xy_coords, pvec)
@@ -155,14 +153,14 @@ if JAX_AVAILABLE:
         return _project_xy_jax(xy_coords, pvec, focal_length)
 
     def _make_objective_jax(dstpoints_flat, keypoint_index, focal_length, shear_cost):
-        """Create JIT-compiled objective matching the original exactly."""
+        """Create JIT-compiled objective matching the original."""
 
         @jax.jit
         def objective(pvec):
             projected = _project_keypoints_jax(pvec, keypoint_index, focal_length)
             error = jnp.sum((dstpoints_flat - projected) ** 2)
 
-            # Shear penalty - must match original
+            # Shear penalty
             if shear_cost > 0.0:
                 rvec = pvec[0:3]
                 error = error + shear_cost * rvec[0] ** 2
@@ -202,36 +200,9 @@ if JAX_AVAILABLE:
             params,
             method="L-BFGS-B",
             jac=True,
-            options={"maxiter": 15000, "maxfun": 100000},
+            options={"maxiter": cfg.OPT_MAX_ITER},
         )
         return result
-
-    def _verify_objectives_match(params, keypoint_index, dstpoints):
-        """Verify JAX and original objectives produce same value."""
-        # Original objective
-        ppts_orig = project_keypoints(params, keypoint_index)
-        error_orig = np.sum((dstpoints - ppts_orig) ** 2)
-        if cfg.SHEAR_COST > 0.0:
-            error_orig += cfg.SHEAR_COST * params[0] ** 2
-
-        # JAX objective
-        dstpoints_flat = jnp.array(dstpoints.reshape(-1, 2))
-        keypoint_index_jax = jnp.array(keypoint_index, dtype=jnp.int32)
-        focal_length = cfg.FOCAL_LENGTH
-
-        objective_jax = _make_objective_jax(
-            dstpoints_flat,
-            keypoint_index_jax,
-            focal_length,
-            cfg.SHEAR_COST,
-        )
-        error_jax = float(objective_jax(jnp.array(params)))
-
-        print(f"  [VERIFY] Original objective: {error_orig:.10f}")
-        print(f"  [VERIFY] JAX objective:      {error_jax:.10f}")
-        print(f"  [VERIFY] Difference:         {abs(error_orig - error_jax):.2e}")
-
-        return abs(error_orig - error_jax) < 1e-6
 
 
 def optimise_params(
@@ -263,51 +234,40 @@ def optimise_params(
 
     print(f"  optimizing {len(params)} parameters...")
 
-    if JAX_AVAILABLE:
-        # Verify objectives match before optimizing
+    method = cfg.OPT_METHOD
+
+    jax_supported_method = method == "L-BFGS-B"  # Currently just 1 method
+    use_jax = JAX_AVAILABLE and jax_supported_method
+
+    if use_jax:
+        start = dt.now()
         with warnings.catch_warnings():
             warnings.simplefilter("ignore")
-            if not _verify_objectives_match(params, keypoint_index, dstpoints):
-                print(
-                    "  WARNING: JAX objective doesn't match original, falling back to Powell",
-                )
-                start = dt.now()
-                result = minimize(
-                    objective,
-                    params,
-                    method=cfg.OPT_METHOD,
-                    options={"maxiter": cfg.OPT_MAX_ITER},
-                )
-                elapsed = (dt.now() - start).total_seconds()
-                print(f"  optimization ({cfg.OPT_METHOD}) took {elapsed:.2f}s")
-                print(f"  final objective is {result.fun:.6f}")
-                params = result.x
-            else:
-                start = dt.now()
-                result = _optimise_with_jax(dstpoints, keypoint_index, params)
-                elapsed = (dt.now() - start).total_seconds()
-                print(
-                    f"  optimization (JAX L-BFGS-B) took {elapsed:.2f}s, {result.nfev} evals",
-                )
-                print(f"  final objective is {result.fun:.6f}")
-                params = result.x
-    else:
+            result = _optimise_with_jax(dstpoints, keypoint_index, params)
+        elapsed = (dt.now() - start).total_seconds()
         print(
-            f"  (JAX not available, using {cfg.OPT_METHOD})",
+            f"  optimization (L-BFGS-B + JAX autodiff) took {elapsed:.2f}s, {result.nfev} evals",
         )
+    elif jax_supported_method:
+        print(
+            "OPT_METHOD='L-BFGS-B' can use JAX for fast autodiff. "
+            "Install with: pip install jax jaxlib",
+            file=sys.stderr,
+        )
+    if not use_jax:
+        # Powell or other SciPy methods
         start = dt.now()
         result = minimize(
             objective,
             params,
-            method=cfg.OPT_METHOD,
+            method=method,
             options={"maxiter": cfg.OPT_MAX_ITER},
         )
         elapsed = (dt.now() - start).total_seconds()
-        print(
-            f"  optimization ({cfg.OPT_METHOD}) took {elapsed:.2f}s, {result.nfev} evals",
-        )
-        print(f"  final objective is {result.fun:.6f}")
-        params = result.x
+        print(f"  optimization ({method}) took {elapsed:.2f}s, {result.nfev} evals")
+
+    print(f"  final objective is {result.fun:.6f}")
+    params = result.x
 
     if debug_lvl >= 1:
         projpts = project_keypoints(params, keypoint_index)

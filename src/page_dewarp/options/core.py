@@ -32,7 +32,7 @@ class Config(Struct):
 
     Attributes:
         OPT_MAX_ITER (int): Maximum Powell's method optimisation iterations.
-        OPT_METHOD (str): Name of the SciPy optimisation method to use.
+        OPT_METHOD (str): Name of the JAX/SciPy optimisation method to use.
         FOCAL_LENGTH (float): Normalized focal length of camera.
         TEXT_MIN_WIDTH (int): Minimum reduced pixel width of detected text contour.
         TEXT_MIN_HEIGHT (int): Minimum reduced pixel height of detected text contour.
@@ -77,9 +77,14 @@ class Config(Struct):
        Powell's method is slower than methods like L-BFGS-B, but it avoids local minima
        better in high-dimensional parameter spaces.
     """
-    OPT_METHOD: desc(str, "Name of the SciPy optimisation method to use.") = "Powell"
+    OPT_METHOD: desc(str, "Name of the JAX/SciPy optimisation method to use.") = (
+        "L-BFGS-B"
+    )
     """
-    Name of the SciPy optimisation method to use.
+    Name of the JAX/SciPy optimisation method to use.
+
+    JAX supports L-BFGS-B only (the default). It is typically several times faster than
+    SciPy Powell, and more accurate than SciPy L-BFGS-B.
 
     Note:
        This name is passed as `method` to
