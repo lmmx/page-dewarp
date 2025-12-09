@@ -104,7 +104,7 @@ jobs:
         if: steps.test.outcome == 'failure'
         uses: actions/upload-artifact@v4
         with:
-          name: failed-versions
+          name: failed-${{ matrix.python-version }}
           path: failed_${{ matrix.python-version }}.txt
 
       - name: Fail job if tests failed
@@ -122,8 +122,10 @@ jobs:
       - name: Download failure artifacts
         uses: actions/download-artifact@v4
         with:
-          name: failed-versions
+          pattern: failed-*
           path: failures
+          merge-multiple: true
+        continue-on-error: true
 
       - name: Build retry matrix
         id: build-matrix
