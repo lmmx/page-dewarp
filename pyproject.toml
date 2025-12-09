@@ -52,7 +52,7 @@ license = { text = "MIT" }
 name = "page-dewarp"
 readme = "README.md"
 requires-python = ">=3.10"
-version = "0.2.2"
+version = "0.2.3"
 
 [project.scripts]
 page-dewarp = "page_dewarp.__main__:main"
