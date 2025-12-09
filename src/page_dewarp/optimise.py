@@ -15,6 +15,7 @@ import numpy as np
 from cv2 import LINE_AA, Rodrigues, circle, line
 from scipy.optimize import minimize
 
+from .backends import HAS_JAX
 from .debug_utils import debug_show
 from .keypoints import make_keypoint_index, project_keypoints
 from .normalisation import norm2pix
@@ -26,16 +27,11 @@ __all__ = ["draw_correspondences", "optimise_params"]
 
 
 # Check if JAX is available
-JAX_AVAILABLE = False
-try:
+if HAS_JAX:
     import jax
 
     jax.config.update("jax_platforms", "cpu")
     import jax.numpy as jnp
-
-    JAX_AVAILABLE = True
-except ImportError:
-    pass
 
 
 def draw_correspondences(
@@ -55,7 +51,7 @@ def draw_correspondences(
     return display
 
 
-if JAX_AVAILABLE:
+if HAS_JAX:
 
     def _rodrigues_jax(rvec):
         """Convert rotation vector to rotation matrix (Rodrigues formula)."""
@@ -237,7 +233,7 @@ def optimise_params(
     method = cfg.OPT_METHOD
 
     jax_supported_method = method == "L-BFGS-B"  # Currently just 1 method
-    use_jax = JAX_AVAILABLE and jax_supported_method
+    use_jax = HAS_JAX and jax_supported_method
 
     if use_jax:
         start = dt.now()

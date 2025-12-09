@@ -1,4 +1,4 @@
-"""Fixtures for CI detection."""
+"""Fixtures for testing."""
 
 import os
 
@@ -7,5 +7,5 @@ import pytest
 
 @pytest.fixture
 def IS_CI():
-    """Fixture to determine if the code is running in a CI environment."""
-    return bool(os.environ.get("CI", None))
+    """Fixture to determine if running in CI."""
+    return bool(os.environ.get("CI"))

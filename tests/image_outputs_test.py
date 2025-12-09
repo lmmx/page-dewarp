@@ -10,6 +10,8 @@ from pathlib import Path
 import pytest
 from czkawka import ImageSimilarity
 
+from page_dewarp.backends import HAS_JAX, HAS_SCIPY
+
 
 repo_root = Path(__file__).parents[1]
 example_inputs_dir = repo_root / "example_input"
@@ -22,6 +24,7 @@ def temp_dir(tmp_path):
     return tmp_path
 
 
+@pytest.mark.skipif(not HAS_JAX, reason="JAX not installed")
 def test_page_dewarp_output(temp_dir, IS_CI):
     """Check that the CLI produces the expected thresholded image from sample input."""
     input_file = example_inputs_dir / "boston_cooking_a.jpg"
@@ -33,6 +36,29 @@ def test_page_dewarp_output(temp_dir, IS_CI):
 
     finder = ImageSimilarity()
     expected_hash = "8LS0tKSwnLQ" if IS_CI else "8LS0pOCgnLQ"
+    output_hash = finder.hash_image(output_file)
+    distance = finder.compare_hashes(output_hash, expected_hash)
+
+    assert distance == 0, (
+        f"Output image too different: distance={distance}, hash={output_hash}"
+    )
+
+
+@pytest.mark.skipif(
+    HAS_JAX or not HAS_SCIPY,
+    reason="JAX must not be installed, needs SciPy only",
+)
+def test_page_dewarp_output_scipy(temp_dir):
+    """Check CLI output when using scipy backend (no JAX)."""
+    input_file = example_inputs_dir / "boston_cooking_a.jpg"
+    output_file = temp_dir / "boston_cooking_a_thresh.png"
+
+    subprocess.run(["page-dewarp", str(input_file)], cwd=temp_dir, check=True)
+
+    assert output_file.exists(), "Output file was not created"
+
+    finder = ImageSimilarity()
+    expected_hash = "8JSwpOCwnLQ"
     output_hash = finder.hash_image(output_file)
     distance = finder.compare_hashes(output_hash, expected_hash)
 
