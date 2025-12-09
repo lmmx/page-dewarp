@@ -36,6 +36,6 @@ def test_page_dewarp_output(temp_dir):
     output_hash = finder.hash_image(output_file)
     distance = finder.compare_hashes(output_hash, expected_hash)
 
-    assert distance <= 5, (
+    assert distance <= 1, (
         f"Output image too different: distance={distance}, hash={output_hash}"
     )
