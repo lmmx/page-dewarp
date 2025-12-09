@@ -58,7 +58,7 @@ jobs:
       has-failures: ${{ steps.build-matrix.outputs.has-failures }}
     steps:
       - name: Download failure artifacts
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v5
         with:
           pattern: failed-${{ inputs.backend }}-*
           path: failures
