@@ -92,8 +92,8 @@ jobs:
         run: uv sync --frozen --group test --group jax
 
       - name: Run tests
-        env:
-          JAX_ENABLE_X64: "1"
-          JAX_PLATFORM_NAME: "cpu"
-          XLA_FLAGS: "--xla_cpu_enable_fast_math=false"
+        # env:
+        #   JAX_ENABLE_X64: "1"
+        #   JAX_PLATFORM_NAME: "cpu"
+        #   XLA_FLAGS: "--xla_cpu_enable_fast_math=false"
         run: uv run --frozen pytest
