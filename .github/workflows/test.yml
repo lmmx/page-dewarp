@@ -92,20 +92,20 @@ jobs:
 
       - name: Record result
         if: steps.test.outcome == 'failure'
-        run: echo "${{ matrix.python-version }}" > failed_${{ matrix.python-version }}.txt
+        run: echo "${{ matrix.python-version }}" > failed_jax_${{ matrix.python-version }}.txt
 
       - name: Upload failures
         if: steps.test.outcome == 'failure'
         uses: actions/upload-artifact@v4
         with:
-          name: failed-${{ matrix.python-version }}
-          path: failed_${{ matrix.python-version }}.txt
+          name: failed-jax-${{ matrix.python-version }}
+          path: failed_jax_${{ matrix.python-version }}.txt
 
       - name: Fail job if tests failed
         if: steps.test.outcome == 'failure'
         run: exit 1
 
-  aggregate-failures:
+  aggregate-jax-failures:
     needs: test-jax
     if: always()
     runs-on: ubuntu-latest
@@ -116,7 +116,7 @@ jobs:
       - name: Download failure artifacts
         uses: actions/download-artifact@v4
         with:
-          pattern: failed-*
+          pattern: failed-jax-*
           path: failures
           merge-multiple: true
         continue-on-error: true
@@ -139,14 +139,14 @@ jobs:
           fi
 
   test-jax-retry:
-    needs: aggregate-failures
-    if: always() && needs.aggregate-failures.outputs.has-failures == 'true'
+    needs: aggregate-jax-failures
+    if: always() && needs.aggregate-jax-failures.outputs.has-failures == 'true'
     runs-on: ubuntu-latest
     timeout-minutes: 5
     strategy:
       fail-fast: false
       matrix:
-        python-version: ${{ fromJson(needs.aggregate-failures.outputs.failed-matrix) }}
+        python-version: ${{ fromJson(needs.aggregate-jax-failures.outputs.failed-matrix) }}
     steps:
       - uses: actions/checkout@v4
 
@@ -166,13 +166,74 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Install uv
-        uses: astral-sh/setup-uv@v7
+      - name: Run SciPy tests
+        id: test
+        continue-on-error: true
+        uses: ./.github/actions/test-scipy
         with:
           python-version: ${{ matrix.python-version }}
 
-      - name: Install dependencies (scipy only)
-        run: uv sync --frozen --group test
+      - name: Record result
+        if: steps.test.outcome == 'failure'
+        run: echo "${{ matrix.python-version }}" > failed_scipy_${{ matrix.python-version }}.txt
 
-      - name: Run tests
-        run: uv run --frozen pytest -s -v
+      - name: Upload failures
+        if: steps.test.outcome == 'failure'
+        uses: actions/upload-artifact@v4
+        with:
+          name: failed-scipy-${{ matrix.python-version }}
+          path: failed_scipy_${{ matrix.python-version }}.txt
+
+      - name: Fail job if tests failed
+        if: steps.test.outcome == 'failure'
+        run: exit 1
+
+  aggregate-scipy-failures:
+    needs: test-scipy
+    if: always()
+    runs-on: ubuntu-latest
+    outputs:
+      failed-matrix: ${{ steps.build-matrix.outputs.matrix }}
+      has-failures: ${{ steps.build-matrix.outputs.has-failures }}
+    steps:
+      - name: Download failure artifacts
+        uses: actions/download-artifact@v4
+        with:
+          pattern: failed-scipy-*
+          path: failures
+          merge-multiple: true
+        continue-on-error: true
+
+      - name: Build retry matrix
+        id: build-matrix
+        run: |
+          set -euxo pipefail
+
+          mkdir -p failures || true
+
+          versions=$(grep -h -v '^[[:space:]]*$' failures/* 2>/dev/null | sort -u | jq -R -s -c 'split("\n")[:-1]')
+
+          if [ -z "$versions" ] || [ "$versions" = "[]" ]; then
+            echo "has-failures=false" >> $GITHUB_OUTPUT
+            echo "matrix=[]" >> $GITHUB_OUTPUT
+          else
+            echo "has-failures=true" >> $GITHUB_OUTPUT
+            echo "matrix=$versions" >> $GITHUB_OUTPUT
+          fi
+
+  test-scipy-retry:
+    needs: aggregate-scipy-failures
+    if: always() && needs.aggregate-scipy-failures.outputs.has-failures == 'true'
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ${{ fromJson(needs.aggregate-scipy-failures.outputs.failed-matrix) }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Run SciPy tests
+        uses: ./.github/actions/test-scipy
+        with:
+          python-version: ${{ matrix.python-version }}
