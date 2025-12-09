@@ -22,7 +22,7 @@ def temp_dir(tmp_path):
     return tmp_path
 
 
-def test_page_dewarp_output(temp_dir):
+def test_page_dewarp_output(temp_dir, IS_CI):
     """Check that the CLI produces the expected thresholded image from sample input."""
     input_file = example_inputs_dir / "boston_cooking_a.jpg"
     output_file = temp_dir / "boston_cooking_a_thresh.png"
@@ -32,10 +32,10 @@ def test_page_dewarp_output(temp_dir):
     assert output_file.exists(), "Output file was not created"
 
     finder = ImageSimilarity()
-    expected_hash = "8LS0pOCgnLQ"
+    expected_hash = "8LS0tKSwnLQ" if IS_CI else "8LS0pOCgnLQ"
     output_hash = finder.hash_image(output_file)
     distance = finder.compare_hashes(output_hash, expected_hash)
 
-    assert distance <= 1, (
+    assert distance == 0, (
         f"Output image too different: distance={distance}, hash={output_hash}"
     )
