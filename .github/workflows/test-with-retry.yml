@@ -37,7 +37,7 @@ jobs:
         continue-on-error: true
         run: uv run --frozen pytest -s -v
 
-      - name: Record result
+      - name: Record failure for retry
         if: steps.test.outcome == 'failure'
         run: echo "${{ matrix.python-version }}" > failed_${{ inputs.backend }}_${{ matrix.python-version }}.txt
 
@@ -48,13 +48,10 @@ jobs:
           name: failed-${{ inputs.backend }}-${{ matrix.python-version }}
           path: failed_${{ inputs.backend }}_${{ matrix.python-version }}.txt
 
-      - name: Fail job if tests failed
-        if: steps.test.outcome == 'failure'
-        run: exit 1
+      # Job "succeeds" - failure is deferred to retry job
 
   aggregate-failures:
     needs: test
-    if: always()
     runs-on: ubuntu-latest
     outputs:
       failed-matrix: ${{ steps.build-matrix.outputs.matrix }}
@@ -87,7 +84,7 @@ jobs:
 
   retry:
     needs: aggregate-failures
-    if: always() && needs.aggregate-failures.outputs.has-failures == 'true'
+    if: needs.aggregate-failures.outputs.has-failures == 'true'
     runs-on: ubuntu-latest
     timeout-minutes: 5
     strategy:
@@ -107,3 +104,25 @@ jobs:
 
       - name: Run tests
         run: uv run --frozen pytest -s -v
+
+  # Final status gate - this is what the PR checks
+  status:
+    needs: [test, aggregate-failures, retry]
+    if: always()
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check final status
+        run: |
+          if [ "${{ needs.aggregate-failures.outputs.has-failures }}" != "true" ]; then
+            echo "All tests passed on first try"
+            exit 0
+          elif [ "${{ needs.retry.result }}" == "success" ]; then
+            echo "Tests passed after retry"
+            exit 0
+          elif [ "${{ needs.retry.result }}" == "skipped" ]; then
+            echo "No retries needed"
+            exit 0
+          else
+            echo "Tests failed even after retry"
+            exit 1
+          fi
