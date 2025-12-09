@@ -103,6 +103,10 @@ jobs:
         if: steps.test.outcome == 'failure'
         run: echo "failed=${{ matrix.python-version }}" >> $GITHUB_OUTPUT
 
+      - name: Fail job if tests failed
+        if: steps.test.outcome == 'failure'
+        run: exit 1
+
   aggregate-failures:
     needs: [get-python-versions, test-jax]
     if: always()
