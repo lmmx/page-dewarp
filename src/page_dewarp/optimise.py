@@ -63,6 +63,8 @@ def optimise_params(
     Uses scipy's Powell method to minimize the squared distance between
     `dstpoints` (desired) and the projected points (via `project_keypoints`).
 
+    If the `SHEAR_COST` is non-zero (positive only) it will penalise X-rotation (shear).
+
     Args:
         name: A string identifier for debugging/logging.
         small: A downsampled image for optional visualization.
@@ -79,7 +81,14 @@ def optimise_params(
 
     def objective(pvec: np.ndarray) -> float:
         ppts = project_keypoints(pvec, keypoint_index)
-        return np.sum((dstpoints - ppts) ** 2)
+        error = np.sum((dstpoints - ppts) ** 2)
+        if (shear_cost := cfg.SHEAR_COST) > 0.0:
+            rvec = pvec[slice(*cfg.RVEC_IDX)]
+            # Penalise X-rotation (shear) specifically
+            rotation_penalty = shear_cost * rvec[0] ** 2
+            return error + rotation_penalty
+        else:
+            return error
 
     print("  initial objective is", objective(params))
     if debug_lvl >= 1:

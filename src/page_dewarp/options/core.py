@@ -53,6 +53,7 @@ class Config(Struct):
         OUTPUT_DPI (int): Stated DPI of output PNG (does not affect appearance).
         REMAP_DECIMATE (int): Downscaling factor for remapping images.
         NO_BINARY (int): Disable output conversion to binary thresholded image.
+        SHEAR_COST (float): Penalty against camera tilt (shear distortion).
         RVEC_IDX (tuple[int, int]): Index slice of rotation vector in parameter vector.
         TVEC_IDX (tuple[int, int]): Index slice of translation vector in parameter vector.
         CUBIC_IDX (tuple[int, int]): Index slice of cubic slopes in parameter vector.
@@ -233,6 +234,28 @@ class Config(Struct):
     """Downscaling factor for remapping image."""
     NO_BINARY: desc(int, "Disable output conversion to binary thresholded image") = 0
     """Disable output conversion to binary thresholded image."""
+    SHEAR_COST: desc(float, "Penalty against camera tilt (shear distortion).") = 0.0
+    """Penalty against camera tilt (shear distortion).
+
+    Adds a penalty term to the optimization objective that discourages X-rotation,
+    which manifests as sheared/slanted output.
+
+    Tip:
+       Increase if output appears sheared (parallelogram instead of rectangle).
+
+    Note:
+       The optimizer can mistake page curvature for camera tilt, producing sheared
+       output even from flat scans. This penalty encourages modeling curvature via
+       the cubic params instead of rotation.
+
+    Warning:
+       Using this at all may overcorrect, causing non-parallel sides. If edges look
+       worse after enabling (typically only mildly), reduce the value.
+
+    Question:
+       [#83](https://github.com/lmmx/page-dewarp/issues/83): Discussion of shear
+       distortion in flat document scans.
+    """
     # [proj_opts]
     RVEC_IDX: desc(
         tuple[int, int],

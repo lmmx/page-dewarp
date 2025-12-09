@@ -40,7 +40,7 @@ by Matt Zucker, as Python 2 is now long since decommissioned.
 - See [config docs](https://page-dewarp.vercel.app/api/options) for a table of options
 
 ```
-usage: page-dewarp [-h] [-d {0,1,2,3}] [-o {file,screen,both}] [-p]
+usage: page-dewarp [-h] [-d {0,1,2,3}] [-o {file,screen,both}]
                    [-it OPT_MAX_ITER] [-m OPT_METHOD] [-vw SCREEN_MAX_W]
                    [-vh SCREEN_MAX_H] [-x PAGE_MARGIN_X] [-y PAGE_MARGIN_Y]
                    [-tw TEXT_MIN_WIDTH] [-th TEXT_MIN_HEIGHT]
@@ -50,7 +50,7 @@ usage: page-dewarp [-h] [-d {0,1,2,3}] [-o {file,screen,both}] [-p]
                    [-eo EDGE_MAX_OVERLAP] [-el EDGE_MAX_LENGTH]
                    [-ec EDGE_ANGLE_COST] [-ea EDGE_MAX_ANGLE]
                    [-f FOCAL_LENGTH] [-z OUTPUT_ZOOM] [-dpi OUTPUT_DPI]
-                   [-nb NO_BINARY] [-s REMAP_DECIMATE]
+                   [-nb NO_BINARY] [-sh SHEAR_COST] [-s REMAP_DECIMATE]
                    IMAGE_FILE_OR_FILES [IMAGE_FILE_OR_FILES ...]
 
 positional arguments:
@@ -134,6 +134,9 @@ options:
   -nb, --no-binary NO_BINARY
                         Disable output conversion to binary thresholded image
                         (type: int, default: 0)
+  -sh, --shear-cost SHEAR_COST
+                        Penalty against camera tilt (shear distortion). (type:
+                        float, default: 0.0)
   -s, --shrink REMAP_DECIMATE
                         Downscaling factor for remapping image (type: int,
                         default: 16)
