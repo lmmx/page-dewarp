@@ -70,9 +70,13 @@ jobs:
         run: |
           set -euxo pipefail
 
-          mkdir -p failures || true
+          mkdir -p failures
 
-          versions=$(grep -h -v '^[[:space:]]*$' failures/* 2>/dev/null | sort -u | jq -R -s -c 'split("\n")[:-1]')
+          if ls failures/* 1>/dev/null 2>&1; then
+            versions=$(cat failures/* | grep -v '^[[:space:]]*$' | sort -u | jq -R -s -c 'split("\n") | map(select(length > 0))')
+          else
+            versions="[]"
+          fi
 
           if [ -z "$versions" ] || [ "$versions" = "[]" ]; then
             echo "has-failures=false" >> $GITHUB_OUTPUT
