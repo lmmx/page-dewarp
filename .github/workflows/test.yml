@@ -92,11 +92,30 @@ jobs:
         run: uv sync --frozen --group test --group jax
 
       - name: Run tests
-        # env:
-        #   JAX_ENABLE_X64: "1"
-        #   JAX_PLATFORM_NAME: "cpu"
-        #   XLA_FLAGS: "--xla_cpu_enable_fast_math=false"
-        run: uv run --with pytest-rerunfailures --frozen pytest -s -v --reruns 5
+        run: uv run --frozen pytest -s -v
+
+  test-jax-retry:
+    needs: [get-python-versions, test-jax]
+    if: failure()
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ${{ fromJson(needs.get-python-versions.outputs.python-versions) }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v7
+        with:
+          python-version: ${{ matrix.python-version }}
+
+      - name: Install dependencies (with JAX)
+        run: uv sync --frozen --group test --group jax
+
+      - name: Run tests
+        run: uv run --frozen pytest -s
 
   test-scipy:
     needs: get-python-versions
