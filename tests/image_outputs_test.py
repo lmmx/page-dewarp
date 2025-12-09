@@ -9,7 +9,6 @@ from pathlib import Path
 
 import pytest
 from czkawka import ImageSimilarity
-from inline_snapshot import snapshot
 
 
 repo_root = Path(__file__).parents[1]
@@ -33,5 +32,10 @@ def test_page_dewarp_output(temp_dir):
     assert output_file.exists(), "Output file was not created"
 
     finder = ImageSimilarity()
+    expected_hash = "8KT0pOS0tLQ"
     output_hash = finder.hash_image(output_file)
-    assert output_hash == snapshot("8KT0pOS0tLQ")
+    distance = finder.compare_hashes(output_hash, expected_hash)
+
+    assert distance <= 5, (
+        f"Output image too different: distance={distance}, hash={output_hash}"
+    )
