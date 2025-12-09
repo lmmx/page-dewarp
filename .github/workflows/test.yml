@@ -146,7 +146,7 @@ jobs:
 
   test-jax-retry:
     needs: aggregate-failures
-    if: needs.aggregate-failures.outputs.has-failures == 'true'
+    if: always() && needs.aggregate-failures.outputs.has-failures == 'true'
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
