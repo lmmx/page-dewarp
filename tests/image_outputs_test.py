@@ -25,7 +25,7 @@ def temp_dir(tmp_path):
 
 
 @pytest.mark.skipif(not HAS_JAX, reason="JAX not installed")
-def test_page_dewarp_output(temp_dir, IS_CI):
+def test_page_dewarp_output_jax(temp_dir, IS_CI):
     """Check that the CLI produces the expected thresholded image from sample input."""
     input_file = example_inputs_dir / "boston_cooking_a.jpg"
     output_file = temp_dir / "boston_cooking_a_thresh.png"
