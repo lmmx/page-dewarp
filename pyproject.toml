@@ -83,6 +83,9 @@ version = "bash news/scripts/get_version.sh"
 write-all-news = "bash news/scripts/version_based_changelog.sh all"
 write-news = "bash news/scripts/version_based_changelog.sh next"
 
+[tool.inline-snapshot]
+format-command = "ruff format --stdin-filename {filename}"
+
 [tool.ruff]
 
 [tool.ruff.lint]

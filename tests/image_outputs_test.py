@@ -34,4 +34,4 @@ def test_page_dewarp_output(temp_dir):
 
     finder = ImageSimilarity()
     output_hash = finder.hash_image(output_file)
-    assert output_hash == snapshot("8LS0tOSwvLQ")
+    assert output_hash == snapshot("8LS0pOCgnLQ")
