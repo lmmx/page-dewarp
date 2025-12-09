@@ -89,7 +89,7 @@ jobs:
           python-version: ${{ matrix.python-version }}
 
       - name: Install dependencies
-        run: uv sync --frozen --group test
+        run: uv sync --frozen --group test --group jax
 
       - name: Run tests
         run: uv run --frozen pytest
