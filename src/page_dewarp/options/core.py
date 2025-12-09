@@ -31,7 +31,7 @@ class Config(Struct):
     output size, page margin, debug verbosity, etc.
 
     Attributes:
-        OPT_MAX_ITER (int): Maximum Powell's method optimisation iterations.
+        OPT_MAX_ITER (int): Maximum optimisation iterations.
         OPT_METHOD (str): Name of the JAX/SciPy optimisation method to use.
         FOCAL_LENGTH (float): Normalized focal length of camera.
         TEXT_MIN_WIDTH (int): Minimum reduced pixel width of detected text contour.
@@ -62,7 +62,7 @@ class Config(Struct):
 
     """
 
-    OPT_MAX_ITER: desc(int, "Maximum Powell's method optimisation iterations") = 600_000
+    OPT_MAX_ITER: desc(int, "Maximum optimisation iterations") = 600_000
     """
     Maximum optimisation iterations.
 

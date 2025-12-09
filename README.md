@@ -65,86 +65,86 @@ positional arguments:
 
 options:
   -h, --help            show this help message and exit
-  -d, --debug-level {0,1,2,3}
+  -d {0,1,2,3}, --debug-level {0,1,2,3}
                         (type: int, default: 0)
-  -o, --debug-output {file,screen,both}
+  -o {file,screen,both}, --debug-output {file,screen,both}
                         (type: str, default: file)
-  -it, --max-iter OPT_MAX_ITER
-                        Maximum Powell's method optimisation iterations (type:
-                        int, default: 600000)
-  -m, --method OPT_METHOD
-                        Name of the SciPy optimisation method to use. (type:
-                        str, default: Powell)
-  -vw, --max-screen-width SCREEN_MAX_W
+  -it OPT_MAX_ITER, --max-iter OPT_MAX_ITER
+                        Maximum optimisation iterations (type: int, default:
+                        600000)
+  -m OPT_METHOD, --method OPT_METHOD
+                        Name of the JAX/SciPy optimisation method to use.
+                        (type: str, default: auto)
+  -vw SCREEN_MAX_W, --max-screen-width SCREEN_MAX_W
                         Viewing screen max width (for resizing to screen)
                         (type: int, default: 1280)
-  -vh, --max-screen-height SCREEN_MAX_H
+  -vh SCREEN_MAX_H, --max-screen-height SCREEN_MAX_H
                         Viewing screen max height (for resizing to screen)
                         (type: int, default: 700)
-  -x, --x-margin PAGE_MARGIN_X
+  -x PAGE_MARGIN_X, --x-margin PAGE_MARGIN_X
                         Reduced px to ignore near L/R edge (type: int,
                         default: 50)
-  -y, --y-margin PAGE_MARGIN_Y
+  -y PAGE_MARGIN_Y, --y-margin PAGE_MARGIN_Y
                         Reduced px to ignore near T/B edge (type: int,
                         default: 20)
-  -tw, --min-text-width TEXT_MIN_WIDTH
+  -tw TEXT_MIN_WIDTH, --min-text-width TEXT_MIN_WIDTH
                         Min reduced px width of detected text contour (type:
                         int, default: 15)
-  -th, --min-text-height TEXT_MIN_HEIGHT
+  -th TEXT_MIN_HEIGHT, --min-text-height TEXT_MIN_HEIGHT
                         Min reduced px height of detected text contour (type:
                         int, default: 2)
-  -ta, --min-text-aspect TEXT_MIN_ASPECT
+  -ta TEXT_MIN_ASPECT, --min-text-aspect TEXT_MIN_ASPECT
                         Filter out text contours below this w/h ratio (type:
                         float, default: 1.5)
-  -tk, --max-text-thickness TEXT_MAX_THICKNESS
+  -tk TEXT_MAX_THICKNESS, --max-text-thickness TEXT_MAX_THICKNESS
                         Max reduced px thickness of detected text contour
                         (type: int, default: 10)
-  -wz, --adaptive-winsz ADAPTIVE_WINSZ
+  -wz ADAPTIVE_WINSZ, --adaptive-winsz ADAPTIVE_WINSZ
                         Window size for adaptive threshold in reduced px
                         (type: int, default: 55)
-  -ri, --rotation-vec-param-idx RVEC_IDX
+  -ri RVEC_IDX, --rotation-vec-param-idx RVEC_IDX
                         Index of rvec in params vector (slice: pair of values)
                         (type: tuple[int, int], default: (0, 3))
-  -ti, --translation-vec-param-idx TVEC_IDX
+  -ti TVEC_IDX, --translation-vec-param-idx TVEC_IDX
                         Index of tvec in params vector (slice: pair of values)
                         (type: tuple[int, int], default: (3, 6))
-  -ci, --cubic-slope-param-idx CUBIC_IDX
+  -ci CUBIC_IDX, --cubic-slope-param-idx CUBIC_IDX
                         Index of cubic slopes in params vector (slice: pair of
                         values) (type: tuple[int, int], default: (6, 8))
-  -sw, --min-span-width SPAN_MIN_WIDTH
+  -sw SPAN_MIN_WIDTH, --min-span-width SPAN_MIN_WIDTH
                         Minimum reduced px width for span (type: int, default:
                         30)
-  -sp, --span-spacing SPAN_PX_PER_STEP
+  -sp SPAN_PX_PER_STEP, --span-spacing SPAN_PX_PER_STEP
                         Reduced px spacing for sampling along spans (type:
                         int, default: 20)
-  -eo, --max-edge-overlap EDGE_MAX_OVERLAP
+  -eo EDGE_MAX_OVERLAP, --max-edge-overlap EDGE_MAX_OVERLAP
                         Max reduced px horiz. overlap of contours in span
                         (type: float, default: 1.0)
-  -el, --max-edge-length EDGE_MAX_LENGTH
+  -el EDGE_MAX_LENGTH, --max-edge-length EDGE_MAX_LENGTH
                         Max reduced px length of edge connecting contours
                         (type: float, default: 100.0)
-  -ec, --edge-angle-cost EDGE_ANGLE_COST
+  -ec EDGE_ANGLE_COST, --edge-angle-cost EDGE_ANGLE_COST
                         Cost of angles in edges (tradeoff vs. length) (type:
                         float, default: 10.0)
-  -ea, --max-edge-angle EDGE_MAX_ANGLE
+  -ea EDGE_MAX_ANGLE, --max-edge-angle EDGE_MAX_ANGLE
                         Maximum change in angle allowed between contours
                         (type: float, default: 7.5)
-  -f, --focal-length FOCAL_LENGTH
+  -f FOCAL_LENGTH, --focal-length FOCAL_LENGTH
                         Normalized focal length of camera (type: float,
                         default: 1.2)
-  -z, --output-zoom OUTPUT_ZOOM
+  -z OUTPUT_ZOOM, --output-zoom OUTPUT_ZOOM
                         How much to zoom output relative to *original* image
                         (type: float, default: 1.0)
-  -dpi, --output-dpi OUTPUT_DPI
+  -dpi OUTPUT_DPI, --output-dpi OUTPUT_DPI
                         Just affects stated DPI of PNG, not appearance (type:
                         int, default: 300)
-  -nb, --no-binary NO_BINARY
+  -nb NO_BINARY, --no-binary NO_BINARY
                         Disable output conversion to binary thresholded image
                         (type: int, default: 0)
-  -sh, --shear-cost SHEAR_COST
+  -sh SHEAR_COST, --shear-cost SHEAR_COST
                         Penalty against camera tilt (shear distortion). (type:
                         float, default: 0.0)
-  -s, --shrink REMAP_DECIMATE
+  -s REMAP_DECIMATE, --shrink REMAP_DECIMATE
                         Downscaling factor for remapping image (type: int,
                         default: 16)
 ```
