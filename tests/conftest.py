@@ -1,8 +1,13 @@
 """Fixtures for testing."""
 
 import os
+import sys
 
 import pytest
+
+
+if sys.version_info[:2] == (3, 12):
+    assert False
 
 
 @pytest.fixture
