@@ -163,6 +163,7 @@ class ArgParser(argparse.ArgumentParser):
         self.add_default_argument(["-z", "--output-zoom"])
         self.add_default_argument(["-dpi", "--output-dpi"])
         self.add_default_argument(["-nb", "--no-binary"], "NO_BINARY")
+        self.add_default_argument(["-sh", "--shear-cost"], "SHEAR_COST")
         self.add_default_argument(["-s", "--shrink"], "REMAP_DECIMATE")
 
     def __init__(self):
