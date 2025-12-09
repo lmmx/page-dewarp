@@ -7,3 +7,8 @@ import ".just/test.just"
 refresh-examples:
     #!/usr/bin/env bash
     ../.venv/bin/page-dewarp ../example_input/*
+
+[working-directory: "example_output"]
+refresh-boston-a:
+    #!/usr/bin/env bash
+    ../.venv/bin/page-dewarp ../example_input/boston*_a*
