@@ -17,8 +17,15 @@ Python 3 library for page dewarping and thresholding,
 
 To install from PyPI, optionally using [uv](https://docs.astral.sh/uv/) (recommended), run:
 
-- `pip install page-dewarp`
-- or `uv pip install page-dewarp` (recommended)
+```sh
+uv pip install page-dewarp
+```
+
+To install with JAX autodiff for ~7x faster optimisation, add the `jax` extra:
+
+```sh
+uv pip install page-dewarp[jax]
+```
 
 ## Dependencies
 

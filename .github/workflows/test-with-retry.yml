@@ -1,0 +1,132 @@
+name: Test with retry
+
+on:
+  workflow_call:
+    inputs:
+      backend:
+        required: true
+        type: string
+      python-versions:
+        required: true
+        type: string
+      install-command:
+        required: true
+        type: string
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ${{ fromJson(inputs.python-versions) }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v7
+        with:
+          python-version: ${{ matrix.python-version }}
+
+      - name: Install dependencies
+        run: ${{ inputs.install-command }}
+
+      - name: Run tests
+        id: test
+        continue-on-error: true
+        run: uv run --frozen pytest -s -v
+
+      - name: Record failure for retry
+        if: steps.test.outcome == 'failure'
+        run: echo "${{ matrix.python-version }}" > failed_${{ inputs.backend }}_${{ matrix.python-version }}.txt
+
+      - name: Upload failures
+        if: steps.test.outcome == 'failure'
+        uses: actions/upload-artifact@v4
+        with:
+          name: failed-${{ inputs.backend }}-${{ matrix.python-version }}
+          path: failed_${{ inputs.backend }}_${{ matrix.python-version }}.txt
+
+      # Job "succeeds" - failure is deferred to retry job
+
+  aggregate-failures:
+    needs: test
+    runs-on: ubuntu-latest
+    outputs:
+      failed-matrix: ${{ steps.build-matrix.outputs.matrix }}
+      has-failures: ${{ steps.build-matrix.outputs.has-failures }}
+    steps:
+      - name: Download failure artifacts
+        uses: actions/download-artifact@v5
+        with:
+          pattern: failed-${{ inputs.backend }}-*
+          path: failures
+          merge-multiple: true
+        continue-on-error: true
+
+      - name: Build retry matrix
+        id: build-matrix
+        run: |
+          set -euxo pipefail
+
+          mkdir -p failures
+
+          if ls failures/* 1>/dev/null 2>&1; then
+            versions=$(cat failures/* | grep -v '^[[:space:]]*$' | sort -u | jq -R -s -c 'split("\n") | map(select(length > 0))')
+          else
+            versions="[]"
+          fi
+
+          if [ -z "$versions" ] || [ "$versions" = "[]" ]; then
+            echo "has-failures=false" >> $GITHUB_OUTPUT
+            echo "matrix=[]" >> $GITHUB_OUTPUT
+          else
+            echo "has-failures=true" >> $GITHUB_OUTPUT
+            echo "matrix=$versions" >> $GITHUB_OUTPUT
+          fi
+
+  retry:
+    needs: aggregate-failures
+    if: needs.aggregate-failures.outputs.has-failures == 'true'
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ${{ fromJson(needs.aggregate-failures.outputs.failed-matrix) }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v7
+        with:
+          python-version: ${{ matrix.python-version }}
+
+      - name: Install dependencies
+        run: ${{ inputs.install-command }}
+
+      - name: Run tests
+        run: uv run --frozen pytest -s -v
+
+  # Final status gate - this is what the PR checks
+  status:
+    needs: [test, aggregate-failures, retry]
+    if: always()
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check final status
+        run: |
+          if [ "${{ needs.aggregate-failures.outputs.has-failures }}" != "true" ]; then
+            echo "All tests passed on first try"
+            exit 0
+          elif [ "${{ needs.retry.result }}" == "success" ]; then
+            echo "Tests passed after retry"
+            exit 0
+          elif [ "${{ needs.retry.result }}" == "skipped" ]; then
+            echo "No retries needed"
+            exit 0
+          else
+            echo "Tests failed even after retry"
+            exit 1
+          fi

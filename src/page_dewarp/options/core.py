@@ -32,7 +32,7 @@ class Config(Struct):
 
     Attributes:
         OPT_MAX_ITER (int): Maximum Powell's method optimisation iterations.
-        OPT_METHOD (str): Name of the SciPy optimisation method to use.
+        OPT_METHOD (str): Name of the JAX/SciPy optimisation method to use.
         FOCAL_LENGTH (float): Normalized focal length of camera.
         TEXT_MIN_WIDTH (int): Minimum reduced pixel width of detected text contour.
         TEXT_MIN_HEIGHT (int): Minimum reduced pixel height of detected text contour.
@@ -64,22 +64,32 @@ class Config(Struct):
 
     OPT_MAX_ITER: desc(int, "Maximum Powell's method optimisation iterations") = 600_000
     """
-    Maximum Powell's method optimisation iterations.
+    Maximum optimisation iterations.
 
     Tip:
        For a fast 'draft' preview, set this to a low value like 1 with `-it 1`.
 
     Note:
-       This value is passed as `maxiter` to
+       This value is passed as `maxiter` to JAX or
        [scipy.optimize.minimize](https://docs.scipy.org/doc/scipy/reference/optimize.minimize-powell.html),
        which defaults to `N*1000` where N is the number of parameter variables (in our case, 600).
+    """
+    OPT_METHOD: desc(str, "Name of the JAX/SciPy optimisation method to use.") = "auto"
+    """
+    Name of the JAX/SciPy optimisation method to use.
 
-       Powell's method is slower than methods like L-BFGS-B, but it avoids local minima
-       better in high-dimensional parameter spaces.
-    """
-    OPT_METHOD: desc(str, "Name of the SciPy optimisation method to use.") = "Powell"
-    """
-    Name of the SciPy optimisation method to use.
+    JAX supports L-BFGS-B only (its default). It is typically several times faster than
+    Powell's method (SciPy's default), and more accurate than SciPy's L-BFGS-B.
+
+    Tip:
+       Install the `jax` Python package to use JAX reverse-mode autodifferentiation to
+       produce gradients for L-BFGS-B (recommended). It is much faster than Powell's
+       method with SciPy, typically with far fewer function evaluations and a better
+       result.
+
+    In SciPy, Powell's method is slower than methods like L-BFGS-B, but it avoids local minima
+    better in high-dimensional parameter spaces because SciPy's gradients are lower
+    quality so produce worse optimisations when used by gradient methods like L-BFGS-B.
 
     Note:
        This name is passed as `method` to
