@@ -33,6 +33,16 @@ if HAS_JAX:
     jax.config.update("jax_platforms", "cpu")
     import jax.numpy as jnp
 
+# Check if JAXopt is available
+HAS_JAXOPT = False
+if HAS_JAX:
+    try:
+        import jaxopt
+
+        HAS_JAXOPT = True
+    except ImportError:
+        pass
+
 
 def draw_correspondences(
     img: np.ndarray,
