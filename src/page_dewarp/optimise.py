@@ -196,7 +196,7 @@ if HAS_JAX:
             params,
             method="L-BFGS-B",
             jac=True,
-            options={"maxiter": cfg.OPT_MAX_ITER, "maxcor": 30},
+            options={"maxiter": cfg.OPT_MAX_ITER, "maxcor": 100},
         )
         return result
 
