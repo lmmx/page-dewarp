@@ -56,7 +56,8 @@ usage: page-dewarp [-h] [-d {0,1,2,3}] [-o {file,screen,both}]
                    [-eo EDGE_MAX_OVERLAP] [-el EDGE_MAX_LENGTH]
                    [-ec EDGE_ANGLE_COST] [-ea EDGE_MAX_ANGLE]
                    [-f FOCAL_LENGTH] [-z OUTPUT_ZOOM] [-dpi OUTPUT_DPI]
-                   [-nb NO_BINARY] [-sh SHEAR_COST] [-s REMAP_DECIMATE]
+                   [-nb NO_BINARY] [-sh SHEAR_COST] [-mc MAX_CORR]
+                   [-s REMAP_DECIMATE]
                    IMAGE_FILE_OR_FILES [IMAGE_FILE_OR_FILES ...]
 
 positional arguments:
@@ -143,6 +144,9 @@ options:
   -sh SHEAR_COST, --shear-cost SHEAR_COST
                         Penalty against camera tilt (shear distortion). (type:
                         float, default: 0.0)
+  -mc MAX_CORR, --max-corrections MAX_CORR
+                        Maximum corrections used to approximate the inverse
+                        Hessian. (type: int, default: 100)
   -s REMAP_DECIMATE, --shrink REMAP_DECIMATE
                         Downscaling factor for remapping image (type: int,
                         default: 16)

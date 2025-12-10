@@ -78,7 +78,7 @@ jobs:
     with:
       backend: jax
       python-versions: ${{ needs.get-python-versions.outputs.python-versions }}
-      install-command: uv sync --frozen --group test --group jax
+      install-command: uv sync --frozen --no-default-groups --group test --group jax
 
   test-scipy:
     needs: get-python-versions
@@ -86,4 +86,4 @@ jobs:
     with:
       backend: scipy
       python-versions: ${{ needs.get-python-versions.outputs.python-versions }}
-      install-command: uv sync --frozen --group test
+      install-command: uv sync --frozen --no-default-groups --group test

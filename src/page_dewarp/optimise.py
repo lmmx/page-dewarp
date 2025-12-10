@@ -165,7 +165,7 @@ if HAS_JAX:
 
         return objective
 
-    def _optimise_with_jax(dstpoints, keypoint_index, params):
+    def _optimise_with_jax_lbfgsb(dstpoints, keypoint_index, params):
         """Run optimization using JAX autodiff + L-BFGS-B."""
         # Match original dtype (float32 for K matrix, but params are float64)
         dstpoints_flat = jnp.array(dstpoints.reshape(-1, 2))
@@ -196,7 +196,7 @@ if HAS_JAX:
             params,
             method="L-BFGS-B",
             jac=True,
-            options={"maxiter": cfg.OPT_MAX_ITER},
+            options={"maxiter": cfg.OPT_MAX_ITER, "maxcor": cfg.MAX_CORR},
         )
         return result
 
@@ -241,7 +241,7 @@ def optimise_params(
         start = dt.now()
         with warnings.catch_warnings():
             warnings.simplefilter("ignore")
-            result = _optimise_with_jax(dstpoints, keypoint_index, params)
+            result = _optimise_with_jax_lbfgsb(dstpoints, keypoint_index, params)
         elapsed = (dt.now() - start).total_seconds()
         print(
             f"  optimization (L-BFGS-B + JAX autodiff) took {elapsed:.2f}s, {result.nfev} evals",
