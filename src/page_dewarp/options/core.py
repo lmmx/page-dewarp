@@ -54,6 +54,7 @@ class Config(Struct):
         REMAP_DECIMATE (int): Downscaling factor for remapping images.
         NO_BINARY (int): Disable output conversion to binary thresholded image.
         SHEAR_COST (float): Penalty against camera tilt (shear distortion).
+        MAX_CORR (int): Maximum corrections used to approximate the inverse Hessian.
         RVEC_IDX (tuple[int, int]): Index slice of rotation vector in parameter vector.
         TVEC_IDX (tuple[int, int]): Index slice of translation vector in parameter vector.
         CUBIC_IDX (tuple[int, int]): Index slice of cubic slopes in parameter vector.
@@ -265,6 +266,25 @@ class Config(Struct):
     Question:
        [#83](https://github.com/lmmx/page-dewarp/issues/83): Discussion of shear
        distortion in flat document scans.
+    """
+    MAX_CORR: desc(
+        int,
+        "Maximum corrections used to approximate the inverse Hessian.",
+    ) = 100
+    """Maximum corrections used to approximate the inverse Hessian.
+
+    Performance tuning parameter, only used in L-BFGS-B. For our problem in 600D, a high
+    value (rather than the SciPy default of 10) is helpful to converge in fewer
+    iterations.
+
+    Question:
+       [#135](https://github.com/lmmx/page-dewarp/pulls/135): performance measurements
+       at SciPy default maxcorr = 10 and new page-dewarp configured default 100.
+
+    See: [SciPy docs](https://docs.scipy.org/doc/scipy/reference/optimize.minimize-lbfgsb.html)
+
+    See also: [Ceres docs](http://ceres-solver.org/nnls_solving.html), which describe
+    the tradeoff of computation vs. quality of approximation.
     """
     # [proj_opts]
     RVEC_IDX: desc(
