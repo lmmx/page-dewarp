@@ -1,6 +1,6 @@
 """Backend availability detection."""
 
-__all__ = ["HAS_JAX", "HAS_SCIPY", "get_default_method"]
+__all__ = ["HAS_JAX", "HAS_SCIPY", "HAS_JAXOPT", "get_default_method"]
 
 HAS_JAX = False
 try:
@@ -9,6 +9,15 @@ try:
     HAS_JAX = True
 except ImportError:
     pass
+
+HAS_JAXOPT = False
+if HAS_JAX:
+    try:
+        import jaxopt  # noqa: F401
+
+        HAS_JAXOPT = True
+    except ImportError:
+        pass
 
 HAS_SCIPY = False
 try:
@@ -27,7 +36,9 @@ if not HAS_JAX and not HAS_SCIPY:
 
 def get_default_method() -> str:
     """Return the default optimization method based on available backend."""
-    if HAS_JAX:
+    if HAS_JAXOPT:
+        return "LevenbergMarquardt"
+    elif HAS_JAX:
         return "L-BFGS-B"
     else:
         return "Powell"
