@@ -1,5 +1,8 @@
 """Backend availability detection."""
 
+from __future__ import annotations
+
+
 __all__ = ["HAS_JAX", "HAS_SCIPY", "get_default_method"]
 
 HAS_JAX = False
