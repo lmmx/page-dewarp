@@ -35,7 +35,7 @@ jobs:
       - name: Run tests
         id: test
         continue-on-error: true
-        run: uv run --frozen pytest -s -v
+        run: uv run --no-sync --frozen pytest -s -v
 
       - name: Record failure for retry
         if: steps.test.outcome == 'failure'
@@ -107,7 +107,7 @@ jobs:
         run: ${{ inputs.install-command }}
 
       - name: Run tests
-        run: uv run --frozen pytest -s -v
+        run: uv run --no-sync --frozen pytest -s -v
 
   # Final status gate - this is what the PR checks
   status:
