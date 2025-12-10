@@ -20,7 +20,7 @@ To install from PyPI, optionally using [uv](https://docs.astral.sh/uv/) (recomme
 uv pip install page-dewarp
 ```
 
-To install with JAX autodiff for ~7x faster optimisation, add the `jax` extra:
+To install with JAX autodiff for ~11x faster optimisation, add the `jax` extra:
 
 ```sh
 uv pip install page-dewarp[jax]
