@@ -175,7 +175,7 @@ if HAS_JAX:
 
         return objective
 
-    def _optimise_with_jax(dstpoints, keypoint_index, params):
+    def _optimise_with_jax_lbfgsb(dstpoints, keypoint_index, params):
         """Run optimization using JAX autodiff + L-BFGS-B."""
         # Match original dtype (float32 for K matrix, but params are float64)
         dstpoints_flat = jnp.array(dstpoints.reshape(-1, 2))
@@ -211,6 +211,50 @@ if HAS_JAX:
         return result
 
 
+if HAS_JAXOPT:
+    import jax
+    import jax.numpy as jnp
+    import jaxopt
+
+    def _optimise_with_jaxopt_lm(dstpoints, keypoint_index, params):
+        dst = jnp.array(dstpoints.reshape(-1, 2))
+        key = jnp.array(keypoint_index, dtype=jnp.int32)
+        focal = cfg.FOCAL_LENGTH
+        shear_cost = cfg.SHEAR_COST
+
+        # === residual function ===
+        def residual_fn(pvec):
+            projected = _project_keypoints_jax(pvec, key, focal)
+            r = (dst - projected).reshape(-1)
+            if shear_cost > 0:
+                r = r.at[0].set(r[0] + pvec[0] * shear_cost)
+            return r
+
+        # === correct constructor ===
+        solver = jaxopt.LevenbergMarquardt(
+            residual_fn,
+            maxiter=cfg.OPT_MAX_ITER,
+        )
+
+        p0 = jnp.array(params)
+
+        # run solver
+        res = solver.run(p0)
+        p_opt = res.params
+
+        # compute final residual norm for compatibility
+        final_r = residual_fn(p_opt)
+        final_cost = float(jnp.dot(final_r, final_r))
+
+        # wrap SciPy-like result
+        class Result:
+            x = np.array(p_opt)
+            fun = final_cost
+            nfev = int(res.state.iter_num)
+
+        return Result()
+
+
 def optimise_params(
     name: str,
     small: np.ndarray,
@@ -244,25 +288,40 @@ def optimise_params(
     if method == "auto":
         method = get_default_method()
 
-    jax_supported_method = method == "L-BFGS-B"  # Currently just 1 method
+    # Only one supported JAXopt method: LevenbergMarquardt
+    jaxopt_supported_method = method == "LevenbergMarquardt"
+    use_jaxopt = HAS_JAXOPT and jaxopt_supported_method
+    # Only one supported JAX method: L-BFGS-B
+    jax_supported_method = method == "L-BFGS-B"
     use_jax = HAS_JAX and jax_supported_method
 
-    if use_jax:
+    if use_jaxopt:
         start = dt.now()
         with warnings.catch_warnings():
             warnings.simplefilter("ignore")
-            result = _optimise_with_jax(dstpoints, keypoint_index, params)
+            result = _optimise_with_jaxopt_lm(dstpoints, keypoint_index, params)
+        elapsed = (dt.now() - start).total_seconds()
+        print(
+            f"  optimization (JAXopt Levenberg-Marquardt autodiff) took {elapsed:.2f}s, {result.nfev} evals",
+        )
+        # No other solvers support JAXopt's one method so no need to print a hint using the
+        # `jaxopt_supported_method` variable like we do for `jax_supported_method` below
+    elif use_jax:
+        start = dt.now()
+        with warnings.catch_warnings():
+            warnings.simplefilter("ignore")
+            result = _optimise_with_jax_lbfgsb(dstpoints, keypoint_index, params)
         elapsed = (dt.now() - start).total_seconds()
         print(
             f"  optimization (L-BFGS-B + JAX autodiff) took {elapsed:.2f}s, {result.nfev} evals",
         )
-    elif jax_supported_method:
-        print(
-            "OPT_METHOD='L-BFGS-B' can use JAX for fast autodiff. "
-            "Install with: pip install jax jaxlib",
-            file=sys.stderr,
-        )
-    if not use_jax:
+    else:
+        if jax_supported_method:
+            print(
+                "OPT_METHOD='L-BFGS-B' can use JAX for fast autodiff. "
+                "Install with: pip install jax jaxlib",
+                file=sys.stderr,
+            )
         # Powell or other SciPy methods
         start = dt.now()
         result = minimize(

@@ -1742,7 +1742,7 @@ jax = [
     { name = "jax", version = "0.6.2", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version < '3.11'" },
     { name = "jax", version = "0.8.1", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version >= '3.11'" },
 ]
-lm = [
+jaxopt = [
     { name = "jaxopt" },
 ]
 test = [
@@ -1783,7 +1783,7 @@ docs = [
     { name = "zensical", specifier = ">=0.0.11" },
 ]
 jax = [{ name = "jax", specifier = ">=0.6.2" }]
-lm = [{ name = "jaxopt", specifier = ">=0.8.5" }]
+jaxopt = [{ name = "jaxopt", specifier = ">=0.8.5" }]
 test = [
     { name = "czkawka", specifier = ">=0.1.2" },
     { name = "inline-snapshot", specifier = ">=0.30.1" },

@@ -15,7 +15,7 @@ dev = [
 ]
 docs = ["mkdocstrings[python]>=1.0", "urllib3<2", "zensical>=0.0.11"]
 jax = ["jax>=0.6.2"]
-lm = ["jaxopt>=0.8.5"]
+jaxopt = ["jaxopt>=0.8.5"]
 test = ["czkawka>=0.1.2", "inline-snapshot>=0.30.1", "pytest>=7.4.0"]
 
 [project]
@@ -156,7 +156,7 @@ name = "Miscellany"
 showcontent = true
 
 [tool.uv]
-default-groups = ["build", "dev", "jax", "test"]
+default-groups = ["build", "dev", "jax", "jaxopt", "test"]
 
 [tool.uv.sources]
 mdx-truly-sane-lists = { git = "https://github.com/radude/mdx_truly_sane_lists.git" }
