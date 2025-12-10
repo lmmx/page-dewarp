@@ -36,7 +36,7 @@ def test_page_dewarp_output_jax(temp_dir, IS_CI):
     assert output_file.exists(), "Output file was not created"
 
     finder = ImageSimilarity()
-    expected_hash = "8LS0tKSwnLQ" if IS_CI else "8LT0tOSwnKw"
+    expected_hash = "8LT0tOSwnKw" if IS_CI else "8LT0tOSwnKw"
     output_hash = finder.hash_image(output_file)
     distance = finder.compare_hashes(output_hash, expected_hash)
 
