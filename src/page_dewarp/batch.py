@@ -2,9 +2,9 @@
 """Batched image processing for page dewarping.
 
 This module provides efficient processing of multiple images by:
-1. Preprocessing images in parallel (CPU multiprocessing)
-2. Running optimization as a single batch on GPU
-3. Generating outputs in parallel (CPU multiprocessing)
+1. Preprocessing images in parallel (CPU)
+2. Running optimization in parallel (GPU via vmap)
+3. Generating outputs in parallel (CPU)
 """
 
 from __future__ import annotations
@@ -114,14 +114,10 @@ def _preprocess_single(args: tuple) -> PreparedData | tuple[str, str]:
             margin_y,
         )
 
-        # Get contours
         mask = Mask(stem, small, pagemask, "text")
         contour_list = mask.contours()
-
-        # Assemble spans
         spans = assemble_spans(stem, small, pagemask, contour_list)
 
-        # Retry with line detection if insufficient spans
         if len(spans) < 3:
             mask = Mask(stem, small, pagemask, "line")
             contour_list = mask.contours()
@@ -133,7 +129,6 @@ def _preprocess_single(args: tuple) -> PreparedData | tuple[str, str]:
             return (str(imgfile), f"Insufficient spans: {len(spans)}")
 
         span_points = sample_spans(small.shape, spans)
-
         corners, ycoords, xcoords = keypoints_from_samples(
             stem,
             small,
@@ -141,7 +136,6 @@ def _preprocess_single(args: tuple) -> PreparedData | tuple[str, str]:
             page_outline,
             span_points,
         )
-
         rough_dims, span_counts, params = get_default_params(corners, ycoords, xcoords)
         dstpoints = np.vstack((corners[0].reshape((1, 1, 2)),) + tuple(span_points))
 
@@ -160,7 +154,7 @@ def _preprocess_single(args: tuple) -> PreparedData | tuple[str, str]:
 
 
 def _finalize_single(args: tuple) -> tuple[str, str | None, str | None]:
-    """Generate output for a single image. Returns (input_path, output_path, error)."""
+    """Generate output for a single image."""
     file_path, corners, rough_dims, opt_params, config_dict = args
 
     try:
@@ -171,11 +165,9 @@ def _finalize_single(args: tuple) -> tuple[str, str | None, str | None]:
         from .options import Config
 
         config = msgspec.convert(config_dict, Config)
-
         cv2_img = imread(str(file_path))
         small = _resize_to_screen(cv2_img, config.SCREEN_MAX_W, config.SCREEN_MAX_H)
         stem = Path(file_path).stem
-
         page_dims = get_page_dims(corners, rough_dims, opt_params)
 
         if np.any(page_dims < 0):
@@ -195,7 +187,7 @@ def _finalize_single(args: tuple) -> tuple[str, str | None, str | None]:
 
 
 def _run_parallel(func, args_list, n_workers):
-    """Run function in parallel, suppressing fork warnings from JAX."""
+    """Run function in parallel, suppressing fork warnings."""
     with warnings.catch_warnings():
         warnings.filterwarnings(
             "ignore",
@@ -210,16 +202,10 @@ def process_images_batched(
     image_files: list[str | Path],
     config: Config,
 ) -> list[BatchedResult]:
-    """Process multiple images with batched GPU optimization.
-
-    Pipeline:
-    1. Preprocess all images in parallel on CPU
-    2. Run single batched optimization on GPU
-    3. Generate all outputs in parallel on CPU
-    """
+    """Process multiple images with parallel optimization."""
     import msgspec
 
-    from .optimise._jax_batched import OptimizationProblem, optimise_params_batched
+    from .optimise._jax_vmap import OptimizationProblem, optimise_params_vmap
 
     config_dict = msgspec.structs.asdict(config)
     n_workers = min(len(image_files), max(1, mp.cpu_count() - 1))
@@ -265,8 +251,8 @@ def process_images_batched(
     if not prepared:
         return failed
 
-    # Phase 2: Batched GPU optimization
-    print("\n=== Phase 2: Batched Optimization ===")
+    # Phase 2: Parallel BFGS optimization (vmap)
+    print("\n=== Phase 2: Parallel Optimization ===")
     problems = [
         OptimizationProblem(
             name=Path(p.file_path).stem,
@@ -279,7 +265,7 @@ def process_images_batched(
         for p in prepared
     ]
 
-    optimized_params_list = optimise_params_batched(problems, config.DEBUG_LEVEL)
+    optimized_params_list = optimise_params_vmap(problems, config.DEBUG_LEVEL)
 
     # Phase 3: Parallel output generation
     print("\n=== Phase 3: Generating Outputs ===")
