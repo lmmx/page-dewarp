@@ -1,23 +1,28 @@
 # src/page_dewarp/optimise/_jax_vmap.py
-"""Parallel optimization using JAX - runs independent L-BFGS-B optimizations."""
+"""Parallel optimization using JAX's native L-BFGS with vmap."""
 
 from __future__ import annotations
 
 import warnings
-from concurrent.futures import ThreadPoolExecutor
 from dataclasses import dataclass
 from datetime import datetime as dt
 
 import jax
 import jax.numpy as jnp
 import numpy as np
-from scipy.optimize import minimize
+
+
+# Enable float64 for numerical stability
+jax.config.update("jax_enable_x64", True)
+
+# Import the internal L-BFGS implementation
+from jax._src.scipy.optimize._lbfgs import _minimize_lbfgs
 
 from ..device import get_device
 from ..keypoints import make_keypoint_index
 from ..options import cfg
 from ._base import make_objective
-from ._jax import _project_keypoints_jax
+from ._jax import _project_xy_jax
 
 
 __all__ = ["OptimizationProblem", "optimise_params_vmap"]
@@ -36,76 +41,11 @@ class OptimizationProblem:
     rough_dims: tuple[float, float] | None = None
 
 
-def _make_objective_and_grad(dstpoints, keypoint_index, focal_length, shear_cost):
-    """Create JIT-compiled objective and gradient for scipy L-BFGS-B."""
-    dstpoints_flat = jnp.array(dstpoints.reshape(-1, 2))
-    keypoint_index_jax = jnp.array(keypoint_index, dtype=jnp.int32)
-
-    @jax.jit
-    def objective_jax(pvec):
-        projected = _project_keypoints_jax(pvec, keypoint_index_jax, focal_length)
-        error = jnp.sum((dstpoints_flat - projected) ** 2)
-        if shear_cost > 0.0:
-            error = error + shear_cost * pvec[0] ** 2
-        return error
-
-    objective_and_grad = jax.jit(jax.value_and_grad(objective_jax))
-
-    def objective_with_grad_np(p):
-        p_jax = jnp.array(p)
-        val, grad = objective_and_grad(p_jax)
-        val_np = float(val)
-        grad_np = np.array(grad, dtype=np.float64)
-        # NaN/Inf handling - critical for stability
-        if not np.isfinite(val_np):
-            return 1e10, np.zeros_like(p)
-        grad_np = np.nan_to_num(grad_np, nan=0.0, posinf=0.0, neginf=0.0)
-        return val_np, grad_np
-
-    return objective_with_grad_np
-
-
-def _optimize_single(args):
-    """Optimize a single problem using scipy L-BFGS-B with JAX gradients."""
-    (
-        name,
-        dstpoints,
-        keypoint_index,
-        params,
-        focal_length,
-        shear_cost,
-        maxiter,
-        maxcor,
-    ) = args
-
-    objective_with_grad = _make_objective_and_grad(
-        dstpoints,
-        keypoint_index,
-        focal_length,
-        shear_cost,
-    )
-
-    result = minimize(
-        objective_with_grad,
-        params,
-        method="L-BFGS-B",
-        jac=True,
-        options={"maxiter": maxiter, "maxcor": maxcor},
-    )
-
-    return name, result.x, result.fun, result.nfev
-
-
 def optimise_params_vmap(
     problems: list[OptimizationProblem],
     debug_lvl: int = 0,
 ) -> list[np.ndarray]:
-    """Run parallel independent L-BFGS-B optimizations.
-
-    Uses scipy's L-BFGS-B (which supports bounds and per-problem iteration)
-    with JAX autodiff for gradients. Parallelizes across problems using threads
-    since the actual computation happens on GPU via JAX.
-    """
+    """Run parallel independent optimizations using JAX vmap + L-BFGS."""
     if not problems:
         return []
 
@@ -125,15 +65,45 @@ def optimise_params_vmap(
         ]
 
     device = get_device(cfg.DEVICE)
-    focal_length = cfg.FOCAL_LENGTH
-    shear_cost = cfg.SHEAR_COST
-    maxiter = cfg.OPT_MAX_ITER
+    focal_length = float(cfg.FOCAL_LENGTH)
+    shear_cost = float(cfg.SHEAR_COST)
     maxcor = cfg.MAX_CORR
+    maxiter = cfg.OPT_MAX_ITER
 
-    # Prepare keypoint indices
+    # Prepare all problems
     keypoint_indices = [make_keypoint_index(p.span_counts) for p in problems]
 
-    # Print initial objectives
+    n_points_list = [len(p.dstpoints) for p in problems]
+    n_params_list = [len(p.params) for p in problems]
+    max_points = max(n_points_list)
+    max_params = max(n_params_list)
+    max_kp_idx = max(len(kp) for kp in keypoint_indices)
+    batch_size = len(problems)
+
+    # Pad arrays - use float64 throughout
+    dstpoints_padded = np.zeros((batch_size, max_points, 2), dtype=np.float64)
+    keypoint_index_padded = np.zeros((batch_size, max_kp_idx, 2), dtype=np.int32)
+    params_padded = np.zeros((batch_size, max_params), dtype=np.float64)
+
+    # Masks for valid data
+    point_valid_mask = np.zeros((batch_size, max_points), dtype=np.float64)
+    n_valid_points = np.zeros(
+        batch_size,
+        dtype=np.int32,
+    )  # actual point count per problem
+
+    for i, p in enumerate(problems):
+        n_pts = n_points_list[i]
+        n_par = n_params_list[i]
+        n_kp = len(keypoint_indices[i])
+
+        dstpoints_padded[i, :n_pts] = p.dstpoints.reshape(-1, 2)
+        keypoint_index_padded[i, :n_kp] = keypoint_indices[i]
+        params_padded[i, :n_par] = p.params
+        point_valid_mask[i, :n_pts] = 1.0
+        n_valid_points[i] = n_pts
+
+    # Print initial objectives using the SAME function as serial code
     for i, p in enumerate(problems):
         obj = make_objective(
             p.dstpoints,
@@ -143,47 +113,102 @@ def optimise_params_vmap(
         )
         print(f"  [{p.name}] initial objective is {obj(p.params):.6f}")
 
-    # Prepare arguments for parallel execution
-    opt_args = [
-        (
-            p.name,
-            p.dstpoints,
-            keypoint_indices[i],
-            p.params,
-            focal_length,
-            shear_cost,
-            maxiter,
-            maxcor,
+    # Convert to JAX arrays
+    dstpoints_jax = jnp.array(dstpoints_padded)
+    kp_idx_jax = jnp.array(keypoint_index_padded)
+    params_jax = jnp.array(params_padded)
+    point_mask_jax = jnp.array(point_valid_mask)
+    n_valid_jax = jnp.array(n_valid_points)
+
+    def single_objective(pvec, dstpoints, kp_idx, point_mask, n_valid):
+        """Objective for one problem - matches _jax.py exactly.
+
+        Key insight: we must only use the VALID keypoint indices,
+        not the padded zeros which would index wrong params.
+        """
+        # Extract xy coordinates using keypoint index
+        # kp_idx shape: (max_kp_idx, 2) - each row is [x_idx, y_idx] into pvec
+        # We need xy_coords shape: (n_keypoints, 2)
+        xy_coords = pvec[kp_idx]  # (max_kp_idx, 2)
+
+        # First keypoint is always at origin (matches _jax.py)
+        xy_coords = xy_coords.at[0, :].set(0.0)
+
+        # Project all keypoints (including padded, but we'll mask the error)
+        projected = _project_xy_jax(xy_coords, pvec, focal_length)  # (max_kp_idx, 2)
+
+        # Compute squared error only for valid points
+        # dstpoints shape: (max_points, 2), projected shape: (max_kp_idx, 2)
+        # These should be the same size (max_points == max_kp_idx for keypoints)
+        diff = dstpoints - projected
+        sq_error = jnp.sum(diff**2, axis=1)  # (max_points,)
+
+        # Mask out padded points
+        error = jnp.sum(sq_error * point_mask)
+
+        # Shear penalty (matches _jax.py)
+        if shear_cost > 0.0:
+            rvec = pvec[0:3]
+            error = error + shear_cost * rvec[0] ** 2
+
+        return error
+
+    def optimize_single(pvec, dstpoints, kp_idx, point_mask, n_valid):
+        """Run L-BFGS on one problem."""
+
+        def obj(p):
+            return single_objective(p, dstpoints, kp_idx, point_mask, n_valid)
+
+        result = _minimize_lbfgs(
+            obj,
+            pvec,
+            maxiter=maxiter,
+            maxcor=maxcor,
+            gtol=1e-5,
+            ftol=2.220446049250313e-09,
         )
-        for i, p in enumerate(problems)
-    ]
+        return result.x_k
+
+    # vmap over batch dimension
+    optimize_batch = jax.vmap(optimize_single)
 
     print(
-        f"\n  Running {len(problems)} parallel L-BFGS-B optimizations "
+        f"\n  Running {len(problems)} parallel L-BFGS optimizations "
         f"on {device.device_kind.upper()}...",
     )
 
     start = dt.now()
-
-    # Use ThreadPoolExecutor - JAX releases GIL during computation
-    # so threads can run JAX ops in parallel on GPU
     with warnings.catch_warnings():
         warnings.simplefilter("ignore")
         with jax.default_device(device):
-            # Warm up JIT compilation with first problem
-            _ = _optimize_single(opt_args[0])
+            optimize_batch_jit = jax.jit(optimize_batch)
 
-            # Run all in parallel
-            with ThreadPoolExecutor(max_workers=len(problems)) as executor:
-                results_raw = list(executor.map(_optimize_single, opt_args))
+            results_padded = optimize_batch_jit(
+                params_jax,
+                dstpoints_jax,
+                kp_idx_jax,
+                point_mask_jax,
+                n_valid_jax,
+            )
+            results_padded.block_until_ready()
 
     elapsed = (dt.now() - start).total_seconds()
-    print(f"  parallel L-BFGS-B optimization took {elapsed:.2f}s")
+    print(f"  parallel L-BFGS optimization took {elapsed:.2f}s")
 
-    # Extract results in order
+    # Extract results (trim padding)
     results = []
-    for name, opt_params, final_obj, nfev in results_raw:
-        print(f"  [{name}] final objective is {final_obj:.6f} ({nfev} evals)")
+    for i, n_par in enumerate(n_params_list):
+        opt_params = np.array(results_padded[i, :n_par], dtype=np.float64)
         results.append(opt_params)
+
+    # Print final objectives using the SAME function as serial code
+    for i, (p, opt_params) in enumerate(zip(problems, results)):
+        obj = make_objective(
+            p.dstpoints,
+            keypoint_indices[i],
+            shear_cost,
+            slice(*cfg.RVEC_IDX),
+        )
+        print(f"  [{p.name}] final objective is {obj(opt_params):.6f}")
 
     return results
