@@ -8,6 +8,8 @@ When invoked via `python -m page_dewarp`, this module:
 - Processes input images (e.g., dewarping, thresholding).
 """
 
+from pathlib import Path
+
 import msgspec
 from cv2 import namedWindow
 
@@ -48,6 +50,18 @@ def _should_use_batch(config: Config, num_images: int) -> bool:
         raise ValueError(f"Invalid option for USE_BATCH: {config.USE_BATCH!r}")
 
 
+def _collect_images(input_images: list[str]) -> list[Path]:
+    """Validate that there are no dir paths passed."""
+    img_paths = list(map(Path, input_images))
+    bad_paths = list(filter(Path.is_dir, img_paths))
+    if bad_paths:
+        dir_reprs = list(map(str, map(Path.absolute, bad_paths)))
+        repr_sep = "\n  - "
+        full_dirs = repr_sep.join(map(repr, dir_reprs))
+        raise IsADirectoryError(f"Paths should be to image paths:{repr_sep}{full_dirs}")
+    return img_paths
+
+
 @snoop()
 def main():
     """Parse CLI arguments and dewarp images."""
@@ -59,7 +73,9 @@ def main():
 
     print(f"Parsed config: {config}")
 
-    num_images = len(parser.input_images)
+    image_files = _collect_images(parser.input_images)
+
+    num_images = len(image_files)
     use_batched = _should_use_batch(config, num_images)
 
     if use_batched:
