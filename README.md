@@ -40,6 +40,16 @@ uv pip install page-dewarp[jax-cuda13] # CUDA 13 (requires Python 3.11+)
 > **Note**: CPU execution is the default `DEVICE` and can be faster than GPU for this workload, but this may vary
 > depending on your relative CPU/GPU horsepower (cores, RAM, VRAM, etc.)
 
+## Serial vs Batch
+
+When the JAX backend is available, default behaviour when given multiple images is to use batch
+mode. Performance benchmark on 40 images (via [#139](https://github.com/lmmx/page-dewarp/pull/139)):
+
+| **Device** | **Serial** | **Batch** | **Speedup** |
+|--------|--------|--------|--------|
+| CPU | **36s** | **8.7s** | 4.1x |
+| GPU | 53s | 11.2s | **4.7x**  |
+
 ## Dependencies
 
 Python 3.10+ and NumPy, SciPy, SymPy, Matplotlib, OpenCV, and msgspec are required to run `page-dewarp`.
