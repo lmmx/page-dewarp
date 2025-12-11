@@ -9,6 +9,9 @@ results/
 site/
 .cache/
 
+*_copy*.jpg
+*_copy*.png
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]

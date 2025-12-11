@@ -22,11 +22,33 @@ uv pip install page-dewarp
 
 ### JAX
 
-To install with JAX autodiff for ~11x faster optimisation, add the `jax` extra:
+To install with JAX autodiff for ~11x faster optimisation on single images and ~33x faster for batches (CPU only), add the `jax` extra:
 
 ```sh
 uv pip install page-dewarp[jax]
 ```
+
+#### GPU support
+
+To install with support for GPU execution instead of only CPU, choose one of:
+
+```sh
+uv pip install page-dewarp[jax-cuda12] # CUDA 12
+uv pip install page-dewarp[jax-cuda13] # CUDA 13 (requires Python 3.11+)
+```
+
+> **Note**: CPU execution is the default `DEVICE` and can be faster than GPU for this workload, but this may vary
+> depending on your relative CPU/GPU horsepower (cores, RAM, VRAM, etc.)
+
+## Serial vs Batch
+
+When the JAX backend is available, default behaviour when given multiple images is to use batch
+mode. Performance benchmark on 40 images (via [#139](https://github.com/lmmx/page-dewarp/pull/139)):
+
+| **Device** | **Serial** | **Batch** | **Speedup** |
+|--------|--------|--------|--------|
+| CPU | **36s** | **8.7s** | 4.1x |
+| GPU | 53s | 11.2s | **4.7x**  |
 
 ## Dependencies
 
@@ -51,8 +73,8 @@ by Matt Zucker, as Python 2 is now long since decommissioned.
 ```
 usage: page-dewarp [-h] [-d {0,1,2,3}] [-o {file,screen,both}]
                    [-it OPT_MAX_ITER] [-m OPT_METHOD] [-dev DEVICE]
-                   [-vw SCREEN_MAX_W] [-vh SCREEN_MAX_H] [-x PAGE_MARGIN_X]
-                   [-y PAGE_MARGIN_Y] [-tw TEXT_MIN_WIDTH]
+                   [-b USE_BATCH] [-vw SCREEN_MAX_W] [-vh SCREEN_MAX_H]
+                   [-x PAGE_MARGIN_X] [-y PAGE_MARGIN_Y] [-tw TEXT_MIN_WIDTH]
                    [-th TEXT_MIN_HEIGHT] [-ta TEXT_MIN_ASPECT]
                    [-tk TEXT_MAX_THICKNESS] [-wz ADAPTIVE_WINSZ]
                    [-ri RVEC_IDX] [-ti TVEC_IDX] [-ci CUBIC_IDX]
@@ -81,7 +103,10 @@ options:
                         (type: str, default: auto)
   -dev DEVICE, --device DEVICE
                         Compute device to select for optimisation. (type: str,
-                        default: cpu)
+                        default: auto)
+  -b USE_BATCH, --batch USE_BATCH
+                        Whether to batch process images (JAX backend only).
+                        (type: str, default: auto)
   -vw SCREEN_MAX_W, --max-screen-width SCREEN_MAX_W
                         Viewing screen max width (for resizing to screen)
                         (type: int, default: 1280)
@@ -166,18 +191,6 @@ git clone https://github.com/lmmx/page-dewarp
 cd page-dewarp
 mkdir results && cd results
 page-dewarp ../example_input/boston_cooking_a.jpg
-```
-
-#### GPU support
-
-> **Note**: CPU execution is the default `DEVICE` and typically fastest for this workload.
-> GPU support is included for development purposes and isn't recommended for users.
-
-To install with support for GPU execution instead of only CPU, choose one of:
-
-```sh
-uv pip install page-dewarp[jax-cuda12] # CUDA 12
-uv pip install page-dewarp[jax-cuda13] # CUDA 13 (requires Python 3.11+)
 ```
 
 ## Explanation and further reading
