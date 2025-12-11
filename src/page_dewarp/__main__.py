@@ -42,7 +42,7 @@ def _should_use_batch(config: Config, num_images: int) -> bool:
         return num_images > 1
     elif config.USE_BATCH in ["on", "1"]:
         return True
-    elif config.USE_BATCH == ["off", "0"]:
+    elif config.USE_BATCH in ["off", "0"]:
         return False
     else:
         raise ValueError(f"Invalid option for USE_BATCH: {config.USE_BATCH!r}")
