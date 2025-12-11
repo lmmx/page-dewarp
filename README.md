@@ -51,8 +51,8 @@ by Matt Zucker, as Python 2 is now long since decommissioned.
 ```
 usage: page-dewarp [-h] [-d {0,1,2,3}] [-o {file,screen,both}]
                    [-it OPT_MAX_ITER] [-m OPT_METHOD] [-dev DEVICE]
-                   [-vw SCREEN_MAX_W] [-vh SCREEN_MAX_H] [-x PAGE_MARGIN_X]
-                   [-y PAGE_MARGIN_Y] [-tw TEXT_MIN_WIDTH]
+                   [-b USE_BATCH] [-vw SCREEN_MAX_W] [-vh SCREEN_MAX_H]
+                   [-x PAGE_MARGIN_X] [-y PAGE_MARGIN_Y] [-tw TEXT_MIN_WIDTH]
                    [-th TEXT_MIN_HEIGHT] [-ta TEXT_MIN_ASPECT]
                    [-tk TEXT_MAX_THICKNESS] [-wz ADAPTIVE_WINSZ]
                    [-ri RVEC_IDX] [-ti TVEC_IDX] [-ci CUBIC_IDX]
@@ -81,7 +81,10 @@ options:
                         (type: str, default: auto)
   -dev DEVICE, --device DEVICE
                         Compute device to select for optimisation. (type: str,
-                        default: cpu)
+                        default: auto)
+  -b USE_BATCH, --batch USE_BATCH
+                        Whether to batch process images (JAX backend only).
+                        (type: str, default: auto)
   -vw SCREEN_MAX_W, --max-screen-width SCREEN_MAX_W
                         Viewing screen max width (for resizing to screen)
                         (type: int, default: 1280)
