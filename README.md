@@ -20,6 +20,8 @@ To install from PyPI, optionally using [uv](https://docs.astral.sh/uv/) (recomme
 uv pip install page-dewarp
 ```
 
+### JAX
+
 To install with JAX autodiff for ~11x faster optimisation, add the `jax` extra:
 
 ```sh
@@ -29,6 +31,7 @@ uv pip install page-dewarp[jax]
 ## Dependencies
 
 Python 3.10+ and NumPy, SciPy, SymPy, Matplotlib, OpenCV, and msgspec are required to run `page-dewarp`.
+
 
 ## Help
 
@@ -47,12 +50,13 @@ by Matt Zucker, as Python 2 is now long since decommissioned.
 
 ```
 usage: page-dewarp [-h] [-d {0,1,2,3}] [-o {file,screen,both}]
-                   [-it OPT_MAX_ITER] [-m OPT_METHOD] [-vw SCREEN_MAX_W]
-                   [-vh SCREEN_MAX_H] [-x PAGE_MARGIN_X] [-y PAGE_MARGIN_Y]
-                   [-tw TEXT_MIN_WIDTH] [-th TEXT_MIN_HEIGHT]
-                   [-ta TEXT_MIN_ASPECT] [-tk TEXT_MAX_THICKNESS]
-                   [-wz ADAPTIVE_WINSZ] [-ri RVEC_IDX] [-ti TVEC_IDX]
-                   [-ci CUBIC_IDX] [-sw SPAN_MIN_WIDTH] [-sp SPAN_PX_PER_STEP]
+                   [-it OPT_MAX_ITER] [-m OPT_METHOD] [-dev DEVICE]
+                   [-vw SCREEN_MAX_W] [-vh SCREEN_MAX_H] [-x PAGE_MARGIN_X]
+                   [-y PAGE_MARGIN_Y] [-tw TEXT_MIN_WIDTH]
+                   [-th TEXT_MIN_HEIGHT] [-ta TEXT_MIN_ASPECT]
+                   [-tk TEXT_MAX_THICKNESS] [-wz ADAPTIVE_WINSZ]
+                   [-ri RVEC_IDX] [-ti TVEC_IDX] [-ci CUBIC_IDX]
+                   [-sw SPAN_MIN_WIDTH] [-sp SPAN_PX_PER_STEP]
                    [-eo EDGE_MAX_OVERLAP] [-el EDGE_MAX_LENGTH]
                    [-ec EDGE_ANGLE_COST] [-ea EDGE_MAX_ANGLE]
                    [-f FOCAL_LENGTH] [-z OUTPUT_ZOOM] [-dpi OUTPUT_DPI]
@@ -75,6 +79,9 @@ options:
   -m OPT_METHOD, --method OPT_METHOD
                         Name of the JAX/SciPy optimisation method to use.
                         (type: str, default: auto)
+  -dev DEVICE, --device DEVICE
+                        Compute device to select for optimisation. (type: str,
+                        default: cpu)
   -vw SCREEN_MAX_W, --max-screen-width SCREEN_MAX_W
                         Viewing screen max width (for resizing to screen)
                         (type: int, default: 1280)
@@ -161,7 +168,19 @@ mkdir results && cd results
 page-dewarp ../example_input/boston_cooking_a.jpg
 ```
 
-## Explanation and extension to Gpufit
+#### GPU support
+
+> **Note**: CPU execution is the default `DEVICE` and typically fastest for this workload.
+> GPU support is included for development purposes and isn't recommended for users.
+
+To install with support for GPU execution instead of only CPU, choose one of:
+
+```sh
+uv pip install page-dewarp[jax-cuda12] # CUDA 12
+uv pip install page-dewarp[jax-cuda13] # CUDA 13 (requires Python 3.11+)
+```
+
+## Explanation and further reading
 
 A book on a flat surface can be said to be 'fixed to zero' at the endpoints of a curve, which
 you can model as a cubic (see
@@ -187,7 +206,7 @@ Improvements on the original include:
     - [x] Alterable config options
 - [x] Repackage for pip installation
 - [x] Refactor with modules and classes
-- [ ] Speed up the optimisation
+- [x] Speed up the optimisation
     - [x] Limit optimisation iterations (via `-it` flag)
+    - [x] Optional GPU interface (via `-dev` flag)
     - [ ] Multiprocessing on CPU
-    - [ ] Optional interface to use Gpufit on GPU (or Deep Declarative Networks?)

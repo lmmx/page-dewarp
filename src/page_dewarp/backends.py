@@ -30,7 +30,4 @@ if not HAS_JAX and not HAS_SCIPY:
 
 def get_default_method() -> str:
     """Return the default optimization method based on available backend."""
-    if HAS_JAX:
-        return "L-BFGS-B"
-    else:
-        return "Powell"
+    return "L-BFGS-B" if HAS_JAX else "Powell"

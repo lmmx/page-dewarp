@@ -17,6 +17,7 @@ from cv2 import Rodrigues
 from scipy.optimize import minimize
 
 from ..debug_utils import debug_show
+from ..device import get_device
 from ..keypoints import make_keypoint_index, project_keypoints
 from ..options import cfg
 from ._base import draw_correspondences, make_objective
@@ -42,13 +43,8 @@ def _rodrigues_jax(rvec):
 
     # Skew-symmetric matrix
     K_mat = jnp.array(
-        [
-            [0.0, -k[2], k[1]],
-            [k[2], 0.0, -k[0]],
-            [-k[1], k[0], 0.0],
-        ],
+        [[0.0, -k[2], k[1]], [k[2], 0.0, -k[0]], [-k[1], k[0], 0.0]],
     )
-
     K_mat_sq = K_mat @ K_mat
 
     # Standard Rodrigues formula
@@ -204,6 +200,7 @@ def optimise_params_jax(
         Optimized parameter vector.
 
     """
+    device = get_device(cfg.DEVICE)
     keypoint_index = make_keypoint_index(span_counts)
 
     # Use the base objective for initial value display
@@ -220,12 +217,13 @@ def optimise_params_jax(
         display = draw_correspondences(small, dstpoints, projpts)
         debug_show(name, 4, "keypoints before", display)
 
-    print(f"  optimizing {len(params)} parameters...")
+    print(f"  optimizing {len(params)} parameters on {device.device_kind.upper()}...")
 
     start = dt.now()
     with warnings.catch_warnings():
         warnings.simplefilter("ignore")
-        result = _run_jax_lbfgsb(dstpoints, keypoint_index, params)
+        with jax.default_device(device):
+            result = _run_jax_lbfgsb(dstpoints, keypoint_index, params)
     elapsed = (dt.now() - start).total_seconds()
     print(
         f"  optimization (L-BFGS-B + JAX autodiff) took {elapsed:.2f}s, {result.nfev} evals",
@@ -252,11 +250,11 @@ def _print_diagnostics(
     display = draw_correspondences(small, dstpoints, projpts)
     debug_show(name, 5, "keypoints after", display)
 
-    print("  === Parameter Diagnostics ===")
     rvec = params[slice(*cfg.RVEC_IDX)]
     tvec = params[slice(*cfg.TVEC_IDX)]
     alpha, beta = params[slice(*cfg.CUBIC_IDX)]
 
+    print("  === Parameter Diagnostics ===")
     print(f"  Rotation vector: {rvec}")
     print(f"  Rotation angles (degrees): {np.degrees(rvec)}")
     print(f"  Translation vector: {tvec}")
