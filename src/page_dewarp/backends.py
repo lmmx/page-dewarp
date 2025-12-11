@@ -10,6 +10,9 @@ try:
     import jax  # noqa: F401
 
     HAS_JAX = True
+
+    # Enable float64 for numerical stability (must be set before JIT compilation)
+    jax.config.update("jax_enable_x64", True)
 except ImportError:
     pass
 

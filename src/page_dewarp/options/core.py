@@ -33,6 +33,7 @@ class Config(Struct):
     Attributes:
         OPT_MAX_ITER (int): Maximum optimisation iterations.
         OPT_METHOD (str): Name of the JAX/SciPy optimisation method to use.
+        USE_BATCH (str): Whether to batch process images (JAX backend only).
         DEVICE (str): JAX device to select for optimisation.
         FOCAL_LENGTH (float): Normalized focal length of camera.
         TEXT_MIN_WIDTH (int): Minimum reduced pixel width of detected text contour.
@@ -115,6 +116,14 @@ class Config(Struct):
        - trust-ncg
        - trust-exact
        - trust-krylov
+    """
+    USE_BATCH: desc(str, "Whether to batch process images (JAX backend only).") = "auto"
+    """Whether to batch process images (JAX backend only).
+
+    Options:
+       - "auto": Use batch if multiple images, otherwise serial (default)
+       - "on" or "1": Process images in batches.
+       - "off" or "0": Process images serially. Recommended for debugging a single case.
     """
     DEVICE: desc(str, "Compute device to select for optimisation.") = "auto"
     """Compute device to select for optimisation.

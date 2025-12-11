@@ -10,13 +10,7 @@ from datetime import datetime as dt
 import jax
 import jax.numpy as jnp
 import numpy as np
-
-
-# Enable float64 for numerical stability
-jax.config.update("jax_enable_x64", True)
-
-# Import the internal L-BFGS implementation
-from jax._src.scipy.optimize._lbfgs import _minimize_lbfgs
+from jax._src.scipy.optimize._lbfgs import _minimize_lbfgs  # Internal!
 
 from ..device import get_device
 from ..keypoints import make_keypoint_index

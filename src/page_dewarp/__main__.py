@@ -35,6 +35,19 @@ def _warmup_jax():
         pass
 
 
+def _should_use_batch(config: Config, num_images: int) -> bool:
+    """Determine whether to use batched processing."""
+    if config.USE_BATCH == "auto":
+        # Use batch if multiple images
+        return num_images > 1
+    elif config.USE_BATCH in ["on", "1"]:
+        return True
+    elif config.USE_BATCH == ["off", "0"]:
+        return False
+    else:
+        raise ValueError(f"Invalid option for USE_BATCH: {config.USE_BATCH!r}")
+
+
 @snoop()
 def main():
     """Parse CLI arguments and dewarp images."""
@@ -47,7 +60,7 @@ def main():
     print(f"Parsed config: {config}")
 
     num_images = len(parser.input_images)
-    use_batched = num_images > 1 and config.DEBUG_LEVEL == 0
+    use_batched = _should_use_batch(config, num_images)
 
     if use_batched:
         from .backends import HAS_JAX
@@ -69,9 +82,9 @@ def main():
                     print(f"  ✗ {result.input_path}: {result.error}")
             return
         else:
-            print("JAX not available, falling back to sequential processing")
+            pass  # JAX not available, gracefully fall back to sequential processing
 
-    # Sequential processing (original behavior)
+    # Sequential processing
     outfiles = []
     for imgfile in parser.input_images:
         processed_img = WarpedImage(imgfile, config=config)

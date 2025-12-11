@@ -142,6 +142,7 @@ class ArgParser(argparse.ArgumentParser):
         self.add_default_argument(["-it", "--max-iter"], "OPT_MAX_ITER")
         self.add_default_argument(["-m", "--method"], "OPT_METHOD")
         self.add_default_argument(["-dev", "--device"], "DEVICE")
+        self.add_default_argument(["-b", "--batch"], "USE_BATCH")
         self.add_default_argument(["-vw", "--max-screen-width"], "SCREEN_MAX_W")
         self.add_default_argument(["-vh", "--max-screen-height"], "SCREEN_MAX_H")
         self.add_default_argument(["-x", "--x-margin"], "PAGE_MARGIN_X")
