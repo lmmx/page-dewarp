@@ -116,12 +116,12 @@ class Config(Struct):
        - trust-exact
        - trust-krylov
     """
-    DEVICE: desc(str, "Compute device to select for optimisation.") = "cpu"
+    DEVICE: desc(str, "Compute device to select for optimisation.") = "auto"
     """Compute device to select for optimisation.
 
     Options:
-       - "auto": Use GPU if available, otherwise CPU
-       - "cpu": Force CPU execution (default)
+       - "auto": Use GPU if available, otherwise CPU (default)
+       - "cpu": Force CPU execution
        - "gpu": Use the default GPU
        - "gpu:N": Use a specific GPU by index (e.g., "gpu:0", "gpu:1")
 

@@ -25,9 +25,6 @@ from ._base import draw_correspondences, make_objective
 
 __all__ = ["optimise_params_jax"]
 
-# Configure JAX to use CPU (must happen after import but before use)
-jax.config.update("jax_platforms", "cpu")
-
 
 def _rodrigues_jax(rvec):
     """Convert rotation vector to rotation matrix (Rodrigues formula)."""
