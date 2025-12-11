@@ -33,6 +33,7 @@ class Config(Struct):
     Attributes:
         OPT_MAX_ITER (int): Maximum optimisation iterations.
         OPT_METHOD (str): Name of the JAX/SciPy optimisation method to use.
+        DEVICE (str): JAX device to select for optimisation.
         FOCAL_LENGTH (float): Normalized focal length of camera.
         TEXT_MIN_WIDTH (int): Minimum reduced pixel width of detected text contour.
         TEXT_MIN_HEIGHT (int): Minimum reduced pixel height of detected text contour.
@@ -114,6 +115,27 @@ class Config(Struct):
        - trust-ncg
        - trust-exact
        - trust-krylov
+    """
+    DEVICE: desc(str, "Compute device to select for optimisation.") = "cpu"
+    """Compute device to select for optimisation.
+
+    Options:
+       - "auto": Use GPU if available, otherwise CPU
+       - "cpu": Force CPU execution (default)
+       - "gpu": Use the default GPU
+       - "gpu:N": Use a specific GPU by index (e.g., "gpu:0", "gpu:1")
+
+    Tip:
+        CPU is typically faster for page-dewarp's optimization problem size.
+        The JAX speedup comes from efficient autodiff, not GPU parallelism.
+        GPU support is available for experimentation but rarely helps.
+
+    Note:
+        GPU support requires the `jax-cuda12` or `jax-cuda13` extra.
+        Only applies when using the JAX backend (L-BFGS-B method).
+
+        - `pip install page-dewarp[jax-cuda12]` (CUDA 12)
+        - `pip install page-dewarp[jax-cuda13]` (CUDA 13, requires Python 3.11+)
     """
     # [camera_opts]
     FOCAL_LENGTH: desc(float, "Normalized focal length of camera") = 1.2
