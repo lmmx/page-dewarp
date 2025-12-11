@@ -22,11 +22,23 @@ uv pip install page-dewarp
 
 ### JAX
 
-To install with JAX autodiff for ~11x faster optimisation, add the `jax` extra:
+To install with JAX autodiff for ~11x faster optimisation on single images and ~33x faster for batches (CPU only), add the `jax` extra:
 
 ```sh
 uv pip install page-dewarp[jax]
 ```
+
+#### GPU support
+
+To install with support for GPU execution instead of only CPU, choose one of:
+
+```sh
+uv pip install page-dewarp[jax-cuda12] # CUDA 12
+uv pip install page-dewarp[jax-cuda13] # CUDA 13 (requires Python 3.11+)
+```
+
+> **Note**: CPU execution is the default `DEVICE` and can be faster than GPU for this workload, but this may vary
+> depending on your relative CPU/GPU horsepower (cores, RAM, VRAM, etc.)
 
 ## Dependencies
 
@@ -169,18 +181,6 @@ git clone https://github.com/lmmx/page-dewarp
 cd page-dewarp
 mkdir results && cd results
 page-dewarp ../example_input/boston_cooking_a.jpg
-```
-
-#### GPU support
-
-> **Note**: CPU execution is the default `DEVICE` and typically fastest for this workload.
-> GPU support is included for development purposes and isn't recommended for users.
-
-To install with support for GPU execution instead of only CPU, choose one of:
-
-```sh
-uv pip install page-dewarp[jax-cuda12] # CUDA 12
-uv pip install page-dewarp[jax-cuda13] # CUDA 13 (requires Python 3.11+)
 ```
 
 ## Explanation and further reading
