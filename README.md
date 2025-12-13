@@ -222,4 +222,4 @@ Improvements on the original include:
 - [x] Speed up the optimisation
     - [x] Limit optimisation iterations (via `-it` flag)
     - [x] Optional GPU interface (via `-dev` flag)
-    - [ ] Multiprocessing on CPU
+    - [x] Multiprocessing on CPU
