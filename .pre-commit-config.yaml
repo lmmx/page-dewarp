@@ -13,7 +13,7 @@ repos:
       - id: run-just-rust
         args: ['precommit']
   - repo: https://github.com/compilerla/conventional-pre-commit
-    rev: v4.3.0
+    rev: v4.4.0
     hooks:
       - id: conventional-pre-commit
         stages: [commit-msg]
@@ -38,7 +38,7 @@ repos:
       - id: pyupgrade
         args: [--py310-plus]
   - repo: https://github.com/astral-sh/ruff-pre-commit
-    rev: v0.15.1
+    rev: v0.15.5
     hooks:
       # Run the linter
       - id: ruff
