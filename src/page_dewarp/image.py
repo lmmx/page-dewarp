@@ -1,11 +1,9 @@
 """Utilities for loading, resizing, and dewarping page images.
 
 This module includes:
-
-- A simple helper function (`imgsize`) to format an image's width/height into a string.
-- A function (`get_page_dims`) to optimize final page dimensions via the cubic model.
-- A class (`WarpedImage`) that loads an image, resizes it, finds page boundaries,
-  and threshold-remaps the final dewarped image to disk.
+- A simple helper function (`imgsize`) to format an image's width/height.
+- A function (`get_page_dims`) to optimize final page dimensions.
+- A class (`WarpedImage`) that loads, processes, and outputs dewarped images.
 """
 
 from __future__ import annotations
@@ -20,6 +18,7 @@ from scipy.optimize import minimize
 from .contours import ContourInfo
 from .debug_utils import debug_show
 from .dewarp import RemappedImage
+from .logging_config import get_logger
 from .mask import Mask
 from .optimise import optimise_params
 from .options import Config
@@ -29,6 +28,8 @@ from .spans import assemble_spans, keypoints_from_samples, sample_spans
 
 
 __all__ = ["imgsize", "get_page_dims", "WarpedImage"]
+
+logger = get_logger("image")
 
 
 def imgsize(img: np.ndarray) -> str:
@@ -45,12 +46,12 @@ def get_page_dims(
     """Optimize final page dimensions using a cubic polynomial model.
 
     Args:
-        corners: The four corner points of the page outline, in reduced coordinates.
+        corners: The four corner points of the page outline.
         rough_dims: An initial (height, width) estimate for page dimensions.
-        params: The optimization parameter vector, e.g. includes rotation/translation/cubic slopes.
+        params: The optimization parameter vector.
 
     Returns:
-        A 1D array of floats [height, width] representing the optimized page dimensions.
+        A 1D array [height, width] representing the optimized page dimensions.
 
     """
     dst_br = corners[2].flatten()
@@ -62,18 +63,23 @@ def get_page_dims(
 
     res = minimize(objective, dims, method="Powell")
     dims = res.x
-    print("  got page dims", dims[0], "x", dims[1])
+
+    logger.debug(
+        "Page dimensions optimized",
+        extra={
+            "width": dims[0],
+            "height": dims[1],
+        },
+    )
+
     return dims
 
 
 class WarpedImage:
-    """Handles loading, resizing, and thresholding a page image.
+    """Handles loading, resizing, and thresholding a page image."""
 
-    This class reads an image from disk, optionally downsamples it for display,
-    detects page boundaries, and can threshold-remap the final dewarped image.
-    """
-
-    written = False  # Explicitly declare the file-write attribute
+    written: bool = False
+    outfile: str | None = None
     config: Config
 
     def __init__(self, imgfile: str | Path, config: Config = Config()) -> None:
@@ -81,67 +87,98 @@ class WarpedImage:
 
         Args:
             imgfile: Path to the image file to load.
-            config: A `Config` object that specifies various parameters and defaults.
+            config: A Config object with processing parameters.
 
         """
         self.config = config
         if isinstance(imgfile, Path):
             imgfile = str(imgfile)
+
         self.cv2_img = imread(imgfile)
         self.file_path = Path(imgfile).resolve()
         self.small = self.resize_to_screen()
-        size, resized = self.size, self.resized
-        print(f"Loaded {self.basename} at {size=} --> {resized=}")
+
+        logger.debug(
+            "Image loaded",
+            extra={
+                "file": self.basename,
+                "original_size": self.size,
+                "resized_size": self.resized,
+            },
+        )
+
         if self.config.DEBUG_LEVEL >= 3:
             debug_show(self.stem, 0.0, "original", self.small)
 
-        self.calculate_page_extents()  # set pagemask & page_outline attributes
+        self.calculate_page_extents()
         self.contour_list = self.contour_info(text=True)
         spans = self.iteratively_assemble_spans()
 
-        # Skip if no spans
         if len(spans) < 1:
-            print(f"skipping {self.stem} because only {len(spans)} spans")
-        else:
-            span_points = sample_spans(self.small.shape, spans)
-            n_pts = sum(map(len, span_points))
-            print(f"  got {len(spans)} spans with {n_pts} points.")
+            logger.warning(
+                "Insufficient spans for processing",
+                extra={
+                    "file": self.stem,
+                    "n_spans": len(spans),
+                },
+            )
+            return
 
-            corners, ycoords, xcoords = keypoints_from_samples(
-                self.stem,
-                self.small,
-                self.pagemask,
-                self.page_outline,
-                span_points,
+        span_points = sample_spans(self.small.shape, spans)
+        n_pts = sum(map(len, span_points))
+
+        logger.info(
+            "Spans detected",
+            extra={
+                "file": self.stem,
+                "n_spans": len(spans),
+                "n_points": n_pts,
+            },
+        )
+
+        corners, ycoords, xcoords = keypoints_from_samples(
+            self.stem,
+            self.small,
+            self.pagemask,
+            self.page_outline,
+            span_points,
+        )
+        rough_dims, span_counts, params = get_default_params(
+            corners,
+            ycoords,
+            xcoords,
+        )
+        dstpoints = np.vstack((corners[0].reshape((1, 1, 2)),) + tuple(span_points))
+        params = optimise_params(
+            self.stem,
+            self.small,
+            dstpoints,
+            span_counts,
+            params,
+            self.config.DEBUG_LEVEL,
+        )
+        page_dims = get_page_dims(corners, rough_dims, params)
+
+        if np.any(page_dims < 0):
+            logger.warning(
+                "Negative page dimension, using rough estimate",
+                extra={
+                    "file": self.stem,
+                    "page_dims": page_dims.tolist(),
+                    "rough_dims": list(rough_dims),
+                },
             )
-            rough_dims, span_counts, params = get_default_params(
-                corners,
-                ycoords,
-                xcoords,
-            )
-            dstpoints = np.vstack((corners[0].reshape((1, 1, 2)),) + tuple(span_points))
-            params = optimise_params(
-                self.stem,
-                self.small,
-                dstpoints,
-                span_counts,
-                params,
-                self.config.DEBUG_LEVEL,
-            )
-            page_dims = get_page_dims(corners, rough_dims, params)
-            if np.any(page_dims < 0):
-                # Fallback: see https://github.com/lmmx/page-dewarp/issues/9
-                print("Got a negative page dimension! Falling back to rough estimate")
-                page_dims = rough_dims
-            self.threshold(page_dims, params)
-            self.written = True
+            page_dims = np.array(rough_dims)
+
+        self.threshold(page_dims, params)
+        self.written = True
 
     def threshold(self, page_dims: np.ndarray, params: np.ndarray) -> None:
-        """Construct a dewarped, thresholded image using the RemappedImage class.
+        """Construct a dewarped, thresholded image.
 
         Args:
-            page_dims: The final (height, width) dimensions for the page layout.
-            params: The optimization parameters (e.g. rotation, translation, cubic slopes).
+            page_dims: The final (height, width) dimensions for the page.
+            params: The optimization parameters.
 
         """
         remap = RemappedImage(
@@ -155,28 +192,30 @@ class WarpedImage:
         self.outfile = remap.threshfile
 
     def iteratively_assemble_spans(self) -> list:
-        """Assemble spans from contours; fallback to line detection if too few are found.
-
-        First tries text contours to assemble spans. If fewer than three spans are found,
-        attempts line detection (borders of a table box) rather than text detection,
-        then re-assembles spans.
-        """
+        """Assemble spans from contours; fallback to line detection if needed."""
         spans = assemble_spans(self.stem, self.small, self.pagemask, self.contour_list)
-        # Retry if insufficient spans
+
         if len(spans) < 3:
-            print(f"  detecting lines because only {len(spans)} text spans")
-            self.contour_list = self.contour_info(text=False)  # lines not text
+            logger.debug(
+                "Falling back to line detection",
+                extra={
+                    "file": self.stem,
+                    "text_spans": len(spans),
+                },
+            )
+            self.contour_list = self.contour_info(text=False)
             spans = self.attempt_reassemble_spans(spans)
+
         return spans
 
     def attempt_reassemble_spans(self, prev_spans: list) -> list:
-        """Attempt line-based re-assembly of spans, returning whichever set is larger.
+        """Attempt line-based re-assembly of spans.
 
         Args:
             prev_spans: The spans identified by text contour detection.
 
         Returns:
-            The new line-detected spans if larger in number; else the original spans.
+            The new line-detected spans if larger; else the original.
 
         """
         new_spans = assemble_spans(
@@ -198,21 +237,20 @@ class WarpedImage:
         return self.file_path.stem
 
     def resize_to_screen(self, copy: bool = False) -> np.ndarray:
-        """Downsample the loaded image to fit within SCREEN_MAX_W/H if needed.
+        """Downsample the image to fit within screen dimensions if needed.
 
         Args:
-            copy: If True, returns a copy even if no resizing is needed.
+            copy: If True, returns a copy even if no resizing needed.
 
         Returns:
             A potentially resized NumPy array.
-            If the image is already smaller than SCREEN_MAX_W/H,
-            the same array (or its copy) is returned.
 
         """
         height, width = self.cv2_img.shape[:2]
         scl_x = float(width) / self.config.SCREEN_MAX_W
         scl_y = float(height) / self.config.SCREEN_MAX_H
         scl = int(np.ceil(max(scl_x, scl_y)))
+
         if scl > 1.0:
             inv_scl = 1.0 / scl
             img = cv2_resize(self.cv2_img, (0, 0), None, inv_scl, inv_scl, INTER_AREA)
@@ -220,14 +258,16 @@ class WarpedImage:
             img = self.cv2_img.copy()
         else:
             img = self.cv2_img
+
         return img
 
     def calculate_page_extents(self) -> None:
-        """Create a mask for the page region, ignoring margins around the edges."""
+        """Create a mask for the page region, ignoring margins."""
         height, width = self.small.shape[:2]
         xmin = self.config.PAGE_MARGIN_X
         ymin = self.config.PAGE_MARGIN_Y
         xmax, ymax = (width - xmin), (height - ymin)
+
         self.pagemask = np.zeros((height, width), dtype=np.uint8)
         rectangle(self.pagemask, (xmin, ymin), (xmax, ymax), color=255, thickness=-1)
         self.page_outline = np.array(
@@ -236,22 +276,22 @@ class WarpedImage:
 
     @property
     def size(self) -> str:
-        """Return a formatted string 'widthxheight' for the original (full) image."""
+        """Return 'widthxheight' for the original image."""
         return imgsize(self.cv2_img)
 
     @property
     def resized(self) -> str:
-        """Return a formatted string 'widthxheight' for the downsampled (small) image."""
+        """Return 'widthxheight' for the downsampled image."""
         return imgsize(self.small)
 
     def contour_info(self, text: bool = True) -> list[ContourInfo]:
-        """Compute contour information for either text or line detection.
+        """Compute contour information for text or line detection.
 
         Args:
-            text: If True, identifies text contours; otherwise detects lines.
+            text: If True, detect text contours; otherwise detect lines.
 
         Returns:
-            A list of contour objects (ContourInfo instances).
+            A list of ContourInfo instances.
 
         """
         c_type = "text" if text else "line"

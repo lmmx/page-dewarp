@@ -4,11 +4,12 @@ This module defines a subclass of `argparse.ArgumentParser` to parse
 CLI arguments from the user and store them in the global config.
 """
 
+from __future__ import annotations
+
 import argparse
 from typing import Annotated, get_args, get_origin, get_type_hints
 
 from .options import Config, cfg
-from .snoopy import snoop
 
 
 __all__ = ["ArgParser"]
@@ -31,6 +32,13 @@ class ArgParser(argparse.ArgumentParser):
     `Config` object (`cfg`), automatically populating arguments from defaults
     and storing parsed values back into that config.
     """
+
+    # Parsed attributes
+    input_images: list[str]
+    quiet: bool
+    verbose: bool
+    debug_logging: bool
+    log_file: str | None
 
     def add_default_argument(
         self,
@@ -79,24 +87,18 @@ class ArgParser(argparse.ArgumentParser):
         else:
             kwargs["type"] = default_type
         if isinstance(name_or_flags, str):
-            name_or_flags = [name_or_flags]  # will be star-expanded so must be sequence
+            name_or_flags = [name_or_flags]
         if kwargs["help"] is None:
             kwargs["help"] = self.get_description(arg_name)
-            # comment in TOML as a string if present, or `None` if absent
-            # kwargs["help"] = self.config_comments().get(arg_name)
         self.add_argument(
-            *name_or_flags,  # one or two values
+            *name_or_flags,
             dest=arg_name,
             default=default_value,
             **{kw: v for kw, v in kwargs.items() if v is not None},
         )
 
     def get_description(self, field_name: str) -> str:
-        """Return a generated help string for a Config field.
-
-        We look up the annotated type metadata (if any) to build an
-        informative help string showing the type and default value.
-        """
+        """Return a generated help string for a Config field."""
         hints = get_type_hints(Config, include_extras=True)
         if field_name in Config.__struct_fields__:
             field_idx = Config.__struct_fields__.index(field_name)
@@ -105,7 +107,6 @@ class ArgParser(argparse.ArgumentParser):
                 hint = stringify_hint(type_hint)
                 desc = meta.description + " "
             else:
-                # If the type is unannotated no meta so no description
                 hint = stringify_hint(hints[field_name])
                 desc = ""
             default = Config.__struct_defaults__[field_idx]
@@ -123,44 +124,95 @@ class ArgParser(argparse.ArgumentParser):
         """Retrieve a parameter value from the global config map."""
         return getattr(cfg, param)
 
-    # Overwrite with the function from global of the same name
-    add_default_argument = add_default_argument
-
     def prepare_arguments(self):
         """Define all the standard arguments available via the CLI."""
+        # Positional: input images
         self.add_argument(
             dest="input_images",
             metavar="IMAGE_FILE_OR_FILES",
             nargs="+",
             help="One or more images to process",
         )
-        self.add_default_argument(["-d", "--debug-level"], choices=[0, 1, 2, 3])
+
+        # Verbosity control (new)
+        verbosity = self.add_mutually_exclusive_group()
+        verbosity.add_argument(
+            "-q",
+            "--quiet",
+            action="store_true",
+            default=False,
+            help="Suppress progress output; only print results and errors",
+        )
+        verbosity.add_argument(
+            "-v",
+            "--verbose",
+            action="store_true",
+            default=False,
+            help="Show detailed processing information",
+        )
+
+        self.add_argument(
+            "--debug",
+            action="store_true",
+            default=False,
+            dest="debug_logging",
+            help="Enable debug-level logging to console",
+        )
+        self.add_argument(
+            "--log-file",
+            type=str,
+            default=None,
+            metavar="PATH",
+            help="Write full debug logs to this file",
+        )
+
+        # Visual debugging (separate from logging verbosity)
+        self.add_default_argument(
+            ["-d", "--debug-level"],
+            choices=[0, 1, 2, 3],
+            help="Visual debug level: 0=none, 1=keypoints, 2=spans, 3=all",
+        )
         self.add_default_argument(
             ["-o", "--debug-output"],
             choices=["file", "screen", "both"],
+            help="Where to send visual debug output",
         )
+
+        # Optimization options
         self.add_default_argument(["-it", "--max-iter"], "OPT_MAX_ITER")
         self.add_default_argument(["-m", "--method"], "OPT_METHOD")
         self.add_default_argument(["-dev", "--device"], "DEVICE")
         self.add_default_argument(["-b", "--batch"], "USE_BATCH")
+
+        # Image processing options
         self.add_default_argument(["-vw", "--max-screen-width"], "SCREEN_MAX_W")
         self.add_default_argument(["-vh", "--max-screen-height"], "SCREEN_MAX_H")
         self.add_default_argument(["-x", "--x-margin"], "PAGE_MARGIN_X")
         self.add_default_argument(["-y", "--y-margin"], "PAGE_MARGIN_Y")
+
+        # Text detection options
         self.add_default_argument(["-tw", "--min-text-width"], "TEXT_MIN_WIDTH")
         self.add_default_argument(["-th", "--min-text-height"], "TEXT_MIN_HEIGHT")
         self.add_default_argument(["-ta", "--min-text-aspect"], "TEXT_MIN_ASPECT")
         self.add_default_argument(["-tk", "--max-text-thickness"], "TEXT_MAX_THICKNESS")
         self.add_default_argument(["-wz", "--adaptive-winsz"])
+
+        # Projection options
         self.add_default_argument(["-ri", "--rotation-vec-param-idx"], "RVEC_IDX")
         self.add_default_argument(["-ti", "--translation-vec-param-idx"], "TVEC_IDX")
         self.add_default_argument(["-ci", "--cubic-slope-param-idx"], "CUBIC_IDX")
+
+        # Span options
         self.add_default_argument(["-sw", "--min-span-width"], "SPAN_MIN_WIDTH")
         self.add_default_argument(["-sp", "--span-spacing"], "SPAN_PX_PER_STEP")
+
+        # Edge options
         self.add_default_argument(["-eo", "--max-edge-overlap"], "EDGE_MAX_OVERLAP")
         self.add_default_argument(["-el", "--max-edge-length"], "EDGE_MAX_LENGTH")
         self.add_default_argument(["-ec", "--edge-angle-cost"])
         self.add_default_argument(["-ea", "--max-edge-angle"], "EDGE_MAX_ANGLE")
+
+        # Output options
         self.add_default_argument(["-f", "--focal-length"])
         self.add_default_argument(["-z", "--output-zoom"])
         self.add_default_argument(["-dpi", "--output-dpi"])
@@ -171,17 +223,26 @@ class ArgParser(argparse.ArgumentParser):
 
     def __init__(self):
         """Initialize the ArgParser, then parse and store CLI parameters."""
-        super().__init__()
-        # The config was read in already (`cfg` in `options.py`, which was imported)
-        self.prepare_arguments()  # First set up the parser to read runtime parameters
+        super().__init__(
+            prog="page-dewarp",
+            description="Dewarp scanned pages using a cubic sheet model",
+        )
+        self.prepare_arguments()
         self.parsed = self.parse_args()
-        self.input_images = self.parsed.input_images
-        self.store_parsed_config()  # Store any supplied parameters in the global config
 
-    @snoop()
+        # Store verbosity flags as instance attributes
+        self.input_images = self.parsed.input_images
+        self.quiet = self.parsed.quiet
+        self.verbose = self.parsed.verbose
+        self.debug_logging = self.parsed.debug_logging
+        self.log_file = self.parsed.log_file
+
+        # Store config parameters
+        self.store_parsed_config()
+
     def store_parsed_config(self):
         """Write any parsed CLI options back into the global config."""
         for opt in Config.__struct_fields__:
-            value = getattr(self.parsed, opt)
+            value = getattr(self.parsed, opt, None)
             if value is not None:
                 setattr(cfg, opt, value)
