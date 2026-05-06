@@ -2,7 +2,6 @@
 
 from __future__ import annotations
 
-import sys
 from datetime import datetime as dt
 
 import numpy as np
@@ -11,11 +10,14 @@ from scipy.optimize import minimize
 
 from ..debug_utils import debug_show
 from ..keypoints import make_keypoint_index, project_keypoints
+from ..logging_config import get_logger
 from ..options import cfg
 from ._base import draw_correspondences, make_objective
 
 
 __all__ = ["optimise_params_scipy"]
+
+logger = get_logger("optimise.scipy")
 
 
 def optimise_params_scipy(
@@ -50,20 +52,27 @@ def optimise_params_scipy(
         slice(*cfg.RVEC_IDX),
     )
 
-    print("  initial objective is", objective(params))
+    initial_obj = objective(params)
+    logger.info(
+        "Optimization starting",
+        extra={
+            "file": name,
+            "n_params": len(params),
+            "method": method,
+            "initial_objective": initial_obj,
+        },
+    )
+
     if debug_lvl >= 1:
         projpts = project_keypoints(params, keypoint_index)
         display = draw_correspondences(small, dstpoints, projpts)
         debug_show(name, 4, "keypoints before", display)
 
-    print(f"  optimizing {len(params)} parameters...")
-
     # Hint about JAX for L-BFGS-B
     if method == "L-BFGS-B":
-        print(
-            "OPT_METHOD='L-BFGS-B' can use JAX for fast autodiff. "
+        logger.info(
+            "L-BFGS-B can use JAX for faster autodiff. "
             "Install with: pip install page-dewarp[jax]",
-            file=sys.stderr,
         )
 
     start = dt.now()
@@ -74,39 +83,55 @@ def optimise_params_scipy(
         options={"maxiter": cfg.OPT_MAX_ITER},
     )
     elapsed = (dt.now() - start).total_seconds()
-    print(f"  optimization ({method}) took {elapsed:.2f}s, {result.nfev} evals")
 
-    print(f"  final objective is {result.fun:.6f}")
+    logger.info(
+        "Optimization complete",
+        extra={
+            "file": name,
+            "method": method,
+            "backend": "scipy",
+            "elapsed_s": round(elapsed, 2),
+            "n_evals": result.nfev,
+            "final_objective": round(result.fun, 6),
+        },
+    )
+
     params = result.x
 
     if debug_lvl >= 1:
-        _print_diagnostics(params, keypoint_index, small, dstpoints, name)
+        _log_diagnostics(name, params, keypoint_index, small, dstpoints)
 
     return params
 
 
-def _print_diagnostics(
+def _log_diagnostics(
+    name: str,
     params: np.ndarray,
     keypoint_index: np.ndarray,
     small: np.ndarray,
     dstpoints: np.ndarray,
-    name: str,
 ) -> None:
-    """Print parameter diagnostics and show debug visualization."""
+    """Log parameter diagnostics and show debug visualization."""
     projpts = project_keypoints(params, keypoint_index)
     display = draw_correspondences(small, dstpoints, projpts)
     debug_show(name, 5, "keypoints after", display)
 
-    print("  === Parameter Diagnostics ===")
     rvec = params[slice(*cfg.RVEC_IDX)]
     tvec = params[slice(*cfg.TVEC_IDX)]
     alpha, beta = params[slice(*cfg.CUBIC_IDX)]
 
-    print(f"  Rotation vector: {rvec}")
-    print(f"  Rotation angles (degrees): {np.degrees(rvec)}")
-    print(f"  Translation vector: {tvec}")
-    print(f"  Cubic params - alpha: {alpha}, beta: {beta}")
-
     R, _ = Rodrigues(rvec)
-    print(f"  Rotation matrix determinant: {np.linalg.det(R)}")
-    print(f"  Rotation matrix condition number: {np.linalg.cond(R)}")
+
+    logger.debug(
+        "Optimization diagnostics",
+        extra={
+            "file": name,
+            "rvec": rvec.tolist(),
+            "rvec_degrees": np.degrees(rvec).tolist(),
+            "tvec": tvec.tolist(),
+            "alpha": alpha,
+            "beta": beta,
+            "rotation_det": np.linalg.det(R),
+            "rotation_cond": np.linalg.cond(R),
+        },
+    )

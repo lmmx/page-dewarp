@@ -143,7 +143,6 @@ nav:
       - "options": api/options.md
       - "projection": api/projection.md
       - "simple_utils": api/simple_utils.md
-      - "snoopy": api/snoopy.md
       - "solve": api/solve.md
       - "spans": api/spans.md
       - "viewer": api/viewer.md

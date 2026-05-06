@@ -1,4 +1,3 @@
-# src/page_dewarp/batch.py
 """Batched image processing for page dewarping.
 
 This module provides efficient processing of multiple images by:
@@ -20,6 +19,7 @@ import numpy as np
 from cv2 import INTER_AREA, imread, rectangle
 from cv2 import resize as cv2_resize
 
+from .logging_config import get_logger
 from .mask import Mask
 from .solve import get_default_params
 from .spans import assemble_spans, keypoints_from_samples, sample_spans
@@ -29,6 +29,8 @@ if TYPE_CHECKING:
     from .options import Config
 
 __all__ = ["process_images_batched", "BatchedResult"]
+
+logger = get_logger("batch")
 
 
 @dataclass
@@ -202,7 +204,16 @@ def process_images_batched(
     image_files: list[str | Path],
     config: Config,
 ) -> list[BatchedResult]:
-    """Process multiple images with parallel optimization."""
+    """Process multiple images with parallel optimization.
+
+    Args:
+        image_files: List of image file paths.
+        config: Configuration object.
+
+    Returns:
+        List of BatchedResult objects in the same order as input.
+
+    """
     import msgspec
 
     from .optimise._jax_vmap import OptimizationProblem, optimise_params_vmap
@@ -211,7 +222,8 @@ def process_images_batched(
     n_workers = min(len(image_files), max(1, mp.cpu_count() - 1))
 
     # Phase 1: Parallel preprocessing
-    print("=== Phase 1: Preprocessing ===")
+    logger.info("Batch preprocessing started", extra={"n_images": len(image_files)})
+
     preprocess_args = [(str(f), config_dict) for f in image_files]
 
     prepared: list[PreparedData] = []
@@ -230,14 +242,24 @@ def process_images_batched(
     for i, result in enumerate(preprocess_results):
         if isinstance(result, PreparedData):
             n_pts = sum(result.span_counts)
-            print(
-                f"  {Path(result.file_path).name}: "
-                f"{len(result.span_counts)} spans, {n_pts} points",
+            logger.debug(
+                "Image preprocessed",
+                extra={
+                    "file": Path(result.file_path).name,
+                    "n_spans": len(result.span_counts),
+                    "n_points": n_pts,
+                },
             )
             prepared.append(result)
         else:
             path, error = result
-            print(f"  {Path(path).name}: FAILED - {error}")
+            logger.warning(
+                "Preprocessing failed",
+                extra={
+                    "file": Path(path).name,
+                    "error": error,
+                },
+            )
             failed_indices.add(i)
             failed.append(
                 BatchedResult(
@@ -252,7 +274,8 @@ def process_images_batched(
         return failed
 
     # Phase 2: Parallel BFGS optimization (vmap)
-    print("\n=== Phase 2: Parallel Optimization ===")
+    logger.info("Batch optimization started", extra={"n_images": len(prepared)})
+
     problems = [
         OptimizationProblem(
             name=Path(p.file_path).stem,
@@ -268,7 +291,8 @@ def process_images_batched(
     optimized_params_list = optimise_params_vmap(problems, config.DEBUG_LEVEL)
 
     # Phase 3: Parallel output generation
-    print("\n=== Phase 3: Generating Outputs ===")
+    logger.info("Batch output generation started", extra={"n_images": len(prepared)})
+
     finalize_args = [
         (p.file_path, p.corners, p.rough_dims, opt_params, config_dict)
         for p, opt_params in zip(prepared, optimized_params_list)
@@ -282,7 +306,13 @@ def process_images_batched(
     successful: list[BatchedResult] = []
     for file_path, output_path, error in finalize_results:
         if error:
-            print(f"  {Path(file_path).name}: FAILED - {error}")
+            logger.warning(
+                "Output generation failed",
+                extra={
+                    "file": Path(file_path).name,
+                    "error": error,
+                },
+            )
             successful.append(
                 BatchedResult(
                     input_path=file_path,
@@ -292,7 +322,13 @@ def process_images_batched(
                 ),
             )
         else:
-            print(f"  wrote {output_path}")
+            logger.info(
+                "Output saved",
+                extra={
+                    "file": Path(file_path).name,
+                    "output": output_path,
+                },
+            )
             successful.append(
                 BatchedResult(
                     input_path=file_path,
@@ -313,5 +349,14 @@ def process_images_batched(
         else:
             all_results.append(successful[prep_idx])
             prep_idx += 1
+
+    logger.info(
+        "Batch processing complete",
+        extra={
+            "total": len(all_results),
+            "succeeded": sum(1 for r in all_results if r.success),
+            "failed": sum(1 for r in all_results if not r.success),
+        },
+    )
 
     return all_results

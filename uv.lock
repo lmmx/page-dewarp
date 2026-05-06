@@ -17,7 +17,7 @@ resolution-markers = [
 ]
 
 [options]
-exclude-newer = "2026-04-11T15:18:25.547477904Z"
+exclude-newer = "2026-04-11T15:37:11.494617667Z"
 exclude-newer-span = "P3D"
 
 [[package]]
@@ -1864,9 +1864,6 @@ build = [
     { name = "maturin" },
     { name = "patchelf" },
 ]
-debug = [
-    { name = "pysnooper" },
-]
 dev = [
     { name = "pdbpp" },
     { name = "pre-commit" },
@@ -1913,7 +1910,6 @@ build = [
     { name = "maturin", specifier = ">=1.9.3" },
     { name = "patchelf", specifier = ">=0.17.2.4" },
 ]
-debug = [{ name = "pysnooper", specifier = ">=1.2.0" }]
 dev = [
     { name = "pdbpp", specifier = ">=0.11.7" },
     { name = "pre-commit", specifier = ">=4.1.0" },
@@ -2150,15 +2146,6 @@ source = { registry = "https://pypi.org/simple" }
 sdist = { url = "https://files.pythonhosted.org/packages/08/4f/7088417e5465c53a30b918d30542aad89352ea0d635a5d077717c69a7d2b/pyrepl-0.11.4.tar.gz", hash = "sha256:efe988b4a6e5eed587e9769dc2269aeec2b6feec2f5d77995ee85b9ad7cf7063", size = 51089, upload-time = "2025-07-17T22:56:25.42Z" }
 wheels = [
     { url = "https://files.pythonhosted.org/packages/bd/a5/ce97a778f096aaa27cfcb7ad09f1198cf73277dcab6c68a4b8f332d91e48/pyrepl-0.11.4-py3-none-any.whl", hash = "sha256:ac30d6340267a21c39e1b1934f92bca6b8735017d14b17e40f903b2d1563541d", size = 55596, upload-time = "2025-07-17T22:56:24.537Z" },
-]
-
-[[package]]
-name = "pysnooper"
-version = "1.2.3"
-source = { registry = "https://pypi.org/simple" }
-sdist = { url = "https://files.pythonhosted.org/packages/d2/4a/be3c144f58de6b78911c417cc4a3b3fe5eb6d13cae4c12daf3ca17a8d473/pysnooper-1.2.3.tar.gz", hash = "sha256:1fa1425444a7af45108aaed860b5ca8b62b25bba25b0b037c059ba353d8f1e74", size = 46283, upload-time = "2025-05-31T23:22:46.786Z" }
-wheels = [
-    { url = "https://files.pythonhosted.org/packages/69/87/df62c8a998216e6749b67d548dae0967906036c61457510ef49667927c49/PySnooper-1.2.3-py2.py3-none-any.whl", hash = "sha256:546372f0e72da89f8d1b89e758b7c05a478d65288569a1ca2cc1620e7b1b1944", size = 15086, upload-time = "2025-05-31T23:22:45.745Z" },
 ]
 
 [[package]]
