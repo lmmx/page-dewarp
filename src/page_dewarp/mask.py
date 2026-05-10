@@ -18,6 +18,7 @@ from cv2 import (
     dilate,
     erode,
 )
+from msgspec import Struct
 
 from .contours import ContourInfo, get_contours
 from .debug_utils import debug_show
@@ -25,6 +26,25 @@ from .options import cfg
 
 
 __all__ = ["box", "Mask"]
+
+MORPH_FN = {"d": dilate, "e": erode}
+
+
+class MorphStep(Struct, frozen=True):
+    op: str
+    kernel: tuple[int, int]
+    iterations: int = 1
+
+
+def parse_morph_spec(spec: str) -> list[MorphStep]:
+    """Parse 'd_9_1,e_1_3_2' into [MorphStep('d',(9,1),1), MorphStep('e',(1,3),2)]."""
+    steps = []
+    for part in spec.split(","):
+        tokens = part.split("_")
+        op, w, h = tokens[0], int(tokens[1]), int(tokens[2])
+        iters = int(tokens[3]) if len(tokens) > 3 else 1
+        steps.append(MorphStep(op=op, kernel=(w, h), iterations=iters))
+    return steps
 
 
 def box(width: int, height: int) -> np.ndarray:
@@ -85,17 +105,16 @@ class Mask:
         )
         self.log(0.1, "thresholded", mask)
 
-        # If text, dilate horizontally; if lines, erode to remove noise
-        mask = (
-            dilate(mask, box(9, 1))
-            if self.text
-            else erode(mask, box(3, 1), iterations=3)
-        )
-        self.log(0.2, "dilated" if self.text else "eroded", mask)
-
-        # If text, erode vertically; if lines, dilate further
-        mask = erode(mask, box(1, 3)) if self.text else dilate(mask, box(8, 2))
-        self.log(0.3, "eroded" if self.text else "dilated", mask)
+        # If text, dilate horizontally; if lines, erode to remove noise.
+        # Then if text, erode vertically; if lines, dilate further
+        spec = cfg.TEXT_MORPH_OPS if self.text else cfg.LINE_MORPH_OPS
+        for i, step in enumerate(parse_morph_spec(spec)):
+            mask = MORPH_FN[step.op](
+                mask,
+                box(*step.kernel),
+                iterations=step.iterations,
+            )
+            self.log(0.2 + i * 0.05, "dilated" if step.op == "d" else "eroded", mask)
 
         self.value = np.minimum(mask, self.pagemask)
 
