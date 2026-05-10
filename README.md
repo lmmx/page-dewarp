@@ -76,14 +76,14 @@ usage: page-dewarp [-h] [-d {0,1,2,3}] [-o {file,screen,both}]
                    [-b USE_BATCH] [-vw SCREEN_MAX_W] [-vh SCREEN_MAX_H]
                    [-x PAGE_MARGIN_X] [-y PAGE_MARGIN_Y] [-tw TEXT_MIN_WIDTH]
                    [-th TEXT_MIN_HEIGHT] [-ta TEXT_MIN_ASPECT]
-                   [-tk TEXT_MAX_THICKNESS] [-wz ADAPTIVE_WINSZ]
-                   [-ri RVEC_IDX] [-ti TVEC_IDX] [-ci CUBIC_IDX]
-                   [-sw SPAN_MIN_WIDTH] [-sp SPAN_PX_PER_STEP]
-                   [-eo EDGE_MAX_OVERLAP] [-el EDGE_MAX_LENGTH]
-                   [-ec EDGE_ANGLE_COST] [-ea EDGE_MAX_ANGLE]
-                   [-f FOCAL_LENGTH] [-z OUTPUT_ZOOM] [-dpi OUTPUT_DPI]
-                   [-nb NO_BINARY] [-sh SHEAR_COST] [-mc MAX_CORR]
-                   [-s REMAP_DECIMATE]
+                   [-tk TEXT_MAX_THICKNESS] [-tm TEXT_MORPH_OPS]
+                   [-lm LINE_MORPH_OPS] [-wz ADAPTIVE_WINSZ] [-ri RVEC_IDX]
+                   [-ti TVEC_IDX] [-ci CUBIC_IDX] [-sw SPAN_MIN_WIDTH]
+                   [-sp SPAN_PX_PER_STEP] [-eo EDGE_MAX_OVERLAP]
+                   [-el EDGE_MAX_LENGTH] [-ec EDGE_ANGLE_COST]
+                   [-ea EDGE_MAX_ANGLE] [-f FOCAL_LENGTH] [-z OUTPUT_ZOOM]
+                   [-dpi OUTPUT_DPI] [-nb NO_BINARY] [-sh SHEAR_COST]
+                   [-mc MAX_CORR] [-s REMAP_DECIMATE]
                    IMAGE_FILE_OR_FILES [IMAGE_FILE_OR_FILES ...]
 
 positional arguments:
@@ -91,95 +91,101 @@ positional arguments:
 
 options:
   -h, --help            show this help message and exit
-  -d {0,1,2,3}, --debug-level {0,1,2,3}
+  -d, --debug-level {0,1,2,3}
                         (type: int, default: 0)
-  -o {file,screen,both}, --debug-output {file,screen,both}
+  -o, --debug-output {file,screen,both}
                         (type: str, default: file)
-  -it OPT_MAX_ITER, --max-iter OPT_MAX_ITER
+  -it, --max-iter OPT_MAX_ITER
                         Maximum optimisation iterations (type: int, default:
                         600000)
-  -m OPT_METHOD, --method OPT_METHOD
+  -m, --method OPT_METHOD
                         Name of the JAX/SciPy optimisation method to use.
                         (type: str, default: auto)
-  -dev DEVICE, --device DEVICE
+  -dev, --device DEVICE
                         Compute device to select for optimisation. (type: str,
                         default: auto)
-  -b USE_BATCH, --batch USE_BATCH
+  -b, --batch USE_BATCH
                         Whether to batch process images (JAX backend only).
                         (type: str, default: auto)
-  -vw SCREEN_MAX_W, --max-screen-width SCREEN_MAX_W
+  -vw, --max-screen-width SCREEN_MAX_W
                         Viewing screen max width (for resizing to screen)
                         (type: int, default: 1280)
-  -vh SCREEN_MAX_H, --max-screen-height SCREEN_MAX_H
+  -vh, --max-screen-height SCREEN_MAX_H
                         Viewing screen max height (for resizing to screen)
                         (type: int, default: 700)
-  -x PAGE_MARGIN_X, --x-margin PAGE_MARGIN_X
+  -x, --x-margin PAGE_MARGIN_X
                         Reduced px to ignore near L/R edge (type: int,
                         default: 50)
-  -y PAGE_MARGIN_Y, --y-margin PAGE_MARGIN_Y
+  -y, --y-margin PAGE_MARGIN_Y
                         Reduced px to ignore near T/B edge (type: int,
                         default: 20)
-  -tw TEXT_MIN_WIDTH, --min-text-width TEXT_MIN_WIDTH
+  -tw, --min-text-width TEXT_MIN_WIDTH
                         Min reduced px width of detected text contour (type:
                         int, default: 15)
-  -th TEXT_MIN_HEIGHT, --min-text-height TEXT_MIN_HEIGHT
+  -th, --min-text-height TEXT_MIN_HEIGHT
                         Min reduced px height of detected text contour (type:
                         int, default: 2)
-  -ta TEXT_MIN_ASPECT, --min-text-aspect TEXT_MIN_ASPECT
+  -ta, --min-text-aspect TEXT_MIN_ASPECT
                         Filter out text contours below this w/h ratio (type:
                         float, default: 1.5)
-  -tk TEXT_MAX_THICKNESS, --max-text-thickness TEXT_MAX_THICKNESS
+  -tk, --max-text-thickness TEXT_MAX_THICKNESS
                         Max reduced px thickness of detected text contour
                         (type: int, default: 10)
-  -wz ADAPTIVE_WINSZ, --adaptive-winsz ADAPTIVE_WINSZ
+  -tm, --text-morph TEXT_MORPH_OPS
+                        Morphological ops for text mask (e.g. d_9_1,e_1_3)
+                        (type: str, default: d_9_1,e_1_3)
+  -lm, --line-morph LINE_MORPH_OPS
+                        Morphological ops for line mask (e.g. e_3_1_3,d_8_2)
+                        (type: str, default: e_3_1_3,d_8_2)
+  -wz, --adaptive-winsz ADAPTIVE_WINSZ
                         Window size for adaptive threshold in reduced px
                         (type: int, default: 55)
-  -ri RVEC_IDX, --rotation-vec-param-idx RVEC_IDX
+  -ri, --rotation-vec-param-idx RVEC_IDX
                         Index of rvec in params vector (slice: pair of values)
                         (type: tuple[int, int], default: (0, 3))
-  -ti TVEC_IDX, --translation-vec-param-idx TVEC_IDX
+  -ti, --translation-vec-param-idx TVEC_IDX
                         Index of tvec in params vector (slice: pair of values)
                         (type: tuple[int, int], default: (3, 6))
-  -ci CUBIC_IDX, --cubic-slope-param-idx CUBIC_IDX
+  -ci, --cubic-slope-param-idx CUBIC_IDX
                         Index of cubic slopes in params vector (slice: pair of
                         values) (type: tuple[int, int], default: (6, 8))
-  -sw SPAN_MIN_WIDTH, --min-span-width SPAN_MIN_WIDTH
+  -sw, --min-span-width SPAN_MIN_WIDTH
                         Minimum reduced px width for span (type: int, default:
                         30)
-  -sp SPAN_PX_PER_STEP, --span-spacing SPAN_PX_PER_STEP
+  -sp, --span-spacing SPAN_PX_PER_STEP
                         Reduced px spacing for sampling along spans (type:
                         int, default: 20)
-  -eo EDGE_MAX_OVERLAP, --max-edge-overlap EDGE_MAX_OVERLAP
+  -eo, --max-edge-overlap EDGE_MAX_OVERLAP
                         Max reduced px horiz. overlap of contours in span
                         (type: float, default: 1.0)
-  -el EDGE_MAX_LENGTH, --max-edge-length EDGE_MAX_LENGTH
+  -el, --max-edge-length EDGE_MAX_LENGTH
                         Max reduced px length of edge connecting contours
                         (type: float, default: 100.0)
-  -ec EDGE_ANGLE_COST, --edge-angle-cost EDGE_ANGLE_COST
+  -ec, --edge-angle-cost EDGE_ANGLE_COST
                         Cost of angles in edges (tradeoff vs. length) (type:
                         float, default: 10.0)
-  -ea EDGE_MAX_ANGLE, --max-edge-angle EDGE_MAX_ANGLE
+  -ea, --max-edge-angle EDGE_MAX_ANGLE
                         Maximum change in angle allowed between contours
                         (type: float, default: 7.5)
-  -f FOCAL_LENGTH, --focal-length FOCAL_LENGTH
+  -f, --focal-length FOCAL_LENGTH
                         Normalized focal length of camera (type: float,
                         default: 1.2)
-  -z OUTPUT_ZOOM, --output-zoom OUTPUT_ZOOM
+  -z, --output-zoom OUTPUT_ZOOM
                         How much to zoom output relative to *original* image
                         (type: float, default: 1.0)
-  -dpi OUTPUT_DPI, --output-dpi OUTPUT_DPI
+  -dpi, --output-dpi OUTPUT_DPI
                         Just affects stated DPI of PNG, not appearance (type:
                         int, default: 300)
-  -nb NO_BINARY, --no-binary NO_BINARY
+  -nb, --no-binary NO_BINARY
                         Disable output conversion to binary thresholded image
                         (type: int, default: 0)
-  -sh SHEAR_COST, --shear-cost SHEAR_COST
+  -sh, --shear-cost SHEAR_COST
                         Penalty against camera tilt (shear distortion). (type:
                         float, default: 0.0)
-  -mc MAX_CORR, --max-corrections MAX_CORR
+  -mc, --max-corrections MAX_CORR
                         Maximum corrections used to approximate the inverse
                         Hessian. (type: int, default: 100)
-  -s REMAP_DECIMATE, --shrink REMAP_DECIMATE
+  -s, --shrink REMAP_DECIMATE
                         Downscaling factor for remapping image (type: int,
                         default: 16)
 ```
