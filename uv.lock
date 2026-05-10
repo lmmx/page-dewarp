@@ -17,7 +17,7 @@ resolution-markers = [
 ]
 
 [options]
-exclude-newer = "2026-05-07T15:02:40.424221399Z"
+exclude-newer = "2026-05-07T16:09:09.026834378Z"
 exclude-newer-span = "P3D"
 
 [[package]]
@@ -1833,7 +1833,7 @@ wheels = [
 
 [[package]]
 name = "page-dewarp"
-version = "0.3.1"
+version = "0.3.2"
 source = { editable = "." }
 dependencies = [
     { name = "matplotlib" },
