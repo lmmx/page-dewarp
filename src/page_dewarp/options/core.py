@@ -45,6 +45,7 @@ class Config(Struct):
         DEBUG_LEVEL (int): Debug verbosity level (0 = none).
         DEBUG_DEST (str): Output mode for debug information ('file' by default).
         OUTPUT_DIR (str): Directory for output and debug images ('.' by default).
+        OUTPUT_FORMAT (str): Output image format (e.g. 'png', 'tiff', 'bmp', 'jpeg').
         OUTPUT_JSON (int): Write JSON sidecar with dewarp parameters.
         EDGE_MAX_OVERLAP (float): Maximum horizontal overlap of contours in a span.
         EDGE_MAX_LENGTH (float): Maximum length of edges connecting contours.
@@ -253,11 +254,24 @@ class Config(Struct):
     The directory is created if it does not exist.
 
     Tip:
-       Use with ``-d 3`` to keep debug images out of your working directory.
+       Use with `-d 3` to keep debug images out of your working directory.
 
     Question:
        [#142](https://github.com/lmmx/page-dewarp/issues/142) - Configurable
        output locations.
+    """
+    OUTPUT_FORMAT: desc(str, "Output image format (e.g. png, tiff, bmp, jpeg)") = "png"
+    """Output image format.
+
+    Controls the file format of the thresholded output image.
+
+    Tip:
+       Use `-f tiff` for lossless output matching scanned TIFF inputs,
+       or `-f jpeg` for smaller files at the cost of quality.
+
+    Question:
+       [#159](https://github.com/lmmx/page-dewarp/issues/159) - Preserve
+       file format / lossless output.
     """
     OUTPUT_JSON: desc(int, "Write JSON sidecar with dewarp parameters") = 0
     """Write JSON sidecar with dewarp parameters.
