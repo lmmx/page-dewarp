@@ -21,7 +21,6 @@ test = ["czkawka>=0.1.2", "inline-snapshot>=0.30.1", "pytest>=7.4.0"]
 authors = [{ email = "louismmx@gmail.com", name = "Louis Maddox" }]
 classifiers = [
   "Development Status :: 6 - Mature",
-  "License :: OSI Approved :: MIT License",
   "Operating System :: OS Independent",
   "Programming Language :: Python :: 3.10",
   "Programming Language :: Python :: 3.11",
