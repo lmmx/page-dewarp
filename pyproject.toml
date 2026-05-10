@@ -50,7 +50,7 @@ keywords = [
 name = "page-dewarp"
 readme = "README.md"
 requires-python = ">=3.10"
-version = "0.2.7"
+version = "0.2.8"
 
 [project.license]
 text = "MIT"
