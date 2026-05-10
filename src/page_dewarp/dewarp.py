@@ -140,13 +140,17 @@ class RemappedImage:
             pil_image = Image.fromarray(thresh)
             pil_image = pil_image.convert("1")
 
+        ext = f".{config.OUTPUT_FORMAT.lower().lstrip('.')}"
+        save_kwargs = {"dpi": (config.OUTPUT_DPI, config.OUTPUT_DPI)}
+        if ext in {".tif", ".tiff"}:
+            save_kwargs["compression"] = "tiff_deflate"
+        elif ext in {".jpg", ".jpeg"}:
+            save_kwargs["quality"] = 95
+
         outdir = Path(config.OUTPUT_DIR)
         outdir.mkdir(parents=True, exist_ok=True)
-        self.threshfile = str(outdir / (name + "_thresh.png"))
-        pil_image.save(
-            self.threshfile,
-            dpi=(config.OUTPUT_DPI, config.OUTPUT_DPI),
-        )
+        self.threshfile = str(outdir / f"{name}_thresh{ext}")
+        pil_image.save(self.threshfile, **save_kwargs)
 
         if config.DEBUG_LEVEL >= 1:
             height = small.shape[0]

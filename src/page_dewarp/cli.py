@@ -140,6 +140,7 @@ class ArgParser(argparse.ArgumentParser):
             choices=["file", "screen", "both"],
         )
         self.add_default_argument(["-o", "--output-dir"], "OUTPUT_DIR")
+        self.add_default_argument(["-f", "--output-format"], "OUTPUT_FORMAT")
         self.add_default_argument(["-j", "--json"], "OUTPUT_JSON")
         self.add_default_argument(["-it", "--max-iter"], "OPT_MAX_ITER")
         self.add_default_argument(["-m", "--method"], "OPT_METHOD")
@@ -165,7 +166,7 @@ class ArgParser(argparse.ArgumentParser):
         self.add_default_argument(["-el", "--max-edge-length"], "EDGE_MAX_LENGTH")
         self.add_default_argument(["-ec", "--edge-angle-cost"])
         self.add_default_argument(["-ea", "--max-edge-angle"], "EDGE_MAX_ANGLE")
-        self.add_default_argument(["-f", "--focal-length"])
+        self.add_default_argument(["-fl", "--focal-length"])
         self.add_default_argument(["-z", "--output-zoom"])
         self.add_default_argument(["-dpi", "--output-dpi"])
         self.add_default_argument(["-nb", "--no-binary"], "NO_BINARY")
