@@ -140,6 +140,7 @@ class ArgParser(argparse.ArgumentParser):
             choices=["file", "screen", "both"],
         )
         self.add_default_argument(["-o", "--output-dir"], "OUTPUT_DIR")
+        self.add_default_argument(["-j", "--json"], "OUTPUT_JSON")
         self.add_default_argument(["-it", "--max-iter"], "OPT_MAX_ITER")
         self.add_default_argument(["-m", "--method"], "OPT_METHOD")
         self.add_default_argument(["-dev", "--device"], "DEVICE")

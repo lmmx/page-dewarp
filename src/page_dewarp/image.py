@@ -10,6 +10,7 @@ This module includes:
 
 from __future__ import annotations
 
+import json
 from pathlib import Path
 
 import numpy as np
@@ -75,6 +76,10 @@ class WarpedImage:
 
     written = False  # Explicitly declare the file-write attribute
     config: Config
+    params: np.ndarray | None = None
+    page_dims: np.ndarray | None = None
+    corners: np.ndarray | None = None
+    span_counts: list[int] | None = None
 
     def __init__(self, imgfile: str | Path, config: Config = Config()) -> None:
         """Initialize the WarpedImage with a source file and configuration.
@@ -133,8 +138,44 @@ class WarpedImage:
                 # Fallback: see https://github.com/lmmx/page-dewarp/issues/9
                 print("Got a negative page dimension! Falling back to rough estimate")
                 page_dims = rough_dims
+            self.params = params
+            self.page_dims = page_dims
+            self.corners = corners
+            self.span_counts = span_counts
+
             self.threshold(page_dims, params)
             self.written = True
+
+            if self.config.OUTPUT_JSON:
+                self.write_json()
+
+    def write_json(self) -> None:
+        """Write a JSON sidecar file with dewarp parameters."""
+        rvec = self.config.RVEC_IDX
+        tvec = self.config.TVEC_IDX
+        cubic = self.config.CUBIC_IDX
+
+        outdir = Path(self.config.OUTPUT_DIR)
+        outdir.mkdir(parents=True, exist_ok=True)
+        jsonfile = str(outdir / (self.stem + "_params.json"))
+
+        data = {
+            "input_file": self.basename,
+            "output_file": Path(self.outfile).name,
+            "rotation_vector": self.params[rvec[0] : rvec[1]].tolist(),
+            "translation_vector": self.params[tvec[0] : tvec[1]].tolist(),
+            "cubic_params": self.params[cubic[0] : cubic[1]].tolist(),
+            "page_dims": self.page_dims.tolist()
+            if isinstance(self.page_dims, np.ndarray)
+            else list(self.page_dims),
+            "corners": self.corners.tolist(),
+            "image_shape": list(self.cv2_img.shape),
+            "small_shape": list(self.small.shape),
+        }
+
+        with open(jsonfile, "w") as f:
+            json.dump(data, f)
+        print(f"  wrote {jsonfile}")
 
     def threshold(self, page_dims: np.ndarray, params: np.ndarray) -> None:
         """Construct a dewarped, thresholded image using the RemappedImage class.

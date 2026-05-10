@@ -45,6 +45,7 @@ class Config(Struct):
         DEBUG_LEVEL (int): Debug verbosity level (0 = none).
         DEBUG_DEST (str): Output mode for debug information ('file' by default).
         OUTPUT_DIR (str): Directory for output and debug images ('.' by default).
+        OUTPUT_JSON (int): Write JSON sidecar with dewarp parameters.
         EDGE_MAX_OVERLAP (float): Maximum horizontal overlap of contours in a span.
         EDGE_MAX_LENGTH (float): Maximum length of edges connecting contours.
         EDGE_ANGLE_COST (float): Cost of angles in edges (tradeoff vs length).
@@ -253,6 +254,18 @@ class Config(Struct):
 
     Tip:
        Use with ``-d 3`` to keep debug images out of your working directory.
+
+    Question:
+       [#142](https://github.com/lmmx/page-dewarp/issues/142) - Configurable
+       output locations.
+    """
+    OUTPUT_JSON: desc(int, "Write JSON sidecar with dewarp parameters") = 0
+    """Write JSON sidecar with dewarp parameters.
+
+    When enabled, writes a `_params.json` file alongside the thresholded
+    output containing rotation, translation, cubic parameters, page
+    dimensions, and corners. Useful for downstream coordinate mapping
+    (e.g. overlaying OCR results on the original image).
 
     Question:
        [#142](https://github.com/lmmx/page-dewarp/issues/142) - Configurable
