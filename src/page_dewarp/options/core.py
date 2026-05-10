@@ -40,6 +40,8 @@ class Config(Struct):
         TEXT_MIN_HEIGHT (int): Minimum reduced pixel height of detected text contour.
         TEXT_MIN_ASPECT (float): Filter out text contours below this width/height ratio.
         TEXT_MAX_THICKNESS (int): Maximum reduced pixel thickness of detected text contour.
+        TEXT_MORPH_OPS: (str): Morphological ops for text mask.
+        LINE_MORPH_OPS: (str): Morphological ops for line mask.
         DEBUG_LEVEL (int): Debug verbosity level (0 = none).
         DEBUG_OUTPUT (str): Output mode for debug information ('file' by default).
         EDGE_MAX_OVERLAP (float): Maximum horizontal overlap of contours in a span.
@@ -195,6 +197,48 @@ class Config(Struct):
     Question:
        [#78](https://github.com/lmmx/page-dewarp/issues/78) - Discussion of text detection limitations
        with close-up photos.
+    """
+    TEXT_MORPH_OPS: desc(str, "Morphological ops for text mask (e.g. d_9_1,e_1_3)") = (
+        "d_9_1,e_1_3"
+    )
+    """Morphological ops for text mask.
+
+    A comma-separated sequence of operations applied after adaptive thresholding.
+    Each operation is encoded as `{op}_{width}_{height}` or
+    `{op}_{width}_{height}_{iterations}`, where `op` is `d` (dilate) or
+    `e` (erode), and `width`/`height` define the structuring element.
+
+    The default `d_9_1,e_1_3` dilates horizontally with a 9×1 kernel (bridging
+    letter strokes into word blobs) then erodes vertically with a 1×3 kernel
+    (trimming vertical noise).
+
+    Tip:
+       For documents with background speckle (e.g. ink bleed-through on old
+       newsprint), try a morphological opening prefix: `e_3_3,d_3_3,d_9_1,e_1_3`.
+       For Fraktur or dense text with cross-line span drift, reduce the horizontal
+       dilation: `d_5_1,e_1_3`.
+
+    Question:
+       [#161](https://github.com/lmmx/page-dewarp/issues/161) - Configurable
+       erosion/dilation for pathological documents.
+    """
+    LINE_MORPH_OPS: desc(
+        str,
+        "Morphological ops for line mask (e.g. e_3_1_3,d_8_2)",
+    ) = "e_3_1_3,d_8_2"
+    """Morphological ops for line mask.
+
+    A comma-separated sequence of operations applied after adaptive thresholding
+    when detecting table borders and ruling lines. Same encoding as
+    `TEXT_MORPH_OPS`.
+
+    The default `e_3_1_3,d_8_2` erodes with a 3×1 kernel for 3 iterations
+    (removing text noise) then dilates with an 8×2 kernel (reinforcing line
+    structures).
+
+    Question:
+       [#161](https://github.com/lmmx/page-dewarp/issues/161) - Configurable
+       erosion/dilation for pathological documents.
     """
     # [debug_lvl_opt]
     DEBUG_LEVEL: int = 0

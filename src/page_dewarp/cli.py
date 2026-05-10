@@ -151,6 +151,8 @@ class ArgParser(argparse.ArgumentParser):
         self.add_default_argument(["-th", "--min-text-height"], "TEXT_MIN_HEIGHT")
         self.add_default_argument(["-ta", "--min-text-aspect"], "TEXT_MIN_ASPECT")
         self.add_default_argument(["-tk", "--max-text-thickness"], "TEXT_MAX_THICKNESS")
+        self.add_default_argument(["-tm", "--text-morph"], "TEXT_MORPH_OPS")
+        self.add_default_argument(["-lm", "--line-morph"], "LINE_MORPH_OPS")
         self.add_default_argument(["-wz", "--adaptive-winsz"])
         self.add_default_argument(["-ri", "--rotation-vec-param-idx"], "RVEC_IDX")
         self.add_default_argument(["-ti", "--translation-vec-param-idx"], "TVEC_IDX")
