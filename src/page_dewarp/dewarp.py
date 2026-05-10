@@ -7,6 +7,8 @@ This module provides:
   rectified, thresholded output using a cubic parameterization of the page.
 """
 
+from pathlib import Path
+
 import numpy as np
 from cv2 import (
     ADAPTIVE_THRESH_MEAN_C,
@@ -138,7 +140,9 @@ class RemappedImage:
             pil_image = Image.fromarray(thresh)
             pil_image = pil_image.convert("1")
 
-        self.threshfile = name + "_thresh.png"
+        outdir = Path(config.OUTPUT_DIR)
+        outdir.mkdir(parents=True, exist_ok=True)
+        self.threshfile = str(outdir / (name + "_thresh.png"))
         pil_image.save(
             self.threshfile,
             dpi=(config.OUTPUT_DPI, config.OUTPUT_DPI),

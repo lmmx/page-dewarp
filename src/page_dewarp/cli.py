@@ -136,9 +136,10 @@ class ArgParser(argparse.ArgumentParser):
         )
         self.add_default_argument(["-d", "--debug-level"], choices=[0, 1, 2, 3])
         self.add_default_argument(
-            ["-o", "--debug-output"],
+            ["-dd", "--debug-dest"],
             choices=["file", "screen", "both"],
         )
+        self.add_default_argument(["-o", "--output-dir"], "OUTPUT_DIR")
         self.add_default_argument(["-it", "--max-iter"], "OPT_MAX_ITER")
         self.add_default_argument(["-m", "--method"], "OPT_METHOD")
         self.add_default_argument(["-dev", "--device"], "DEVICE")

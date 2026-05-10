@@ -43,7 +43,8 @@ class Config(Struct):
         TEXT_MORPH_OPS: (str): Morphological ops for text mask.
         LINE_MORPH_OPS: (str): Morphological ops for line mask.
         DEBUG_LEVEL (int): Debug verbosity level (0 = none).
-        DEBUG_OUTPUT (str): Output mode for debug information ('file' by default).
+        DEBUG_DEST (str): Output mode for debug information ('file' by default).
+        OUTPUT_DIR (str): Directory for output and debug images ('.' by default).
         EDGE_MAX_OVERLAP (float): Maximum horizontal overlap of contours in a span.
         EDGE_MAX_LENGTH (float): Maximum length of edges connecting contours.
         EDGE_ANGLE_COST (float): Cost of angles in edges (tradeoff vs length).
@@ -243,7 +244,20 @@ class Config(Struct):
     # [debug_lvl_opt]
     DEBUG_LEVEL: int = 0
     # [debug_out_opt]
-    DEBUG_OUTPUT: str = "file"
+    DEBUG_DEST: str = "file"
+    OUTPUT_DIR: desc(str, "Directory for output and debug images") = "."
+    """Directory for output and debug images.
+
+    All output files (thresholded results and debug images) are written here.
+    The directory is created if it does not exist.
+
+    Tip:
+       Use with ``-d 3`` to keep debug images out of your working directory.
+
+    Question:
+       [#142](https://github.com/lmmx/page-dewarp/issues/142) - Configurable
+       output locations.
+    """
     # [edge_opts]
     EDGE_MAX_OVERLAP: desc(
         float,
