@@ -72,19 +72,19 @@ by Matt Zucker, as Python 2 is now long since decommissioned.
 
 ```
 usage: page-dewarp [-h] [-d {0,1,2,3}] [-dd {file,screen,both}]
-                   [-o OUTPUT_DIR] [-it OPT_MAX_ITER] [-m OPT_METHOD]
-                   [-dev DEVICE] [-b USE_BATCH] [-vw SCREEN_MAX_W]
-                   [-vh SCREEN_MAX_H] [-x PAGE_MARGIN_X] [-y PAGE_MARGIN_Y]
-                   [-tw TEXT_MIN_WIDTH] [-th TEXT_MIN_HEIGHT]
-                   [-ta TEXT_MIN_ASPECT] [-tk TEXT_MAX_THICKNESS]
-                   [-tm TEXT_MORPH_OPS] [-lm LINE_MORPH_OPS]
-                   [-wz ADAPTIVE_WINSZ] [-ri RVEC_IDX] [-ti TVEC_IDX]
-                   [-ci CUBIC_IDX] [-sw SPAN_MIN_WIDTH] [-sp SPAN_PX_PER_STEP]
-                   [-eo EDGE_MAX_OVERLAP] [-el EDGE_MAX_LENGTH]
-                   [-ec EDGE_ANGLE_COST] [-ea EDGE_MAX_ANGLE]
-                   [-f FOCAL_LENGTH] [-z OUTPUT_ZOOM] [-dpi OUTPUT_DPI]
-                   [-nb NO_BINARY] [-sh SHEAR_COST] [-mc MAX_CORR]
-                   [-s REMAP_DECIMATE]
+                   [-o OUTPUT_DIR] [-j OUTPUT_JSON] [-it OPT_MAX_ITER]
+                   [-m OPT_METHOD] [-dev DEVICE] [-b USE_BATCH]
+                   [-vw SCREEN_MAX_W] [-vh SCREEN_MAX_H] [-x PAGE_MARGIN_X]
+                   [-y PAGE_MARGIN_Y] [-tw TEXT_MIN_WIDTH]
+                   [-th TEXT_MIN_HEIGHT] [-ta TEXT_MIN_ASPECT]
+                   [-tk TEXT_MAX_THICKNESS] [-tm TEXT_MORPH_OPS]
+                   [-lm LINE_MORPH_OPS] [-wz ADAPTIVE_WINSZ] [-ri RVEC_IDX]
+                   [-ti TVEC_IDX] [-ci CUBIC_IDX] [-sw SPAN_MIN_WIDTH]
+                   [-sp SPAN_PX_PER_STEP] [-eo EDGE_MAX_OVERLAP]
+                   [-el EDGE_MAX_LENGTH] [-ec EDGE_ANGLE_COST]
+                   [-ea EDGE_MAX_ANGLE] [-f FOCAL_LENGTH] [-z OUTPUT_ZOOM]
+                   [-dpi OUTPUT_DPI] [-nb NO_BINARY] [-sh SHEAR_COST]
+                   [-mc MAX_CORR] [-s REMAP_DECIMATE]
                    IMAGE_FILE_OR_FILES [IMAGE_FILE_OR_FILES ...]
 
 positional arguments:
@@ -99,6 +99,9 @@ options:
   -o, --output-dir OUTPUT_DIR
                         Directory for output and debug images (type: str,
                         default: .)
+  -j, --json OUTPUT_JSON
+                        Write JSON sidecar with dewarp parameters (type: int,
+                        default: 0)
   -it, --max-iter OPT_MAX_ITER
                         Maximum optimisation iterations (type: int, default:
                         600000)
