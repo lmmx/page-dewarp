@@ -68,7 +68,7 @@ def main():
     parser = ArgParser()
     config = msgspec.convert(msgspec.structs.asdict(cfg), Config)
 
-    if config.DEBUG_LEVEL > 0 and config.DEBUG_OUTPUT != "file":
+    if config.DEBUG_LEVEL > 0 and config.DEBUG_DEST != "file":
         namedWindow("Dewarp")
 
     print(f"Parsed config: {config}")

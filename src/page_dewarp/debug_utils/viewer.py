@@ -1,10 +1,12 @@
 """Displays or saves debug images for page-dewarp.
 
-If `cfg.DEBUG_OUTPUT` is "file", the debug image is saved to disk with a filename
-indicating `name`, `step`, and `text`. Otherwise (if `cfg.DEBUG_OUTPUT` is "screen"
+If `cfg.DEBUG_DEST` is "file", the debug image is saved to disk with a filename
+indicating `name`, `step`, and `text`. Otherwise (if `cfg.DEBUG_DEST` is "screen"
 or "both"), the image is displayed in an OpenCV window with an overlaid label,
 and the script waits for a keypress to close the window.
 """
+
+from pathlib import Path
 
 import numpy as np
 from cv2 import FONT_HERSHEY_SIMPLEX, LINE_AA, imshow, imwrite, putText, waitKey
@@ -30,12 +32,15 @@ def debug_show(
         display: A NumPy array (image) to show or save.
 
     """
-    if cfg.DEBUG_OUTPUT != "screen":
+    if cfg.DEBUG_DEST != "screen":
         filetext = text.replace(" ", "_")
-        outfile = f"{name}_debug_{step}_{filetext}.png"
+        outdir = Path(cfg.OUTPUT_DIR)
+        outdir.mkdir(parents=True, exist_ok=True)
+        filetext = text.replace(" ", "_")
+        outfile = str(outdir / f"{name}_debug_{step}_{filetext}.png")
         imwrite(outfile, display)
 
-    if cfg.DEBUG_OUTPUT != "file":
+    if cfg.DEBUG_DEST != "file":
         image = display.copy()
         height = image.shape[0]
 
