@@ -7,10 +7,12 @@
 [![License](https://img.shields.io/pypi/l/page-dewarp.svg)](https://pypi.python.org/pypi/page-dewarp)
 [![pre-commit.ci status](https://results.pre-commit.ci/badge/github/lmmx/page-dewarp/master.svg)](https://results.pre-commit.ci/latest/github/lmmx/page-dewarp/master)
 
-Document image dewarping library using a cubic sheet model
+Document image dewarping library using a cubic sheet model.
 
 Python 3 library for page dewarping and thresholding,
 [available on PyPI](https://pypi.org/project/page_dewarp/).
+
+A managed web version, **[Page Dewarp Web](https://page-dewarp-web.pages.dev)**, is also available for use from any device with a browser, with an API for programmatic web access.
 
 ## Installation
 
@@ -54,17 +56,9 @@ mode. Performance benchmark on 40 images (via [#139](https://github.com/lmmx/pag
 
 Python 3.10+ and NumPy, SciPy, SymPy, Matplotlib, OpenCV, and msgspec are required to run `page-dewarp`.
 
+## Documentation
 
-## Help
-
-See [documentation](https://page-dewarp.vercel.app) for more details.
-
-- **Update!**: the docs now have a [How It Works](https://page-dewarp.vercel.app/how-it-works/Introduction/) section
-
-## Background
-
-This library was renovated from the [original (2016) Python 2 script](https://github.com/mzucker/page_dewarp/)
-by Matt Zucker, as Python 2 is now long since decommissioned.
+See the [docs site](https://page-dewarp.vercel.app) for full details, including a [How It Works](https://page-dewarp.vercel.app/how-it-works/Introduction/) walkthrough of the algorithm and a [configuration reference](https://page-dewarp.vercel.app/api/options).
 
 ## Usage
 
@@ -200,7 +194,7 @@ options:
                         default: 16)
 ```
 
-To try out an example image, run
+To try out an example image:
 
 ```sh
 git clone https://github.com/lmmx/page-dewarp
@@ -209,33 +203,9 @@ mkdir results && cd results
 page-dewarp ../example_input/boston_cooking_a.jpg
 ```
 
-## Explanation and further reading
+See `page-dewarp --help` for the full list of options.
 
-A book on a flat surface can be said to be 'fixed to zero' at the endpoints of a curve, which
-you can model as a cubic (see
-[`derive_cubic.py`](https://github.com/lmmx/page-dewarp/blob/master/derive_cubic.py))
+## Background
 
-The "cubic Hermite spline" is one of the models supported by
-[Gpufit](https://github.com/gpufit/Gpufit/), a library for Levenberg Marquardt curve fitting in
-CUDA (C++ with Python API).
-
-_[Work in progress]_
-
-- See full writeup on [Matt Zucker's blog](https://mzucker.github.io/2016/08/15/page-dewarping.html)
-- See [lecture](https://www.cs.cornell.edu/courses/cs4620/2013fa/lectures/16spline-curves.pdf)
-  on splines by Steve Marschner for more details and how a spline can be represented in matrix form.
-- Brief notes on this project are over on [my website](https://doc.spin.systems/page-dewarp)
-
-## Features
-
-Improvements on the original include:
-
-- [x] Banished Python 2
-- [x] Command line interface
-    - [x] Alterable config options
-- [x] Repackage for pip installation
-- [x] Refactor with modules and classes
-- [x] Speed up the optimisation
-    - [x] Limit optimisation iterations (via `-it` flag)
-    - [x] Optional GPU interface (via `-dev` flag)
-    - [x] Multiprocessing on CPU
+This library was renovated from the [original (2016) Python 2 script](https://github.com/mzucker/page_dewarp/)
+by Matt Zucker. A book on a flat surface can be modelled as a cubic curve fixed to zero at its endpoints (see Matt's [original writeup](https://mzucker.github.io/2016/08/15/page-dewarping.html) and [`derive_cubic.py`](https://github.com/lmmx/page-dewarp/blob/master/derive_cubic.py) for the derivation).
