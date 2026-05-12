@@ -143,3 +143,6 @@ default-groups = ["build", "dev", "jax", "test"]
 
 [tool.uv.sources]
 mdx-truly-sane-lists = { git = "https://github.com/radude/mdx_truly_sane_lists.git" }
+
+[tool.uv.build-backend]
+source-include = ["LICENSE"]
