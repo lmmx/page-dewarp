@@ -17,9 +17,7 @@ To become keypoints, they get processed further, in the initialisation of `Warpe
 corners, ycoords, xcoords = keypoints_from_samples(
     self.stem, self.small, self.pagemask, self.page_outline, span_points
 )
-rough_dims, span_counts, params = get_default_params(
-    corners, ycoords, xcoords
-)
+rough_dims, span_counts, params = get_default_params(corners, ycoords, xcoords)
 dstpoints = np.vstack((corners[0].reshape((1, 1, 2)),) + tuple(span_points))
 ```
 
@@ -31,10 +29,10 @@ which is made up of
 ```py
 params = np.hstack(
     (
-	np.array(rvec).flatten(),
-	np.array(tvec).flatten(),
-	np.array(cubic_slopes).flatten(),
-	ycoords.flatten(),
+        np.array(rvec).flatten(),
+        np.array(tvec).flatten(),
+        np.array(cubic_slopes).flatten(),
+        ycoords.flatten(),
     )
     + tuple(xcoords)
 )
@@ -52,10 +50,10 @@ It is here that the spline model is implemented: the 3D height is modelled as un
 ```py
 corners_object3d = np.array(
     [
-	[0, 0, 0],
-	[page_width, 0, 0],
-	[page_width, page_height, 0],
-	[0, page_height, 0],
+        [0, 0, 0],
+        [page_width, 0, 0],
+        [page_width, page_height, 0],
+        [0, page_height, 0],
     ]
 )
 ```

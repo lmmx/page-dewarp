@@ -14,10 +14,9 @@ def sample_spans(shape, spans):
             xmin, ymin = cinfo.rect[:2]
             step = cfg.span_opts.SPAN_PX_PER_STEP
             start = np.floor_divide((np.mod((len(means) - 1), step)), 2)
-            contour_points.extend([
-                (x + xmin, means[x] + ymin)
-                for x in range(start, len(means), step)
-            ])
+            contour_points.extend(
+                [(x + xmin, means[x] + ymin) for x in range(start, len(means), step)]
+            )
         contour_points = np.array(contour_points, dtype=np.float32).reshape((-1, 1, 2))
         contour_points = pix2norm(shape, contour_points)
         span_points.append(contour_points)
@@ -171,9 +170,7 @@ To become keypoints, they get processed further, in the initialisation of `Warpe
 corners, ycoords, xcoords = keypoints_from_samples(
     self.stem, self.small, self.pagemask, self.page_outline, span_points
 )
-rough_dims, span_counts, params = get_default_params(
-    corners, ycoords, xcoords
-)
+rough_dims, span_counts, params = get_default_params(corners, ycoords, xcoords)
 dstpoints = np.vstack((corners[0].reshape((1, 1, 2)),) + tuple(span_points))
 ```
 
@@ -287,19 +284,20 @@ into relative coordinates (with respect to the centre of the (shrunk) page.
 For example, starting from the squeezed and anti-clockwise reordered `pagecoords`:
 
 ```py
-array([[[440,  20]],
-       [[440, 633]],
-       [[ 50, 633]],
-       [[ 50,  20]]], dtype=int32)
+array([[[440, 20]], [[440, 633]], [[50, 633]], [[50, 20]]], dtype=int32)
 ```
 
 They become normalised by `pix2norm` as:
 
 ```py
-array([[ 0.59724349, -0.93874426],
-       [ 0.59724349,  0.93874426],
-       [-0.59724349,  0.93874426],
-       [-0.59724349, -0.93874426]])
+array(
+    [
+        [0.59724349, -0.93874426],
+        [0.59724349, 0.93874426],
+        [-0.59724349, 0.93874426],
+        [-0.59724349, -0.93874426],
+    ]
+)
 ```
 
 - e.g. the first entry (the bottom right corner) `[ 0.59724349, -0.93874426]`
