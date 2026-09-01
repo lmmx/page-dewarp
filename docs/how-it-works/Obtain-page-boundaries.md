@@ -23,9 +23,7 @@ def resize_to_screen(self, copy=False):
     scl = int(np.ceil(max(scl_x, scl_y)))
     if scl > 1.0:
         inv_scl = 1.0 / scl
-        img = cv2.resize(
-            self.cv2_img, (0, 0), None, inv_scl, inv_scl, cv2.INTER_AREA
-        )
+        img = cv2.resize(self.cv2_img, (0, 0), None, inv_scl, inv_scl, cv2.INTER_AREA)
     elif copy:
         img = self.cv2_img.copy()
     else:
@@ -56,9 +54,7 @@ ymin = cfg.image_opts.PAGE_MARGIN_Y
 xmax, ymax = (width - xmin), (height - ymin)
 self.pagemask = np.zeros((height, width), dtype=np.uint8)
 rectangle(self.pagemask, (xmin, ymin), (xmax, ymax), color=255, thickness=-1)
-self.page_outline = np.array(
-    [[xmin, ymin], [xmin, ymax], [xmax, ymax], [xmax, ymin]]
-)
+self.page_outline = np.array([[xmin, ymin], [xmin, ymax], [xmax, ymax], [xmax, ymin]])
 ```
 
 Note that the page outline is a list (matrix) of the corners
