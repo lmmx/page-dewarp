@@ -8,7 +8,7 @@ default_install_hook_types:
 
 repos:
   - repo: https://github.com/lmmx/just-pre-commit
-    rev: v0.6.5
+    rev: v0.6.6
     hooks:
       - id: run-just-rust
         args: ['precommit']
@@ -38,7 +38,7 @@ repos:
       - id: pyupgrade
         args: [--py310-plus]
   - repo: https://github.com/astral-sh/ruff-pre-commit
-    rev: v0.16.5
+    rev: v0.16.9
     hooks:
       # Run the linter
       - id: ruff
